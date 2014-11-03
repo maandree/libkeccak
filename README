@@ -1,2 +1,5 @@
 Keccak-family hashing library.
 
+This library implements a lanewise
+implementation of the Keccak-family.
+
