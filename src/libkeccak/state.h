@@ -37,6 +37,11 @@
 typedef struct libkeccak_state
 {
   /**
+   * The lanes (state)
+   */
+  int_fast64_t S[25];
+  
+  /**
    * The bitrate
    */
   long r;
@@ -75,11 +80,6 @@ typedef struct libkeccak_state
    * 12 + 2ℓ, the number of rounds
    */
   long nr;
-  
-  /**
-   * The lanes (state)
-   */
-  int_fast64_t S[25];
   
   /**
    * Pointer for `M`

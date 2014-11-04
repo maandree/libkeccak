@@ -24,14 +24,15 @@
 
 
 /**
- * Absorb the more of the message to the Keccak sponge
+ * Absorb more of the message to the Keccak sponge
  * 
- * @param  state   The hashing state
- * @param  msg     The partial message
- * @param  msglen  The length of the partial message
+ * @param   state   The hashing state
+ * @param   msg     The partial message
+ * @param   msglen  The length of the partial message
+ * @return          Zero on success, -1 on error
  */
-__attribute__((nonnull(1)))
-void libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen);
+__attribute__((nonnull))
+int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen);
 
 
 /**
@@ -41,7 +42,7 @@ void libkeccak_update(libkeccak_state_t* restrict state, const char* restrict ms
  * @param   msg      The rest of the message, may be `NULL`
  * @param   msglen   The length of the partial message
  * @param   bits     The number of bits at the end of the message not covered by `msglen`
- * @param   suffix   The suffix concatenate to the message
+ * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
  * @param   hashsum  Output paramter for the hashsum, may be `NULL`
  * @return           Zero on success, -1 on error
  */
@@ -56,7 +57,7 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
  * @param  state  The hashing state
  * @param  times  The number of rounds
  */
-__attribute__((nonnull, nothrow))
+inline __attribute__((nonnull, nothrow, artificial, gnu_inline))
 void libkeccak_simple_squeeze(libkeccak_state_t* restrict state, long times);
 
 
@@ -66,7 +67,7 @@ void libkeccak_simple_squeeze(libkeccak_state_t* restrict state, long times);
  * @param  state  The hashing state
  * @param  times  The number of digests
  */
-__attribute__((nonnull, nothrow))
+inline __attribute__((nonnull, nothrow, artificial, gnu_inline))
 void libkeccak_fast_squeeze(libkeccak_state_t* restrict state, long times);
 
 
