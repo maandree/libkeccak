@@ -22,6 +22,8 @@
 
 #include "libkeccak/spec.h"
 #include "libkeccak/state.h"
+#include "libkeccak/digest.h"
+#include "libkeccak/hex.h"
 
 
 #undef

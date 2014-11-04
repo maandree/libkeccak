@@ -30,7 +30,9 @@
 
 
 /**
- * This datastructure describes the state of a hashing process
+ * Satastructure that describes the state of a hashing process
+ * 
+ * The `char`-size of the output hashsum is calculated by `(.n + 7) >> 3`
  */
 typedef struct libkeccak_state
 {
