@@ -4,6 +4,13 @@
 # without any warranty.
 
 
+# The version of the library.
+LIB_MAJOR = 1
+LIB_MINOR = 0
+LIB_VERSION = $(LIB_MAJOR).$(LIB_MINOR)
+
+
+
 WARN = -Wall -Wextra -pedantic -Wdouble-promotion -Wformat=2 -Winit-self -Wmissing-include-dirs  \
        -Wtrampolines -Wfloat-equal -Wshadow -Wmissing-prototypes -Wmissing-declarations          \
        -Wredundant-decls -Wnested-externs -Winline -Wno-variadic-macros -Wswitch-default         \
@@ -99,11 +106,27 @@ OBJ = digest files generalised-spec hex state
 
 
 .PHONY: all
-all: $(foreach O,$(OBJ),obj/libkeccak/$(O).o)
+all: lib
+
+.PHONY: lib
+lib: bin/libkeccak.so.$(LIB_VERSION) bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak.so
 
 obj/libkeccak/%.o: src/libkeccak/%.c src/libkeccak.h src/libkeccak/*.h
 	@mkdir -p obj/libkeccak
-	$(CC) $(FLAGS) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+	$(CC) $(FLAGS) $(CFLAGS) $(CPPFLAGS) -fPIC -c -o $@ $<
+
+bin/libkeccak.so.$(LIB_VERSION): $(foreach O,$(OBJ),obj/libkeccak/$(O).o)
+	@mkdir -p bin
+	$(CC) $(FLAGS) $(LDFLAGS) -shared -Wl,-soname,libkeccak.so.$(LIB_MAJOR) -o $@ $^
+
+bin/libkeccak.so.$(LIB_MAJOR):
+	@mkdir -p bin
+	ln -sf libkeccak.so.$(LIB_VERSION) $@
+
+bin/libkeccak.so:
+	@mkdir -p bin
+	ln -sf libkeccak.so.$(LIB_VERSION) $@
+
 
 
 .PHONY: clean
