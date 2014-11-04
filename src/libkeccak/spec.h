@@ -21,7 +21,24 @@
 
 
 /**
- * This datastructure describes the parameters
+ * Message suffix for SHA3 hashing
+ */
+#define LIBKECCAK_SHA3_SUFFIX  "01"
+
+/**
+ * Message suffix for RawSHAKE hashing
+ */
+#define LIBKECCAK_RAWSHAKE_SUFFIX  "11"
+
+/**
+ * Message suffix for SHAKE hashing
+ */
+#define LIBKECCAK_SHAKE_SUFFIX  "1111"
+
+
+
+/**
+ * Datastructure that describes the parameters
  * that should be used when hashing
  */
 typedef struct libkeccak_spec
@@ -42,6 +59,48 @@ typedef struct libkeccak_spec
   long output;
   
 } libkeccak_spec_t;
+
+
+
+/**
+ * Fill in a `libkeccak_spec_t` for a SHA3-x hashing
+ * 
+ * @param  spec  The specifications datastructure to fill in
+ * @param  x     The value of x in `SHA3-x`, the output size
+ */
+static inline __attribute__((leaf, nonnull, nothrow))
+void libkeccak_spec_sha3(libkeccak_spec_t* restrict spec, long x)
+{
+  spec->bitrate = 1600 - 2 * x;
+  spec->capacity = 2 * x;
+  spec->output = x;
+}
+
+
+/**
+ * Fill in a `libkeccak_spec_t` for a RawSHAKEx hashing
+ * 
+ * @param  spec  The specifications datastructure to fill in
+ * @param  x     The value of x in `RawSHAKEx`, half the capacity
+ * @param  d     The output size
+ */
+static inline __attribute__((leaf, nonnull, nothrow))
+void libkeccak_spec_rawshake(libkeccak_spec_t* restrict spec, long x, long d)
+{
+  spec->bitrate = 1600 - 2 * x;
+  spec->capacity = 2 * x;
+  spec->output = d;
+}
+
+
+/**
+ * Fill in a `libkeccak_spec_t` for a SHAKEx hashing
+ * 
+ * @param  spec:libkeccak_spec_t*  The specifications datastructure to fill in
+ * @param  x:long                  The value of x in `SHAKEx`, half the capacity
+ * @param  d:long                  The output size
+ */
+#define libkeccak_spec_shake  libkeccak_spec_rawshake
 
 
 #undef
