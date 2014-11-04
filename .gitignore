@@ -10,6 +10,7 @@ obj/
 *.o
 *.out
 *.so
+*.su
 *.gch
 *.info
 *.pdf

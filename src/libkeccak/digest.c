@@ -16,11 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LIBKECCAK_DIGEST_H
-#define LIBKECCAK_DIGEST_H  1
-
-
-#include "state.h"
+#include "digest.h"
 
 
 /**
@@ -30,8 +26,9 @@
  * @param  msg     The partial message
  * @param  msglen  The length of the partial message
  */
-__attribute__((nonnull(1)))
-void libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen);
+void libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen)
+{
+}
 
 
 /**
@@ -45,9 +42,10 @@ void libkeccak_update(libkeccak_state_t* restrict state, const char* restrict ms
  * @param   hashsum  Output paramter for the hashsum, may be `NULL`
  * @return           Zero on success, -1 on error
  */
-__attribute__((nonnull(1)))
 int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
-		     size_t bits, const char* restrict suffix, char* restrict hashsum);
+		     size_t bits, const char* restrict suffix, char* restrict hashsum)
+{
+}
 
 
 /**
@@ -56,8 +54,11 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
  * @param  state  The hashing state
  * @param  times  The number of rounds
  */
-__attribute__((nonnull, nothrow))
-void libkeccak_simple_squeeze(libkeccak_state_t* restrict state, long times);
+void libkeccak_simple_squeeze(libkeccak_state_t* restrict state, long times)
+{
+  while (times--)
+    libkeccak_f(state);
+}
 
 
 /**
@@ -66,8 +67,12 @@ void libkeccak_simple_squeeze(libkeccak_state_t* restrict state, long times);
  * @param  state  The hashing state
  * @param  times  The number of digests
  */
-__attribute__((nonnull, nothrow))
-void libkeccak_fast_squeeze(libkeccak_state_t* restrict state, long times);
+void libkeccak_fast_squeeze(libkeccak_state_t* restrict state, long times)
+{
+  times *= (state->n - 1) / state->r + 1;
+  while (times--)
+    libkeccak_f(state);
+}
 
 
 /**
@@ -76,9 +81,33 @@ void libkeccak_fast_squeeze(libkeccak_state_t* restrict state, long times);
  * @param  state    The hashing state
  * @param  hashsum  Output paramter for the hashsum
  */
-__attribute__((nonnull, nothrow))
-void libkeccak_squeeze(libkeccak_state_t* restrict state, char* restrict hashsum);
-
-
-#undef
+void libkeccak_squeeze(libkeccak_state_t* restrict state, char* restrict hashsum)
+{
+  long ww, nn, olen, i, j, k, ptr, rr, ni;
+  int_fast64_t v;
+  
+  libkeccak_f(state);
+  
+  ww = state->w >> 3;
+  nn = (state->n + 7) >> 3;
+  olen = state->n;
+  j = ptr = 0;
+  rr = state->r >> 3;
+  ni = rr > 25 ? 25 : rr;
+  
+  while (olen > 0)
+    {
+      for (i = 0; (i < ni) && (j < nn); i++)
+	{
+	  v = state->S[(i % 5) * 5 + i / 5];
+	  for (k = 0; k++ < ww; v >>= 8)
+	    if (j++ < nn)
+	      hashsum[ptr++] = (char)v;
+	}
+      if (olen -= state->r, olen > 0)
+	libkeccak_f(state);
+    }
+  if (n & 7)
+    n[nn - 1] &= (1 << (n & 7)) - 1;
+}
 
