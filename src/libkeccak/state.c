@@ -38,7 +38,6 @@ int libkeccak_state_initialise(libkeccak_state_t* restrict state, const libkecca
   state->b = r + c;
   state->w = x = b / 25;
   state->l = 0;
-  if ((x & 0xFF00) != 0)  state->l |= 8,  x >>= 8;
   if ((x & 0x00F0) != 0)  state->l |= 4,  x >>= 4;
   if ((x & 0x000C) != 0)  state->l |= 2,  x >>= 2;
   if ((x & 0x0002) != 0)  state->l |= 1;
