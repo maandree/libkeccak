@@ -38,9 +38,9 @@ int libkeccak_state_initialise(libkeccak_state_t* restrict state, const libkecca
   state->b = r + c;
   state->w = x = b / 25;
   state->l = 0;
-  if ((x & 0x00F0) != 0)  state->l |= 4,  x >>= 4;
-  if ((x & 0x000C) != 0)  state->l |= 2,  x >>= 2;
-  if ((x & 0x0002) != 0)  state->l |= 1;
+  if (x & 0xF0L)  state->l |= 4,  x >>= 4;
+  if (x & 0x0CL)  state->l |= 2,  x >>= 2;
+  if (x & 0x02L)  state->l |= 1;
   state->nr = 12 + (l << 1);
   state->wmod = (state->w == 64) ? ~0LL : ((1LL << w) - 1);
   for (x = 0; x < 25; x++)
