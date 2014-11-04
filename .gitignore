@@ -16,4 +16,5 @@ obj/
 *.pdf
 *.ps
 *.dvi
+*.test
 
