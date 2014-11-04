@@ -264,7 +264,7 @@ size_t libkeccak_state_unmarshal(libkeccak_state_t* restrict state, const char* 
  * @param   data  The data buffer
  * @return        The byte size of the stored state
  */
-__attribute__((leaf, nonnull, nothrow, pure))
+__attribute__((leaf, nonnull, nothrow, warn_unused_result, pure))
 size_t libkeccak_state_unmarshal_skip(const char* restrict data);
 
 
