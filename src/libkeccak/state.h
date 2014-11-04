@@ -79,6 +79,21 @@ typedef struct libkeccak_state
    */
   int_fast64_t S[25];
   
+  /**
+   * Pointer for `M`
+   */
+  size_t mptr;
+  
+  /**
+   * Size of `M`
+   */
+  size_t mlen;
+  
+  /**
+   * Left over water to fill the sponge with at next update
+   */
+  char* M;
+  
 } libkeccak_state_t;
 
 
@@ -99,8 +114,24 @@ int libkeccak_state_initialise(libkeccak_state_t* restrict state, const libkecca
  * 
  * @param  state  The state that should be destroyed
  */
-__attribute__((leaf))
-void libkeccak_state_fast_destroy(libkeccak_state_t* restrict state);
+static inline __attribute__((leaf))
+void libkeccak_state_fast_destroy(libkeccak_state_t* restrict state)
+{
+  if (state == NULL)
+    return;
+  free(state->M);
+  state->M = NULL;
+}
+
+
+/**
+ * Wipe sensitive data wihout freeing any data, this is intended
+ * be called from `libkeccak_state_destroy`
+ * 
+ * @param  state  The state that should be wipe
+ */
+__attribute__((leaf, nonnull, nothrow, optimize("-O0")))
+void libkeccak_state_wipe(volatile libkeccak_state_t* restrict state);
 
 
 /**
@@ -108,8 +139,15 @@ void libkeccak_state_fast_destroy(libkeccak_state_t* restrict state);
  * 
  * @param  state  The state that should be destroyed
  */
-__attribute__((leaf))
-void libkeccak_state_destroy(libkeccak_state_t* restrict state);
+static inline __attribute__((unused, optimize("-O0")))
+void libkeccak_state_destroy(volatile libkeccak_state_t* restrict state)
+{
+  if (state == NULL)
+    return;
+  libkeccak_state_wipe(state);
+  free(state->M);
+  state->M = NULL;
+}
 
 
 /**
@@ -147,8 +185,8 @@ void libkeccak_state_fast_free(libkeccak_state_t* restrict state)
  * 
  * @param  state  The state that should be freed
  */
-static inline __attribute__((unused))
-void libkeccak_state_free(libkeccak_state_t* restrict state)
+static inline __attribute__((unused, optimize("-O0")))
+void libkeccak_state_free(volatile libkeccak_state_t* restrict state)
 {
   libkeccak_state_destroy(state);
   free(state);
@@ -193,7 +231,7 @@ libkeccak_state_t* libkeccak_state_duplicate(const libkeccak_state_t* restrict s
 static inline __attribute__((leaf, nonnull, nothrow, unused, warn_unused_result, pure))
 size_t libkeccak_state_marshal_size(const libkeccak_state_t* restrict state)
 {
-  return sizeof(libkeccak_state_t);
+  return sizeof(libkeccak_state_t) - sizeof(char*) + state->mptr * sizeof(char);
 }
 
 
