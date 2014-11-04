@@ -57,7 +57,7 @@ int libkeccak_digest(libkeccak_state_t* restrict state, char* restrict msg, size
  * @param  state  The hashing state
  * @param  times  The number of rounds
  */
-inline __attribute__((nonnull, nothrow, artificial, gnu_inline))
+__attribute__((nonnull, nothrow))
 void libkeccak_simple_squeeze(libkeccak_state_t* restrict state, long times);
 
 
@@ -67,7 +67,7 @@ void libkeccak_simple_squeeze(libkeccak_state_t* restrict state, long times);
  * @param  state  The hashing state
  * @param  times  The number of digests
  */
-inline __attribute__((nonnull, nothrow, artificial, gnu_inline))
+__attribute__((nonnull, nothrow))
 void libkeccak_fast_squeeze(libkeccak_state_t* restrict state, long times);
 
 
