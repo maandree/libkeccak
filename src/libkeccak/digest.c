@@ -62,6 +62,116 @@ static const int_fast64_t RC[] =
   };
 
 
+/**
+ * Rotate a word
+ * 
+ * @param   x:int_fast64_t     The value to rotate
+ * @param   n:long             Rotation steps, may not be zero
+ * @param   w:long             `state->w`
+ * @param   wmod:int_fast64_t  `state->wmod`
+ * @return  :int_fast64_t      The value rotated
+ */
+#define rotate(x, n, w, wmod)  ((((x) >> (w - ((n) % w))) + ((x) << ((n) % w))) & wmod)
+
+
+/**
+ * Rotate a 64-bit word
+ * 
+ * @param   x:int_fast64_t  The value to rotate
+ * @param   n:long          Rotation steps, may not be zero
+ * @return   :int_fast64_t  The value rotated
+ */
+#define rotate64(x, n)  ((int_fast64_t)((uint_fast64_t)(x) >> (64 - (n))) + ((x) << (n)))
+
+
+/**
+ * Perform one round of computation
+ * 
+ * @param  state  The hashing state
+ * @param  rc     The round contant for this round
+ */
+static __attribute__((leaf, nonnull, nothrow, hot))
+void libkeccak_f_round(libkeccak_state_t* restrict state, int_fast64_t rc)
+{
+  int_fast64_t* restrict A = state->S;
+  int_fast64_t* restrict B = state->B;
+  int_fast64_t* restrict C = state->C;
+  int_fast64_t da, db, dc, dd, de, wmod = state->wmod;
+  long w = state->w;
+  
+  /* θ step (step 1 and 2 of 3). */
+#define X(N)  C[N] = (A[N * 5] ^ A[N * 5 + 1]) ^ (A[N * 5 + 2] ^ A[N * 5 + 3]) ^ A[N * 5 + 4];
+  LIST_25
+#undef X
+  
+  da = C[4] ^ rotate64(C[1], 1);
+  dd = C[2] ^ rotate64(C[4], 1);
+  db = C[0] ^ rotate64(C[2], 1);
+  de = C[3] ^ rotate64(C[0], 1);
+  dc = C[1] ^ rotate64(C[3], 1);
+  
+  /* ρ and π steps, with last two part of θ. */
+#define X(bi, ai, dv, r)  B[bi] = rotate(A[ai] ^ dv, r, w, wmod)
+  B[0] = A[0] ^ da;   X( 1, 15, dd, 28);  X( 2,  5, db,  1);  X( 3, 20, de, 27);  X( 4, 10, dc, 62);
+  X( 5,  6, db, 44);  X( 6, 21, de, 20);  X( 7, 11, dc,  6);  X( 8,  1, da, 36);  X( 9, 16, dd, 55);
+  X(10, 12, dc, 43);  X(11,  2, da,  3);  X(12, 17, dd, 25);  X(13,  7, db, 10);  X(14, 22, de, 39);
+  X(15, 18, dd, 21);  X(16,  8, db, 45);  X(17, 23, de,  8);  X(18, 13, dc, 15);  X(19,  3, da, 41);
+  X(20, 24, de, 14);  X(21, 14, dc, 61);  X(22,  4, da, 18);  X(23, 19, dd, 56);  X(24,  9, db,  2);
+#undef X
+  
+  /* ξ step. */
+#define X(N)  A[N] = B[N] ^ ((~(B[(N + 5) % 25])) & B[(N + 10) % 25]);
+  LIST_25
+#undef X
+  
+  /* ι step. */
+  A[0] ^= rc;
+}
+
+
+/**
+ * 64-bit word version of `libkeccak_f_round`
+ * 
+ * @param  state  The hashing state
+ * @param  rc     The round contant for this round
+ */
+static __attribute__((leaf, nonnull, nothrow, hot))
+void libkeccak_f_round64(libkeccak_state_t* restrict state, int_fast64_t rc)
+{
+  int_fast64_t* restrict A = state->S;
+  int_fast64_t* restrict B = state->B;
+  int_fast64_t* restrict C = state->C;
+  int_fast64_t da, db, dc, dd, de;
+  
+  /* θ step (step 1 and 2 of 3). */
+#define X(N)  C[N] = (A[N * 5] ^ A[N * 5 + 1]) ^ (A[N * 5 + 2] ^ A[N * 5 + 3]) ^ A[N * 5 + 4];
+  LIST_25
+#undef X
+  
+  da = C[4] ^ rotate64(C[1], 1);
+  dd = C[2] ^ rotate64(C[4], 1);
+  db = C[0] ^ rotate64(C[2], 1);
+  de = C[3] ^ rotate64(C[0], 1);
+  dc = C[1] ^ rotate64(C[3], 1);
+  
+  /* ρ and π steps, with last two part of θ. */
+#define X(bi, ai, dv, r)  B[bi] = rotate64(A[ai] ^ dv, r)
+  B[0] = A[0] ^ da;   X( 1, 15, dd, 28);  X( 2,  5, db,  1);  X( 3, 20, de, 27);  X( 4, 10, dc, 62);
+  X( 5,  6, db, 44);  X( 6, 21, de, 20);  X( 7, 11, dc,  6);  X( 8,  1, da, 36);  X( 9, 16, dd, 55);
+  X(10, 12, dc, 43);  X(11,  2, da,  3);  X(12, 17, dd, 25);  X(13,  7, db, 10);  X(14, 22, de, 39);
+  X(15, 18, dd, 21);  X(16,  8, db, 45);  X(17, 23, de,  8);  X(18, 13, dc, 15);  X(19,  3, da, 41);
+  X(20, 24, de, 14);  X(21, 14, dc, 61);  X(22,  4, da, 18);  X(23, 19, dd, 56);  X(24,  9, db,  2);
+#undef X
+  
+  /* ξ step. */
+#define X(N)  A[N] = B[N] ^ ((~(B[(N + 5) % 25])) & B[(N + 10) % 25]);
+  LIST_25
+#undef X
+  
+  /* ι step. */
+  A[0] ^= rc;
+}
+
 
 /**
  * Convert a chunk of bytes to a lane
@@ -94,7 +204,7 @@ void libkeccak_f(libkeccak_state_t* restrict state)
  * @param   off      The offset in the message
  * @return           The lane
  */
-static inline __attribute__((leaf, nonnull, nothrow, pure))
+static inline __attribute__((leaf, nonnull, nothrow, pure, warn_unused_result))
 int_fast64_t libkeccak_to_lane(const char* restrict message, size_t msglen, long rr, long ww, size_t off)
 {
   long n = (long)((msglen < (size_t)rr ? msglen : (size_t)rr) - off);
@@ -118,7 +228,7 @@ int_fast64_t libkeccak_to_lane(const char* restrict message, size_t msglen, long
  * @param   off      The offset in the message
  * @return           The lane
  */
-static inline __attribute__((leaf, nonnull, nothrow, pure, hot))
+static inline __attribute__((leaf, nonnull, nothrow, pure, hot, warn_unused_result))
 int_fast64_t libkeccak_to_lane64(const char* restrict message, size_t msglen, long rr, size_t off)
 {
   long n = (long)((msglen < (size_t)rr ? msglen : (size_t)rr) - off);
@@ -132,10 +242,37 @@ int_fast64_t libkeccak_to_lane64(const char* restrict message, size_t msglen, lo
 }
 
 
-static __attribute__((leaf, nonnull))
-void libkeccak_pad10star1(libkeccak_state_t* restrict state, long bits, long* restrict outlen)
+/**
+ * pad 10*1
+ * 
+ * @param  state  The hashing state, `state->M` and `state->mptr` will be updated,
+ *                `state->M` should have `state->r / 8` bytes left over at the end
+ * @param  bits   The number of bits in the end of the message that does not make a whole byte
+ */
+static __attribute__((leaf, nonnull, nothrow))
+void libkeccak_pad10star1(libkeccak_state_t* restrict state, long bits)
 {
-  /* TODO */
+  long i, r = state->r;
+  long nrf = len - !!bits;
+  long len = (nrf << 3) | bits;
+  long ll = len % r;
+  char b = bits ? (state->M[nrf] | (1 << bits)) : 1;
+  
+  if ((r - 8 <= ll) && (ll <= r - 2))
+    {
+      state->M[nrf] = (char)(b ^ 0x80);
+      state->mptr = nrf + 1;
+    }
+  else
+    {
+      len = ++nrf;
+      len = (len - (len % r) + (r - 8)) >> 3;
+      state->mptr = len + 1;
+      
+      state->M[nrf] = b;
+      __builtin_memset(state->M + nrf, 0, (len - nrf) * sizeof(char));
+      state->M[len] = 0x80;
+    }
 }
 
 
@@ -252,7 +389,7 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
 int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
 		     size_t bits, const char* restrict suffix, char* restrict hashsum)
 {
-  long len, ni, i, j = 0, k, ptr = 0;
+  long len, ni, i, j = 0, k, ptr = 0, ext;
   long rr = state->r >> 3;
   long ww = state->w >> 3;
   long nn = (state->n + 7) >> 3;
@@ -269,12 +406,13 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
 	msg[msglen] &= (1 << bits) - 1;
     }
   
-  if (state->mptr + msglen + ((bits + suffix_len + 7) >> 3) > state->mlen)
+  ext = msglen + ((bits + suffix_len + 7) >> 3) + (state->r >> 3);
+  if (state->mptr + ext > state->mlen)
     {
-      state->mlen += msglen + ((bits + suffix_len + 7) >> 3);
+      state->mlen += ext;
       new = realloc(state->M, state->mlen * sizeof(char)); /* FIXME insecure */
       if (new == NULL)
-	return state->mlen -= msglen + ((bits + suffix_len + 7) >> 3), -1;
+	return state->mlen -= ext, -1;
       state->M = new;
     }
   
@@ -297,15 +435,13 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
   if (msglen)
     __builtin_memcpy(state->M + state->mptr, message, msglen * sizeof(char));
   state->mptr += msglen;
-  
-  // libkeccak_pad10star1(state->M, state->mptr, state->r, bits, &len); /* TODO */
-  
-  libkeccak_absorption_phase(state, len);
+  libkeccak_pad10star1(state->M, state->mptr, state->r, bits);
+  libkeccak_absorption_phase(state, state->mptr);
   
   if (hashsum != NULL)
     libkeccak_squeezing_phase(state, rr, nn, ww, hashsum);
   else
-    for (i = (state->n - 1) / this->r; i--;)
+    for (i = (state->n - 1) / state->r; i--;)
       libkeccak_f(state);
   
   return 0
