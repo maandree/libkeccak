@@ -20,7 +20,7 @@
 
 
 #define have(v)      (spec->v != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC)
-#define copy(v)      (spec->v = v)
+#define copy(v)      (v = spec->v)
 #define deft(v, dv)  (have(v) ? v : (dv))
 
 

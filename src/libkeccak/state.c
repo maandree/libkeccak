@@ -46,7 +46,7 @@ int libkeccak_state_initialise(libkeccak_state_t* restrict state, const libkecca
   for (x = 0; x < 25; x++)
     state->S[x] = 0;
   state->mptr = 0;
-  state->mlen = (state->r * state->b) >> 2;
+  state->mlen = (size_t)(state->r * state->b) >> 2;
   state->M = malloc(state->mlen * sizeof(char));
   return state->M == NULL ? -1 : 0;
 }
@@ -100,7 +100,6 @@ int libkeccak_state_copy(libkeccak_state_t* restrict dest, const libkeccak_state
 size_t libkeccak_state_marshal(const libkeccak_state_t* restrict state, char* restrict data)
 {
 #define set(type, var)  *((type*)data) = state->var, data += sizeof(type) / sizeof(char)
-  size_t i;
   set(long, r);
   set(long, c);
   set(long, n);
@@ -129,8 +128,7 @@ size_t libkeccak_state_marshal(const libkeccak_state_t* restrict state, char* re
  */
 size_t libkeccak_state_unmarshal(libkeccak_state_t* restrict state, const char* restrict data)
 {
-#define get(type, var)  state->var = *((type*)data), data += sizeof(type) / sizeof(char)
-  size_t i;
+#define get(type, var)  state->var = *((const type*)data), data += sizeof(type) / sizeof(char)
   get(long, r);
   get(long, c);
   get(long, n);
@@ -163,6 +161,6 @@ size_t libkeccak_state_unmarshal(libkeccak_state_t* restrict state, const char* 
 size_t libkeccak_state_unmarshal_skip(const char* restrict data)
 {
   data += (7 * sizeof(long) + 26 * sizeof(int_fast64_t)) / sizeof(char);
-  return sizeof(libkeccak_state_t) - sizeof(char*) + *(size_t*)data * sizeof(char);
+  return sizeof(libkeccak_state_t) - sizeof(char*) + *(const size_t*)data * sizeof(char);
 }
 

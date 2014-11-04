@@ -34,10 +34,8 @@ void libkeccak_behex_lower(char* restrict output, const char* restrict hashsum, 
   output[2 * n] = '\0';
   while (n--)
     {
-      char a = (hashsum[n] >> 4) & 255;
-      char b = (hashsum[n] >> 0) & 255;
-      output[2 * n + 0] = "0123456789abcdef"[a];
-      output[2 * n + 1] = "0123456789abcdef"[b];
+      output[2 * n + 0] = "0123456789abcdef"[(hashsum[n] >> 4) & 15];
+      output[2 * n + 1] = "0123456789abcdef"[(hashsum[n] >> 0) & 15];
     }
 }
 
@@ -54,10 +52,8 @@ void libkeccak_behex_upper(char* restrict output, const char* restrict hashsum, 
   output[2 * n] = '\0';
   while (n--)
     {
-      char a = (hashsum[n] >> 4) & 255;
-      char b = (hashsum[n] >> 0) & 255;
-      output[2 * n + 0] = "0123456789ABCDEF"[a];
-      output[2 * n + 1] = "0123456789ABCDEF"[b];
+      output[2 * n + 0] = "0123456789ABCDEF"[(hashsum[n] >> 4) & 15];
+      output[2 * n + 1] = "0123456789ABCDEF"[(hashsum[n] >> 0) & 15];
     }
 }
 
@@ -77,15 +73,10 @@ void libkeccak_unhex(char* restrict output, const char* restrict hashsum)
       char a = hashsum[2 * n + 0];
       char b = hashsum[2 * n + 1];
       
-      if      (a >= 'a')  a -= 'a' - 9;
-      else if (a >= 'A')  a -= 'A' - 9;
-      else                a -= '0';
+      a = (char)((a & 15) + (a > '9' ? 9 : 0));
+      b = (char)((b & 15) + (b > '9' ? 9 : 0));
       
-      if      (b >= 'a')  b -= 'a' - 9;
-      else if (b >= 'A')  b -= 'A' - 9;
-      else                b -= '0';
-      
-      output[n] *= (a << 4) | b;
+      output[n] = (char)((a << 4) | b);
     }
 }
 

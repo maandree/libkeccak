@@ -50,7 +50,7 @@ int libkeccak_generalised_sum_fd(int fd, libkeccak_state_t* restrict state,
   
   if (fstat(fd, &attr) == 0)
     if (attr.st_blksize > 0)
-      blksize = attr.st_blksize;
+      blksize = (size_t)(attr.st_blksize);
   
   chunk = alloca(blksize);
   

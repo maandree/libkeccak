@@ -51,14 +51,14 @@ static const long LANE_TRANSPOSE_MAP[] = { LIST_25 };
 /**
  * Keccak-f round constants
  */
-static const int_fast64_t RC[] =
+static const uint_fast64_t RC[] =
   {
-    0x0000000000000001LL, 0x0000000000008082LL, 0x800000000000808ALL, 0x8000000080008000LL,
-    0x000000000000808BLL, 0x0000000080000001LL, 0x8000000080008081LL, 0x8000000000008009LL,
-    0x000000000000008ALL, 0x0000000000000088LL, 0x0000000080008009LL, 0x000000008000000ALL,
-    0x000000008000808BLL, 0x800000000000008BLL, 0x8000000000008089LL, 0x8000000000008003LL,
-    0x8000000000008002LL, 0x8000000000000080LL, 0x000000000000800ALL, 0x800000008000000ALL,
-    0x8000000080008081LL, 0x8000000000008080LL, 0x0000000080000001LL, 0x8000000080008008LL
+    0x0000000000000001ULL, 0x0000000000008082ULL, 0x800000000000808AULL, 0x8000000080008000ULL,
+    0x000000000000808BULL, 0x0000000080000001ULL, 0x8000000080008081ULL, 0x8000000000008009ULL,
+    0x000000000000008AULL, 0x0000000000000088ULL, 0x0000000080008009ULL, 0x000000008000000AULL,
+    0x000000008000808BULL, 0x800000000000008BULL, 0x8000000000008089ULL, 0x8000000000008003ULL,
+    0x8000000000008002ULL, 0x8000000000000080ULL, 0x000000000000800AULL, 0x800000008000000AULL,
+    0x8000000080008081ULL, 0x8000000000008080ULL, 0x0000000080000001ULL, 0x8000000080008008ULL
   };
 
 
@@ -184,13 +184,13 @@ void libkeccak_f(libkeccak_state_t* restrict state)
   long i = 0, nr = state->nr;
   if (nr == 24)
     {
-#define X(N)  libkeccak_f_round64(state, RC[N]);
+#define X(N)  libkeccak_f_round64(state, (int_fast64_t)(RC[N]));
       LIST_24
 #undef X
     }
   else
     for (; nr--; i++)
-      libkeccak_f_round(state, RC[i] & state->wmod);
+      libkeccak_f_round(state, (int_fast64_t)(RC[i]) & state->wmod);
 }
 
 
@@ -250,13 +250,13 @@ int_fast64_t libkeccak_to_lane64(const char* restrict message, size_t msglen, lo
  * @param  bits   The number of bits in the end of the message that does not make a whole byte
  */
 static __attribute__((nonnull, nothrow))
-void libkeccak_pad10star1(libkeccak_state_t* restrict state, long bits)
+void libkeccak_pad10star1(libkeccak_state_t* restrict state, size_t bits)
 {
-  long i, r = state->r;
-  long nrf = state->mptr - !!bits;
-  long len = (nrf << 3) | bits;
-  long ll = len % r;
-  char b = bits ? (state->M[nrf] | (1 << bits)) : 1;
+  size_t r = (size_t)(state->r);
+  size_t nrf = state->mptr - !!bits;
+  size_t len = (nrf << 3) | bits;
+  size_t ll = len % r;
+  char b = (char)(bits ? (state->M[nrf] | (1 << bits)) : 1);
   
   if ((r - 8 <= ll) && (ll <= r - 2))
     {
@@ -271,7 +271,7 @@ void libkeccak_pad10star1(libkeccak_state_t* restrict state, long bits)
       
       state->M[nrf] = b;
       __builtin_memset(state->M + nrf, 0, (len - nrf) * sizeof(char));
-      state->M[len] = 0x80;
+      state->M[len] = (char)0x80;
     }
 }
 
@@ -285,28 +285,28 @@ void libkeccak_pad10star1(libkeccak_state_t* restrict state, long bits)
 static __attribute__((nonnull, nothrow))
 void libkeccak_absorption_phase(libkeccak_state_t* restrict state, size_t len)
 {
-  long w = state->w, rr = state->r >> 3, ww = state->w >> 3;
-  long i = len / rr;
+  long rr = state->r >> 3, ww = state->w >> 3;
+  long i = (long)len / rr;
   const char* restrict message = state->M;
   if (__builtin_expect(ww >= 8, 1)) /* ww > 8 is impossible, it is just for optimisation possibilities. */
     while (i--)
       {
-#define X(N)  state->S[N] ^= libkeccak_to_lane64(message, len, rr, LANE_TRANSPOSE_MAP[N] * 8);
+#define X(N)  state->S[N] ^= libkeccak_to_lane64(message, len, rr, (size_t)(LANE_TRANSPOSE_MAP[N] * 8));
 	LIST_25
 #undef X
 	libkeccak_f(state);
-	message += rr;
-	len -= rr;
+	message += (size_t)rr;
+	len -= (size_t)rr;
       }
   else
     while (i--)
       {
-#define X(N)  state->S[N] ^= libkeccak_to_lane(message, len, rr, ww, LANE_TRANSPOSE_MAP[N] * ww);
+#define X(N)  state->S[N] ^= libkeccak_to_lane(message, len, rr, ww, (size_t)(LANE_TRANSPOSE_MAP[N] * ww));
 	LIST_25
 #undef X
 	libkeccak_f(state);
-	message += rr;
-	len -= rr;
+	message += (size_t)rr;
+	len -= (size_t)rr;
       }
 }
 
@@ -338,7 +338,7 @@ void libkeccak_squeezing_phase(libkeccak_state_t* restrict state,
 	libkeccak_f(state);
     }
   if (state->n & 7)
-    hashsum[nn - 1] &= (1 << (state->n & 7)) - 1;
+    hashsum[nn - 1] &= (char)((1 << (state->n & 7)) - 1);
 }
 
 
@@ -366,7 +366,7 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
   __builtin_memcpy(state->M + state->mptr, msg, msglen * sizeof(char));
   state->mptr += msglen;
   len = state->mptr;
-  len -= state->mptr % ((state->r * state->b) >> 3);
+  len -= state->mptr % (size_t)((state->r * state->b) >> 3);
   state->mptr -= len;
   
   libkeccak_absorption_phase(state, len);
@@ -390,11 +390,10 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
 int libkeccak_digest(libkeccak_state_t* restrict state, char* restrict msg, size_t msglen,
 		     size_t bits, const char* restrict suffix, char* restrict hashsum)
 {
-  long len, ni, i, j = 0, k, ptr = 0, ext;
-  long rr = state->r >> 3;
+  long rr = state->r >> 3, i;
   long ww = state->w >> 3;
   long nn = (state->n + 7) >> 3;
-  long suffix_len = suffix ? __builtin_strlen(suffix) : 0;
+  size_t ext, suffix_len = suffix ? __builtin_strlen(suffix) : 0;
   const char* restrict message = msg;
   char* restrict new;
   
@@ -404,10 +403,10 @@ int libkeccak_digest(libkeccak_state_t* restrict state, char* restrict msg, size
     {
       msglen += bits >> 3;
       if ((bits &= 7))
-	msg[msglen] &= (1 << bits) - 1;
+	msg[msglen] &= (char)((1 << bits) - 1);
     }
   
-  ext = msglen + ((bits + suffix_len + 7) >> 3) + (state->r >> 3);
+  ext = msglen + ((bits + suffix_len + 7) >> 3) + (size_t)rr;
   if (state->mptr + ext > state->mlen)
     {
       state->mlen += ext;
@@ -425,7 +424,7 @@ int libkeccak_digest(libkeccak_state_t* restrict state, char* restrict msg, size
 	state->M[msglen] = 0;
       while (suffix_len--)
 	{
-	  state->M[msglen] |= (*suffix++ & 1) << bits++;
+	  state->M[msglen] |= (char)((*suffix++ & 1) << bits++);
 	  if (bits == 8)
 	    bits = 0, state->M[++msglen] = 0;
 	}
