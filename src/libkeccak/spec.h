@@ -36,6 +36,38 @@
 #define LIBKECCAK_SHAKE_SUFFIX  "1111"
 
 
+/**
+ * Invalid `libkeccak_spec_t.bitrate`: non-positive
+ */
+#define LIBKECCAK_SPEC_ERROR_BITRATE_NONPOSITIVE  1
+
+/**
+ * Invalid `libkeccak_spec_t.bitrate`: not a multiple of 8
+ */
+#define LIBKECCAK_SPEC_ERROR_BITRATE_MOD_8  2
+
+/**
+ * Invalid `libkeccak_spec_t.capacity`: non-positive
+ */
+#define LIBKECCAK_SPEC_ERROR_CAPACITY_NONPOSITIVE  3
+
+/**
+ * Invalid `libkeccak_spec_t.capacity`: not a multiple of 8
+ */
+#define LIBKECCAK_SPEC_ERROR_CAPACITY_MOD_8  4
+
+/**
+ * Invalid `libkeccak_spec_t.output`: non-positive
+ */
+#define LIBKECCAK_SPEC_ERROR_OUTPUT_NONPOSITIVE  5
+
+/**
+ * Invalue `libkeccak_spec_t` values:  `.bitrate + `.capacity`
+ * is greater 1600 which is the largest supported state size
+ */
+#define LIBKECCAK_SPEC_ERROR_STATE_TOO_LARGE  6
+
+
 
 /**
  * Datastructure that describes the parameters
@@ -101,6 +133,26 @@ void libkeccak_spec_rawshake(libkeccak_spec_t* restrict spec, long x, long d)
  * @param  d:long                  The output size
  */
 #define libkeccak_spec_shake  libkeccak_spec_rawshake
+
+
+/**
+ * Check for errors in a `libkeccak_spec_t`
+ * 
+ * @param   spec  The specifications datastructure to check
+ * @return        Zero if error free, a `LIBKECCAK_SPEC_ERROR_*` if an error was found
+ */
+static inline __attribute__((leaf, nonnull, nothrow, unused, warn_unused_result, pure))
+int libkeccak_spec_check(libkeccak_spec_t* restrict spec)
+{
+  if (spec->bitrate <= 0)   return LIBKECCAK_SPEC_ERROR_BITRATE_NONPOSITIVE;
+  if (spec->bitrate % 8)    return LIBKECCAK_SPEC_ERROR_BITRATE_MOD_8;
+  if (spec->capacity <= 0)  return LIBKECCAK_SPEC_ERROR_CAPACITY_NONPOSITIVE;
+  if (spec->capacity % 8)   return LIBKECCAK_SPEC_ERROR_CAPACITY_MOD_8;
+  if (spec->output <= 0)    return LIBKECCAK_SPEC_ERROR_OUTPUT_NONPOSITIVE;
+  if (spec->capacity + spec->bitrate > 1600)
+    return LIBKECCAK_SPEC_ERROR_STATE_TOO_LARGE;
+  return 0;
+}
 
 
 #undef
