@@ -148,7 +148,7 @@ void libkeccak_spec_rawshake(libkeccak_spec_t* restrict spec, long x, long d)
  * @return        Zero if error free, a `LIBKECCAK_SPEC_ERROR_*` if an error was found
  */
 static inline __attribute__((leaf, nonnull, nothrow, unused, warn_unused_result, pure))
-int libkeccak_spec_check(libkeccak_spec_t* restrict spec)
+int libkeccak_spec_check(const libkeccak_spec_t* restrict spec)
 {
   long state_size = spec->capacity + spec->bitrate;
   if (spec->bitrate <= 0)   return LIBKECCAK_SPEC_ERROR_BITRATE_NONPOSITIVE;
