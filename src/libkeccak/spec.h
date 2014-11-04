@@ -62,10 +62,16 @@
 #define LIBKECCAK_SPEC_ERROR_OUTPUT_NONPOSITIVE  5
 
 /**
- * Invalue `libkeccak_spec_t` values:  `.bitrate + `.capacity`
+ * Invalid `libkeccak_spec_t` values:  `.bitrate + `.capacity`
  * is greater 1600 which is the largest supported state size
  */
 #define LIBKECCAK_SPEC_ERROR_STATE_TOO_LARGE  6
+
+/**
+ * Invalid `libkeccak_spec_t` values:
+ * `.bitrate + `.capacity` is not a multiple of 25
+ */
+#define LIBKECCAK_SPEC_ERROR_STATE_MOD_25  7
 
 
 
@@ -144,13 +150,14 @@ void libkeccak_spec_rawshake(libkeccak_spec_t* restrict spec, long x, long d)
 static inline __attribute__((leaf, nonnull, nothrow, unused, warn_unused_result, pure))
 int libkeccak_spec_check(libkeccak_spec_t* restrict spec)
 {
+  long state_size = spec->capacity + spec->bitrate;
   if (spec->bitrate <= 0)   return LIBKECCAK_SPEC_ERROR_BITRATE_NONPOSITIVE;
   if (spec->bitrate % 8)    return LIBKECCAK_SPEC_ERROR_BITRATE_MOD_8;
   if (spec->capacity <= 0)  return LIBKECCAK_SPEC_ERROR_CAPACITY_NONPOSITIVE;
   if (spec->capacity % 8)   return LIBKECCAK_SPEC_ERROR_CAPACITY_MOD_8;
   if (spec->output <= 0)    return LIBKECCAK_SPEC_ERROR_OUTPUT_NONPOSITIVE;
-  if (spec->capacity + spec->bitrate > 1600)
-    return LIBKECCAK_SPEC_ERROR_STATE_TOO_LARGE;
+  if (state_size > 1600)    return LIBKECCAK_SPEC_ERROR_STATE_TOO_LARGE;
+  if (state_size % 25)      return LIBKECCAK_SPEC_ERROR_STATE_MOD_25;
   return 0;
 }
 
