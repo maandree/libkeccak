@@ -54,7 +54,7 @@ static inline __attribute__((nonnull(2, 3), artificial, gnu_inline))
 int libkeccak_keccaksum_fd(int fd, libkeccak_state_t* restrict state,
 			   const libkeccak_spec_t* restrict spec, char* restrict hashsum)
 {
-  return libkeccak_generalised_sum_fd(fd, spec, NULL, hashsum);
+  return libkeccak_generalised_sum_fd(fd, state, spec, NULL, hashsum);
 }
 
 
@@ -74,7 +74,7 @@ int libkeccak_sha3sum_fd(int fd, libkeccak_state_t* restrict state,
 {
   libkeccak_spec_t spec;
   libkeccak_spec_sha3(&spec, output);
-  return libkeccak_generalised_sum_fd(fd, &spec, LIBKECCAK_SHA3_SUFFIX, hashsum);
+  return libkeccak_generalised_sum_fd(fd, state, &spec, LIBKECCAK_SHA3_SUFFIX, hashsum);
 }
 
 
@@ -95,7 +95,7 @@ int libkeccak_rawshakesum_fd(int fd, libkeccak_state_t* restrict state,
 {
   libkeccak_spec_t spec;
   libkeccak_spec_rawshake(&spec, semicapacity, output);
-  return libkeccak_generalised_sum_fd(fd, &spec, LIBKECCAK_RAWSHAKE_SUFFIX, hashsum);
+  return libkeccak_generalised_sum_fd(fd, state, &spec, LIBKECCAK_RAWSHAKE_SUFFIX, hashsum);
 }
 
 
@@ -116,9 +116,9 @@ int libkeccak_shakesum_fd(int fd, libkeccak_state_t* restrict state,
 {
   libkeccak_spec_t spec;
   libkeccak_spec_shake(&spec, semicapacity, output);
-  return libkeccak_generalised_sum_fd(fd, &spec, LIBKECCAK_SHAKE_SUFFIX, hashsum);
+  return libkeccak_generalised_sum_fd(fd, state, &spec, LIBKECCAK_SHAKE_SUFFIX, hashsum);
 }
 
 
-#undef
+#endif
 

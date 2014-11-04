@@ -35,18 +35,18 @@ int libkeccak_state_initialise(libkeccak_state_t* restrict state, const libkecca
   state->r = spec->bitrate;
   state->n = spec->output;
   state->c = spec->capacity;
-  state->b = r + c;
-  state->w = x = b / 25;
+  state->b = state->r + state->c;
+  state->w = x = state->b / 25;
   state->l = 0;
   if (x & 0xF0L)  state->l |= 4,  x >>= 4;
   if (x & 0x0CL)  state->l |= 2,  x >>= 2;
   if (x & 0x02L)  state->l |= 1;
-  state->nr = 12 + (l << 1);
-  state->wmod = (state->w == 64) ? ~0LL : ((1LL << w) - 1);
+  state->nr = 12 + (state->l << 1);
+  state->wmod = (state->w == 64) ? ~0LL : ((1LL << state->w) - 1);
   for (x = 0; x < 25; x++)
     state->S[x] = 0;
   state->mptr = 0;
-  state->mlen = (r * b) >> 2;
+  state->mlen = (state->r * state->b) >> 2;
   state->M = malloc(state->mlen * sizeof(char));
   return state->M == NULL ? -1 : 0;
 }
@@ -84,7 +84,7 @@ int libkeccak_state_copy(libkeccak_state_t* restrict dest, const libkeccak_state
   memcpy(dest, src, sizeof(libkeccak_state_t));
   dest->M = malloc(src->mlen * sizeof(char));
   if (dest->M == NULL)
-    return dest->M = NULL, NULL;
+    return -1;
   memcpy(dest->M, src->M, src->mptr * sizeof(char));
   return 0;
 }

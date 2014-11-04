@@ -116,7 +116,7 @@ int libkeccak_state_initialise(libkeccak_state_t* restrict state, const libkecca
  * 
  * @param  state  The state that should be destroyed
  */
-static inline __attribute__((leaf))
+static inline
 void libkeccak_state_fast_destroy(libkeccak_state_t* restrict state)
 {
   if (state == NULL)
@@ -163,7 +163,7 @@ libkeccak_state_t* libkeccak_state_create(const libkeccak_spec_t* restrict spec)
 {
   libkeccak_state_t* restrict state = malloc(sizeof(libkeccak_state_t));
   int saved_errno;
-  if ((state == NULL) || libkeccak_state_initialise(state))
+  if ((state == NULL) || libkeccak_state_initialise(state, spec))
     return saved_errno = errno, free(state), errno = saved_errno, NULL;
   return state;
 }
@@ -191,7 +191,7 @@ static inline __attribute__((unused, optimize("-O0")))
 void libkeccak_state_free(volatile libkeccak_state_t* restrict state)
 {
   libkeccak_state_destroy(state);
-  free(state);
+  free((libkeccak_state_t*)state);
 }
 
 
@@ -230,7 +230,7 @@ libkeccak_state_t* libkeccak_state_duplicate(const libkeccak_state_t* restrict s
  * @param   state  The state as it will be marshalled by a subsequent call to `libkeccak_state_marshal`
  * @return         The allocation size needed for the buffer to which the state will be marshalled
  */
-static inline __attribute__((leaf, nonnull, nothrow, unused, warn_unused_result, pure))
+static inline __attribute__((nonnull, nothrow, unused, warn_unused_result, pure))
 size_t libkeccak_state_marshal_size(const libkeccak_state_t* restrict state)
 {
   return sizeof(libkeccak_state_t) - sizeof(char*) + state->mptr * sizeof(char);
@@ -270,5 +270,5 @@ __attribute__((leaf, nonnull, nothrow, warn_unused_result, pure))
 size_t libkeccak_state_unmarshal_skip(const char* restrict data);
 
 
-#undef
+#endif
 

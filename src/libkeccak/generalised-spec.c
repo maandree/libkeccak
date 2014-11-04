@@ -30,12 +30,12 @@
  * If you are interrested in finding errors, you should call
  * `libkeccak_spec_check(output)` if this function returns zero
  * 
- * @param  spec    The generalised input specifications, may be modified
- * @param  output  The specification datastructure to fill in
- * @return         Zero if `spec` is valid, a `LIBKECCAK_GENERALISED_SPEC_ERROR_*` if an error was found
+ * @param   spec         The generalised input specifications, will be update with resolved automatic values
+ * @param   output_spec  The specification datastructure to fill in
+ * @return               Zero if `spec` is valid, a `LIBKECCAK_GENERALISED_SPEC_ERROR_*` if an error was found
  */
 int libkeccak_degeneralise_spec(libkeccak_generalised_spec_t* restrict spec,
-				libkeccak_spec_t* restrict output)
+				libkeccak_spec_t* restrict output_spec)
 {
   long state_size, word_size, capacity, bitrate, output;
   
@@ -79,7 +79,7 @@ int libkeccak_degeneralise_spec(libkeccak_generalised_spec_t* restrict spec,
     }
   
   
-  if (!have(bitrate) && !have(capacity) && !have(opacity)) /* state_size? */
+  if (!have(bitrate) && !have(capacity) && !have(output)) /* state_size? */
     {
       state_size = deft(state_size, 1600L);
       output = ((state_size << 5) / 100L + 7L) & ~0x07L;
@@ -110,6 +110,13 @@ int libkeccak_degeneralise_spec(libkeccak_generalised_spec_t* restrict spec,
       state_size = deft(state_size, bitrate + capacity);
       output = deft(output, capacity == 8 ? 8 : (capacity << 1));
     }
+  
+  spec->capacity   = output_spec->capacity = capacity;
+  spec->bitrate    = output_spec->bitrate  = bitrate;
+  spec->output     = output_spec->output   = output;
+  spec->state_size = state_size;
+  spec->word_size  = state_size / 25;
+  return 0;
 }
 
 

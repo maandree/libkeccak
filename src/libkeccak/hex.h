@@ -56,5 +56,5 @@ __attribute__((leaf, nonnull, nothrow))
 void libkeccak_unhex(char* restrict output, const char* restrict hashsum);
 
 
-#undef
+#endif
 

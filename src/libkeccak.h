@@ -28,5 +28,5 @@
 #include "libkeccak/files.h"
 
 
-#undef
+#endif
 

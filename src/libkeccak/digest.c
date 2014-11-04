@@ -90,7 +90,7 @@ static const int_fast64_t RC[] =
  * @param  state  The hashing state
  * @param  rc     The round contant for this round
  */
-static __attribute__((leaf, nonnull, nothrow, hot))
+static __attribute__((nonnull, nothrow, hot))
 void libkeccak_f_round(libkeccak_state_t* restrict state, int_fast64_t rc)
 {
   int_fast64_t* restrict A = state->S;
@@ -135,7 +135,7 @@ void libkeccak_f_round(libkeccak_state_t* restrict state, int_fast64_t rc)
  * @param  state  The hashing state
  * @param  rc     The round contant for this round
  */
-static __attribute__((leaf, nonnull, nothrow, hot))
+static __attribute__((nonnull, nothrow, hot))
 void libkeccak_f_round64(libkeccak_state_t* restrict state, int_fast64_t rc)
 {
   int_fast64_t* restrict A = state->S;
@@ -204,12 +204,12 @@ void libkeccak_f(libkeccak_state_t* restrict state)
  * @param   off      The offset in the message
  * @return           The lane
  */
-static inline __attribute__((leaf, nonnull, nothrow, pure, warn_unused_result))
+static inline __attribute__((nonnull, nothrow, pure, warn_unused_result))
 int_fast64_t libkeccak_to_lane(const char* restrict message, size_t msglen, long rr, long ww, size_t off)
 {
   long n = (long)((msglen < (size_t)rr ? msglen : (size_t)rr) - off);
   int_fast64_t rc = 0;
-  message += off
+  message += off;
   while (ww--)
     {
       rc <<= 8;
@@ -228,7 +228,7 @@ int_fast64_t libkeccak_to_lane(const char* restrict message, size_t msglen, long
  * @param   off      The offset in the message
  * @return           The lane
  */
-static inline __attribute__((leaf, nonnull, nothrow, pure, hot, warn_unused_result))
+static inline __attribute__((nonnull, nothrow, pure, hot, warn_unused_result))
 int_fast64_t libkeccak_to_lane64(const char* restrict message, size_t msglen, long rr, size_t off)
 {
   long n = (long)((msglen < (size_t)rr ? msglen : (size_t)rr) - off);
@@ -249,11 +249,11 @@ int_fast64_t libkeccak_to_lane64(const char* restrict message, size_t msglen, lo
  *                `state->M` should have `state->r / 8` bytes left over at the end
  * @param  bits   The number of bits in the end of the message that does not make a whole byte
  */
-static __attribute__((leaf, nonnull, nothrow))
+static __attribute__((nonnull, nothrow))
 void libkeccak_pad10star1(libkeccak_state_t* restrict state, long bits)
 {
   long i, r = state->r;
-  long nrf = len - !!bits;
+  long nrf = state->mptr - !!bits;
   long len = (nrf << 3) | bits;
   long ll = len % r;
   char b = bits ? (state->M[nrf] | (1 << bits)) : 1;
@@ -285,7 +285,8 @@ void libkeccak_pad10star1(libkeccak_state_t* restrict state, long bits)
 static __attribute__((nonnull, nothrow))
 void libkeccak_absorption_phase(libkeccak_state_t* restrict state, size_t len)
 {
-  long i = len / rr, w = state->w, rr = state->r >> 3, ww = state->w >> 3;
+  long w = state->w, rr = state->r >> 3, ww = state->w >> 3;
+  long i = len / rr;
   const char* restrict message = state->M;
   if (__builtin_expect(ww >= 8, 1)) /* ww > 8 is impossible, it is just for optimisation possibilities. */
     while (i--)
@@ -369,7 +370,7 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
   state->mptr -= len;
   
   libkeccak_absorption_phase(state, len);
-  __builtin_memmove(state->M, state->M + len, state->mptr * state->sizeof(char));
+  __builtin_memmove(state->M, state->M + len, state->mptr * sizeof(char));
   
   return 0;
 }
@@ -379,21 +380,21 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
  * Absorb the last part of the message and squeeze the Keccak sponge
  * 
  * @param   state    The hashing state
- * @param   msg      The rest of the message, may be `NULL`
+ * @param   msg      The rest of the message, may be `NULL`, may be modified
  * @param   msglen   The length of the partial message
  * @param   bits     The number of bits at the end of the message not covered by `msglen`
  * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
  * @param   hashsum  Output paramter for the hashsum, may be `NULL`
  * @return           Zero on success, -1 on error
  */
-int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
+int libkeccak_digest(libkeccak_state_t* restrict state, char* restrict msg, size_t msglen,
 		     size_t bits, const char* restrict suffix, char* restrict hashsum)
 {
   long len, ni, i, j = 0, k, ptr = 0, ext;
   long rr = state->r >> 3;
   long ww = state->w >> 3;
   long nn = (state->n + 7) >> 3;
-  long suffix_len = suffix ? strlen(suffix) : 0;
+  long suffix_len = suffix ? __builtin_strlen(suffix) : 0;
   const char* restrict message = msg;
   char* restrict new;
   
@@ -435,7 +436,7 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
   if (msglen)
     __builtin_memcpy(state->M + state->mptr, message, msglen * sizeof(char));
   state->mptr += msglen;
-  libkeccak_pad10star1(state->M, state->mptr, state->r, bits);
+  libkeccak_pad10star1(state, bits);
   libkeccak_absorption_phase(state, state->mptr);
   
   if (hashsum != NULL)
@@ -444,7 +445,7 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
     for (i = (state->n - 1) / state->r; i--;)
       libkeccak_f(state);
   
-  return 0
+  return 0;
 }
 
 

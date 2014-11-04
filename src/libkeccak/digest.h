@@ -39,7 +39,7 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
  * Absorb the last part of the message and squeeze the Keccak sponge
  * 
  * @param   state    The hashing state
- * @param   msg      The rest of the message, may be `NULL`
+ * @param   msg      The rest of the message, may be `NULL`, may be modified
  * @param   msglen   The length of the partial message
  * @param   bits     The number of bits at the end of the message not covered by `msglen`
  * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
@@ -47,7 +47,7 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
  * @return           Zero on success, -1 on error
  */
 __attribute__((nonnull(1)))
-int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
+int libkeccak_digest(libkeccak_state_t* restrict state, char* restrict msg, size_t msglen,
 		     size_t bits, const char* restrict suffix, char* restrict hashsum);
 
 
@@ -81,5 +81,5 @@ __attribute__((nonnull, nothrow))
 void libkeccak_squeeze(libkeccak_state_t* restrict state, char* restrict hashsum);
 
 
-#undef
+#endif
 
