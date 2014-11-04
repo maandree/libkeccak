@@ -102,11 +102,13 @@ FLAGS = -std=gnu99 $(WARN)
 
 
 
-OBJ = digest files generalised-spec hex state
+LIB_OBJ = digest files generalised-spec hex state
+TEST_OBJ = test
 
 
 .PHONY: all
-all: lib
+all: lib test
+
 
 .PHONY: lib
 lib: bin/libkeccak.so.$(LIB_VERSION) bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak.so
@@ -115,7 +117,7 @@ obj/libkeccak/%.o: src/libkeccak/%.c src/libkeccak.h src/libkeccak/*.h
 	@mkdir -p obj/libkeccak
 	$(CC) $(FLAGS) $(CFLAGS) $(CPPFLAGS) -fPIC -c -o $@ $<
 
-bin/libkeccak.so.$(LIB_VERSION): $(foreach O,$(OBJ),obj/libkeccak/$(O).o)
+bin/libkeccak.so.$(LIB_VERSION): $(foreach O,$(LIB_OBJ),obj/libkeccak/$(O).o)
 	@mkdir -p bin
 	$(CC) $(FLAGS) $(LDFLAGS) -shared -Wl,-soname,libkeccak.so.$(LIB_MAJOR) -o $@ $^
 
@@ -126,6 +128,17 @@ bin/libkeccak.so.$(LIB_MAJOR):
 bin/libkeccak.so:
 	@mkdir -p bin
 	ln -sf libkeccak.so.$(LIB_VERSION) $@
+
+
+.PHONY: test
+test: bin/test
+
+bin/test: lib $(foreach O,$(TEST_OBJ),obj/test/$(O).o)
+	$(CC) $(FLAGS) $(LDFLAGS) -Lbin -lkeccak -o $@ $(foreach O,$(TEST_OBJ),obj/test/$(O).o)
+
+obj/test/%.o: src/test/%.c src/libkeccak/*.h src/libkeccak.h
+	@mkdir -p obj/test
+	$(CC) $(FLAGS) $(CFLAGS) $(CPPFLAGS) -Isrc -c -o $@ $<
 
 
 
