@@ -67,7 +67,7 @@ void libkeccak_state_wipe(volatile libkeccak_state_t* restrict state)
   M = state->M;
   for (i = 0; i < 25; i++)
     S[i] = 0;
-  for (i = 0; i < state->mlen; i++)
+  for (i = 0; i < state->mptr; i++)
     M[i] = 0;
 }
 
