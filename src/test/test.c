@@ -68,6 +68,63 @@ static int test_hex(void)
 
 
 /**
+ * Test functions in <libkeccak/state.h>
+ * 
+ * @param   spec  The specifications for the state
+ * @return        Zero on success, -1 on error
+ */
+static int test_state(libkeccak_spec_t* restrict spec)
+{
+  libkeccak_state_t* restrict state;
+  libkeccak_state_t* restrict state2;
+  size_t marshal_size, marshalled_size, i, n;
+  char* restrict marshalled_data;
+  
+  if (state = libkeccak_state_create(spec), state == NULL)
+    return perror("libkeccak_state_initialise"), -1;
+  
+  n = state->mlen / 2;
+  for (i = 0; i < n; i++)
+    state->M[state->mptr++] = (char)(i & 255);
+  
+  if (state2 = libkeccak_state_duplicate(state), state2 == NULL)
+    return perror("libkeccak_state_duplicate"), -1;
+  
+  if (state->M[state->mptr - 1] != state2->M[state2->mptr - 1])
+    return printf("Inconsistency found between original state and duplicate state.\n"), -1;
+  
+  marshal_size = libkeccak_state_marshal_size(state2);
+  if (marshalled_data = malloc(marshal_size), marshalled_data == NULL)
+    return perror("malloc"), -1;
+  
+  marshalled_size = libkeccak_state_marshal(state2, marshalled_data);
+  if (marshalled_size != marshal_size)
+    return printf("libkeccak_state_marshal returned an unexpected value.\n"), -1;
+  
+  libkeccak_state_free(state);
+  
+  if (state = malloc(sizeof(libkeccak_state_t)), state == NULL)
+    return perror("malloc"), -1;
+  marshalled_size = libkeccak_state_unmarshal(state, marshalled_data);
+  if (marshalled_size == 0)
+    return perror("libkeccak_state_unmarshal"), -1;
+  if (marshalled_size != marshal_size)
+    return printf("libkeccak_state_unmarshal returned an unexpected value.\n"), -1;
+  
+  if (libkeccak_state_unmarshal_skip(marshalled_data) != marshal_size)
+    return printf("libkeccak_state_unmarshal_skip returned an unexpected value.\n"), -1;
+  
+  if (state->M[state->mptr - 1] != state2->M[state2->mptr - 1])
+    return printf("Inconsistency found between original state and unmarshalled state.\n"), -1;
+
+  free(marshalled_data);
+  libkeccak_state_free(state);
+  libkeccak_state_free(state2);
+  return 0;
+}
+
+
+/**
  * Run a test case for `libkeccak_digest`
  * 
  * @param   spec             The specification for the hashing
@@ -141,63 +198,6 @@ static int test_digest(void)
 
   return 0;
 #undef sha3
-}
-
-
-/**
- * Test functions in <libkeccak/state.h>
- * 
- * @param   spec  The specifications for the state
- * @return        Zero on success, -1 on error
- */
-static int test_state(libkeccak_spec_t* restrict spec)
-{
-  libkeccak_state_t* restrict state;
-  libkeccak_state_t* restrict state2;
-  size_t marshal_size, marshalled_size, i, n;
-  char* restrict marshalled_data;
-  
-  if (state = libkeccak_state_create(spec), state == NULL)
-    return perror("libkeccak_state_initialise"), -1;
-  
-  n = state->mlen / 2;
-  for (i = 0; i < n; i++)
-    state->M[state->mptr++] = (char)(i & 255);
-  
-  if (state2 = libkeccak_state_duplicate(state), state2 == NULL)
-    return perror("libkeccak_state_duplicate"), -1;
-  
-  if (state->M[state->mptr - 1] != state2->M[state2->mptr - 1])
-    return printf("Inconsistency found between original state and duplicate state.\n"), -1;
-  
-  marshal_size = libkeccak_state_marshal_size(state2);
-  if (marshalled_data = malloc(marshal_size), marshalled_data == NULL)
-    return perror("malloc"), -1;
-  
-  marshalled_size = libkeccak_state_marshal(state2, marshalled_data);
-  if (marshalled_size != marshal_size)
-    return printf("libkeccak_state_marshal returned an unexpected value.\n"), -1;
-  
-  libkeccak_state_free(state);
-  
-  if (state = malloc(sizeof(libkeccak_state_t)), state == NULL)
-    return perror("malloc"), -1;
-  marshalled_size = libkeccak_state_unmarshal(state, marshalled_data);
-  if (marshalled_size == 0)
-    return perror("libkeccak_state_unmarshal"), -1;
-  if (marshalled_size != marshal_size)
-    return printf("libkeccak_state_unmarshal returned an unexpected value.\n"), -1;
-  
-  if (libkeccak_state_unmarshal_skip(marshalled_data) != marshal_size)
-    return printf("libkeccak_state_unmarshal_skip returned an unexpected value.\n"), -1;
-  
-  if (state->M[state->mptr - 1] != state2->M[state2->mptr - 1])
-    return printf("Inconsistency found between original state and unmarshalled state.\n"), -1;
-
-  free(marshalled_data);
-  libkeccak_state_free(state);
-  libkeccak_state_free(state2);
-  return 0;
 }
 
 
