@@ -21,8 +21,9 @@ WARN = -Wall -Wextra -pedantic -Wdouble-promotion -Wformat=2 -Winit-self -Wmissi
        -Wsuggest-attribute=noreturn -Wsuggest-attribute=pure -Wsuggest-attribute=format          \
        -Wnormalized=nfkc
 
-FLAGS = -std=gnu99 $(WARN)
+OPTIMISE = -O3
 
+FLAGS = -std=gnu99 $(WARN) $(OPTIMISE)
 
 # TODO optimisation flags to test, and naturally -ON
 #          -faggressive-loop-optimizations -falign-functions[=N]
