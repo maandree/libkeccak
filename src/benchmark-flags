@@ -27,9 +27,8 @@ list_test_flags ()
     cat <<EOF
 -fdata-sections -fcrossjumping -fexpensive-optimizations -ffunction-sections
 -fkeep-inline-functions -fomit-frame-pointer -freorder-blocks-and-partition
--ftree-ter -falign-functions=0 -fira-algorithm=priority -fira-algorithm=CB
--fira-region=all -fira-region=mixed -fira-region=one -fmerge-all-constants
--fmerge-constants -fprofile-generate
+-ftree-ter -falign-functions=0 -fmerge-all-constants -fmerge-constants
+-fprofile-generate
 EOF
 }
 
@@ -49,7 +48,7 @@ while true; do
 	    if [ "${test_flag}" = "" ]; then
 		test_flag=zzz
 	    fi
-	    echo "$(bin/benchmark || echo error) ${test_flags}" >&3
+	    echo "$(bin/benchmark || echo error) ${test_flag}" >&3
 	done
     done
     
