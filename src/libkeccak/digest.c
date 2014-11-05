@@ -81,7 +81,7 @@ static const uint_fast64_t RC[] =
  * @param   n:long          Rotation steps, may not be zero
  * @return   :int_fast64_t  The value rotated
  */
-#define rotate64(x, n)  ((int_fast64_t)((uint_fast64_t)(x) >> (64 - (n))) + ((x) << (n)))
+#define rotate64(x, n)  ((int_fast64_t)(((uint64_t)(x) >> (64L - (n))) + ((uint64_t)(x) << (n))))
 
 
 /**
