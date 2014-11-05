@@ -83,7 +83,6 @@ FLAGS = -std=gnu99 $(WARN)
 
 
 LIB_OBJ = digest files generalised-spec hex state
-TEST_OBJ = test
 
 
 .PHONY: all
@@ -113,11 +112,11 @@ bin/libkeccak.so:
 .PHONY: test
 test: bin/test
 
-bin/test: bin/libkeccak.so $(foreach O,$(TEST_OBJ),obj/test/$(O).o)
-	$(CC) $(FLAGS) $(LDFLAGS) -Lbin -lkeccak -o $@ $(foreach O,$(TEST_OBJ),obj/test/$(O).o)
+bin/test: obj/test.o bin/libkeccak.so
+	$(CC) $(FLAGS) $(LDFLAGS) -Lbin -lkeccak -o $@ $<
 
-obj/test/%.o: src/test/%.c src/libkeccak/*.h src/libkeccak.h
-	@mkdir -p obj/test
+obj/test.o: src/test.c src/libkeccak/*.h src/libkeccak.h
+	@mkdir -p obj
 	$(CC) $(FLAGS) $(CFLAGS) $(CPPFLAGS) -Isrc -O3 -c -o $@ $<
 
 
