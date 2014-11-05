@@ -131,18 +131,17 @@ static int test_state(libkeccak_spec_t* restrict spec)
  * 
  * @param   spec             The specification for the hashing
  * @param   suffix           The message suffix (padding prefix)
- * @param   message          The message to digest
+ * @param   msg              The message to digest
  * @param   bits             Bits at the end of `message` that does not make up a whole byte
  * @param   expected_answer  The expected answer, must be lowercase
  * @return                   Zero on success, -1 on error
  */
 static int test_digest_case(const libkeccak_spec_t* restrict spec, const char* restrict suffix,
-			    const char* restrict message, long bits, const char* restrict expected_answer)
+			    const char* restrict msg, long bits, const char* restrict expected_answer)
 {
   libkeccak_state_t state;
   char* restrict hashsum;
   char* restrict hexsum;
-  char* restrict msg;
   int ok;
   
   if (libkeccak_state_initialise(&state, spec))
@@ -151,13 +150,10 @@ static int test_digest_case(const libkeccak_spec_t* restrict spec, const char* r
     return perror("malloc"), -1;
   if (hexsum = malloc((spec->output + 7) / 8 * 2 + 1), hexsum == NULL)
     return perror("malloc"), -1;
-  if (msg = strdup(message), msg == NULL)
-    return perror("strdup"), -1;
   
   if (libkeccak_digest(&state, msg, strlen(msg) - !!bits, bits, suffix, hashsum))
     return perror("libkeccak_digest"), -1;
   libkeccak_state_fast_destroy(&state);
-  free(msg);
   
   libkeccak_behex_lower(hexsum, hashsum, (spec->output + 7) / 8);
   ok = !strcmp(hexsum, expected_answer);
@@ -307,17 +303,16 @@ static int test_digest(void)
  * 
  * @param   spec             The specification for the hashing
  * @param   suffix           The message suffix (padding prefix)
- * @param   message          The message to digest
+ * @param   msg              The message to digest
  * @param   expected_answer  The expected answer, must be lowercase
  * @return                   Zero on success, -1 on error
  */
 static int test_update_case(const libkeccak_spec_t* restrict spec, const char* restrict suffix,
-			    const char* restrict message, const char* restrict expected_answer)
+			    const char* restrict msg, const char* restrict expected_answer)
 {
   libkeccak_state_t state;
   char* restrict hashsum;
   char* restrict hexsum;
-  char* restrict msg;
   int ok;
   
   if (libkeccak_state_initialise(&state, spec))
@@ -326,15 +321,12 @@ static int test_update_case(const libkeccak_spec_t* restrict spec, const char* r
     return perror("malloc"), -1;
   if (hexsum = malloc((spec->output + 7) / 8 * 2 + 1), hexsum == NULL)
     return perror("malloc"), -1;
-  if (msg = strdup(message), msg == NULL)
-    return perror("strdup"), -1;
   
   if (libkeccak_update(&state, msg, strlen(msg)))
     return perror("libkeccak_update"), -1;
   if (libkeccak_digest(&state, NULL, 0, 0, suffix, hashsum))
     return perror("libkeccak_digest"), -1;
   libkeccak_state_fast_destroy(&state);
-  free(msg);
   
   libkeccak_behex_lower(hexsum, hashsum, (spec->output + 7) / 8);
   ok = !strcmp(hexsum, expected_answer);
@@ -422,7 +414,7 @@ static int test_squeeze_case(libkeccak_state_t* restrict state, const libkeccak_
 			     long fast_squeezes, long squeezes, int fast_digest, char* restrict hashsum,
 			     char* restrict hexsum, const char* restrict expected_answer)
 {
-  static char message[] = "withdrew hypothesis snakebird qmc2";
+#define message  "withdrew hypothesis snakebird qmc2"
   long i;
   int ok;
   
@@ -441,6 +433,7 @@ static int test_squeeze_case(libkeccak_state_t* restrict state, const libkeccak_
     printf("  r, c, n = %li, %li, %li\n", spec->bitrate, spec->capacity, spec->output);
   
   return ok - 1;
+#undef message
 }
 
 
