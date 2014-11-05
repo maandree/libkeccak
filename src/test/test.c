@@ -176,29 +176,29 @@ static int test_digest_case(const libkeccak_spec_t* restrict spec, const char* r
  */
 static int test_digest(void)
 {
-#define sha3(output, message)							\
-  (printf("Testing SHA3-"#output"(%s): ", #message),				\
-   libkeccak_spec_sha3(&spec, output),						\
+#define sha3(output, message)								\
+  (printf("Testing SHA3-"#output"(%s): ", #message),					\
+   libkeccak_spec_sha3(&spec, output),							\
    test_digest_case(&spec, LIBKECCAK_SHA3_SUFFIX, message, 0, answer))
-#define keccak(output, message)							\
-  (printf("Testing Keccak-"#output"(%s): ", #message),				\
-   libkeccak_spec_sha3(&spec, output) /* sic! */,				\
+#define keccak(output, message)								\
+  (printf("Testing Keccak-"#output"(%s): ", #message),					\
+   libkeccak_spec_sha3(&spec, output) /* sic! */,					\
    test_digest_case(&spec, "", message, 0, answer))
-#define keccak_bits(output, message, bits)					\
-  (printf("Testing Keccak-"#output"(%s-%i): ", #message, bits),			\
-   libkeccak_spec_sha3(&spec, output) /* sic! */,				\
+#define keccak_bits(output, message, bits)						\
+  (printf("Testing Keccak-"#output"(%s-%i): ", #message, bits),				\
+   libkeccak_spec_sha3(&spec, output) /* sic! */,					\
    test_digest_case(&spec, "", message, bits, answer))
-#define rawshake(output, message)						\
-  (printf("Testing RawSHAKE-"#output"(%s): ", #message),			\
-   libkeccak_spec_sha3(&spec, output),						\
+#define rawshake(semicapacity, output, message)						\
+  (printf("Testing RawSHAKE-"#semicapacity"(%s, %i): ", #message, output),		\
+   libkeccak_spec_rawshake(&spec, semicapacity, output),				\
    test_digest_case(&spec, LIBKECCAK_RAWSHAKE_SUFFIX, message, 0, answer))
-#define rawshake_bits(output, message, bits)					\
-  (printf("Testing RawSHAKE-"#output"(%s-%i): ", #message, bits),		\
-   libkeccak_spec_sha3(&spec, output),						\
+#define rawshake_bits(semicapacity, output, message, bits)				\
+  (printf("Testing RawSHAKE-"#semicapacity"(%s-%i, %i): ", #message, bits, output),	\
+   libkeccak_spec_rawshake(&spec, semicapacity, output),				\
    test_digest_case(&spec, LIBKECCAK_RAWSHAKE_SUFFIX, message, bits, answer))
-#define shake(output, message)							\
-  (printf("Testing SHAKE-"#output"(%s): ", #message),				\
-   libkeccak_spec_sha3(&spec, output),						\
+#define shake(semicapacity, output, message)						\
+  (printf("Testing SHAKE-"#semicapacity"(%s, %i): ", #message, output),			\
+   libkeccak_spec_shake(&spec, semicapacity, output),					\
    test_digest_case(&spec, LIBKECCAK_SHAKE_SUFFIX, message, 0, answer))
   
   
@@ -275,14 +275,14 @@ static int test_digest(void)
   if (keccak_bits(256, "\x0F", 4))  return -1;
   
   
-  answer = "3a1108d4a90a31b85a10bdce77f4bfbdcc5b1d70dd405686f8bbde834aa1a410";
-  if (rawshake(256, ""))  return -1;
+  answer = "3a1108d4a90a31b85a10bdce77f4bfbd";
+  if (rawshake(256, 128, ""))  return -1;
   
-  answer = "46b9dd2b0ba88d13233b3feb743eeb243fcd52ea62b81b82b50c27646ed5762f";
-  if (rawshake_bits(256, "\x03", 2))  return -1;
+  answer = "46b9dd2b0ba88d13233b3feb743eeb24";
+  if (rawshake_bits(256, 128, "\x03", 2))  return -1;
   
-  answer = "46b9dd2b0ba88d13233b3feb743eeb243fcd52ea62b81b82b50c27646ed5762f";
-  if (shake(256, ""))  return -1;
+  answer = "46b9dd2b0ba88d13233b3feb743eeb24";
+  if (shake(256, 128, ""))  return -1;
   
   
   printf("\n");
