@@ -196,6 +196,7 @@ static int test_digest(void)
            "15b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26";
   if (sha3(512, ""))  return -1;
 
+  printf("\n");
   return 0;
 #undef sha3
 }

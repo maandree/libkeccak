@@ -21,15 +21,20 @@
 
 
 /**
+ * X-macro-enabled listing of all intergers in [0, 4]
+ */
+#define LIST_5  X(0) X(1) X(2) X(3) X(4)
+
+/**
  * X-macro-enabled listing of all intergers in [0, 7]
  */
-#define LIST_8  X(0) X(1) X(2) X(3) X(4) X(5) X(6) X(7)
+#define LIST_8  LIST_5 X(5) X(6) X(7)
 
 /**
  * X-macro-enabled listing of all intergers in [0, 23]
  */
 #define LIST_24  LIST_8 X(8) X(9) X(10) X(11) X(12) X(13) X(14) X(15)  \
-                 X(16) X(17) X(18) X(19) X(20) X(21) X(22) X(23) X(24)
+                 X(16) X(17) X(18) X(19) X(20) X(21) X(22) X(23)
 
 /**
  * X-macro-enabled listing of all intergers in [0, 24]
@@ -145,7 +150,7 @@ void libkeccak_f_round64(libkeccak_state_t* restrict state, int_fast64_t rc)
   
   /* θ step (step 1 and 2 of 3). */
 #define X(N)  C[N] = (A[N * 5] ^ A[N * 5 + 1]) ^ (A[N * 5 + 2] ^ A[N * 5 + 3]) ^ A[N * 5 + 4];
-  LIST_25
+  LIST_5
 #undef X
   
   da = C[4] ^ rotate64(C[1], 1);
@@ -265,11 +270,11 @@ void libkeccak_pad10star1(libkeccak_state_t* restrict state, size_t bits)
     }
   else
     {
-      len = ++nrf;
+      len = ++nrf << 3;
       len = (len - (len % r) + (r - 8)) >> 3;
       state->mptr = len + 1;
       
-      state->M[nrf] = b;
+      state->M[nrf - 1] = b;
       __builtin_memset(state->M + nrf, 0, (len - nrf) * sizeof(char));
       state->M[len] = (char)0x80;
     }
@@ -416,25 +421,26 @@ int libkeccak_digest(libkeccak_state_t* restrict state, char* restrict msg, size
       state->M = new;
     }
   
-  if (bits)
-    state->M[msglen] = message[msglen];
-  if (__builtin_expect(!!suffix_len, 1))
-    {
-      if (bits == 0)
-	state->M[msglen] = 0;
-      while (suffix_len--)
-	{
-	  state->M[msglen] |= (char)((*suffix++ & 1) << bits++);
-	  if (bits == 8)
-	    bits = 0, state->M[++msglen] = 0;
-	}
-    }
-  if (bits)
-    msglen++;
-  
   if (msglen)
     __builtin_memcpy(state->M + state->mptr, message, msglen * sizeof(char));
   state->mptr += msglen;
+  
+  if (bits)
+    state->M[state->mptr] = message[msglen];
+  if (__builtin_expect(!!suffix_len, 1))
+    {
+      if (bits == 0)
+	state->M[state->mptr] = 0;
+      while (suffix_len--)
+	{
+	  state->M[state->mptr] |= (char)((*suffix++ & 1) << bits++);
+	  if (bits == 8)
+	    bits = 0, state->M[++(state->mptr)] = 0;
+	}
+    }
+  if (bits)
+    state->mptr++;
+  
   libkeccak_pad10star1(state, bits);
   libkeccak_absorption_phase(state, state->mptr);
   
