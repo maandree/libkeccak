@@ -68,6 +68,83 @@ static int test_hex(void)
 
 
 /**
+ * Run a test case for `libkeccak_digest`
+ * 
+ * @param   spec             The specification for the hashing
+ * @param   suffix           The message suffix (padding prefix)
+ * @param   message          The message to digest
+ * @param   expected_answer  The expected answer, must be lowercase
+ * @return                   Zero on success, -1 on error
+ */
+static int test_digest_case(const libkeccak_spec_t* restrict spec, const char* restrict suffix,
+			    const char* restrict message, const char* restrict expected_answer)
+{
+  libkeccak_state_t state;
+  char* restrict hashsum;
+  char* restrict hexsum;
+  char* restrict msg;
+  int ok;
+  
+  if (libkeccak_state_initialise(&state, spec))
+    return perror("libkeccak_state_initialise"), -1;
+  if (hashsum = malloc((spec->output + 7) / 8), hashsum == NULL)
+    return perror("malloc"), -1;
+  if (hexsum = malloc((spec->output + 7) / 8 * 2 + 1), hexsum == NULL)
+    return perror("malloc"), -1;
+  if (msg = strdup(message), msg == NULL)
+    return perror("strdup"), -1;
+  
+  libkeccak_digest(&state, msg, strlen(msg), 0, suffix, hashsum);
+  libkeccak_state_fast_destroy(&state);
+  free(msg);
+  
+  libkeccak_behex_lower(hexsum, hashsum, (spec->output + 7) / 8);
+  ok = !strcmp(hexsum, expected_answer);
+  printf("%s%s\n", ok ? "OK" : "Fail: ", ok ? "" : hexsum);
+  if (!ok)
+    printf("  r, c, n = %li, %li, %li\n", spec->bitrate, spec->capacity, spec->output);
+  
+  free(hashsum);
+  free(hexsum);
+  
+  return ok - 1;
+}
+
+
+/**
+ * Run test cases for `libkeccak_digest`
+ * 
+ * @return  Zero on success, -1 on error
+ */
+static int test_digest(void)
+{
+#define sha3(output, message)						\
+  (printf("Testing SHA3-"#output"(\""message"\"): "),			\
+   libkeccak_spec_sha3(&spec, output),					\
+   test_digest_case(&spec, LIBKECCAK_SHA3_SUFFIX, message, answer))
+  
+  libkeccak_spec_t spec;
+  const char* answer;
+  
+  answer = "6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7";
+  if (sha3(224, ""))  return -1;
+  
+  answer = "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a";
+  if (sha3(256, ""))  return -1;
+  
+  answer = "0c63a75b845e4f7d01107d852e4c2485c51a50aaaa94fc61995e71bbee983a2ac3713831264adb47fb6bd1e058d5f004";
+  if (sha3(384, ""))  return -1;
+  
+  answer = "a69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a6"
+           "15b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26";
+  if (sha3(512, ""))  return -1;
+
+  return 0;
+#undef sha3
+}
+
+
+/**
  * Test functions in <libkeccak/state.h>
  * 
  * @param   spec  The specifications for the state
@@ -148,6 +225,7 @@ int main(void)
   
   if (test_hex())         return 1;
   if (test_state(&spec))  return 1;
+  if (test_digest())      return 1;
   
   return 0;
 }
