@@ -20,6 +20,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 
 /**
@@ -406,7 +408,15 @@ static int test_update(void)
 /**
  * Run a test for `libkeccak_*squeeze` functions
  * 
- * @return  Zero on success, -1 on error
+ * @param   state            The state whould should use, we will reset it
+ * @param   spec             The specification for the hashing
+ * @param   fast_squeezes    The number of fast squeezes to perform
+ * @param   squeezes         The number of extra squeezes to perform in total
+ * @param   fast_digest      Whether `libkeccak_digest` should do a fast squeeze rather than a slow squeeze
+ * @param   hashsum          A buffer in which we can used to store the binary hashsum
+ * @param   hexsum           A buffer in which we can used to store the hexadecimal hashsum
+ * @param   expected_answer  The hashum we expect, must be in lowercase hexadecimal
+ * @return                   Zero on success, -1 on error
  */
 static int test_squeeze_case(libkeccak_state_t* restrict state, const libkeccak_spec_t* restrict spec,
 			     long fast_squeezes, long squeezes, int fast_digest, char* restrict hashsum,
@@ -501,6 +511,51 @@ static int test_squeeze(void)
 }
 
 
+
+/**
+ * Run a test for `libkeccak_generalised_sum_fd`
+ * 
+ * @param   spec             The specification for the hashing
+ * @param   suffix           The message suffix (padding prefix)
+ * @param   filename         The name of the file we should hash
+ * @param   expected_answer  The hashum we expect, must be in lowercase hexadecimal
+ * @return                   Zero on success, -1 on error
+ */
+static int test_file(const libkeccak_spec_t* restrict spec, const char* restrict suffix,
+		     const char* restrict filename, const char* restrict expected_answer)
+{
+  libkeccak_state_t state;
+  char* restrict hashsum;
+  char* restrict hexsum;
+  int ok, fd;
+  
+  printf("Testing libkeccak_generalised_sum_fd on %s: ", filename);
+  
+  if (hashsum = malloc((spec->output + 7) / 8), hashsum == NULL)
+    return perror("malloc"), -1;
+  if (hexsum = malloc((spec->output + 7) / 8 * 2 + 1), hexsum == NULL)
+    return perror("malloc"), -1;
+  
+  if (fd = open(filename, O_RDONLY), fd < 0)
+    return perror("open"), -1;
+  
+  if (libkeccak_generalised_sum_fd(fd, &state, spec, suffix, hashsum))
+    return perror("libkeccak_generalised_sum_fd"), close(fd), -1;
+  
+  libkeccak_behex_lower(hexsum, hashsum, (spec->output + 7) / 8);
+  ok = !strcmp(hexsum, expected_answer);
+  printf("%s%s\n", ok ? "OK" : "Fail: ", ok ? "" : hexsum);
+  if (!ok)
+    printf("  r, c, n = %li, %li, %li\n", spec->bitrate, spec->capacity, spec->output);
+  
+  close(fd);
+  free(hashsum);
+  free(hexsum);
+  libkeccak_state_fast_destroy(&state);
+  return ok - 1;
+}
+
+
 int main(void)
 {
   libkeccak_generalised_spec_t gspec;
@@ -528,6 +583,11 @@ int main(void)
   if (test_digest())      return 1;
   if (test_update())      return 1;
   if (test_squeeze())     return 1;
+  
+  if (test_file(&spec, LIBKECCAK_SHA3_SUFFIX, "LICENSE",
+		"68dd720832a594c1986078d2d09ab21d80b9d66d98c52f2679e81699519e2f8a"
+		"3c970bb9c514206b574a944ffaa6466d546eb17f64f47c01ec053ab4ce35575a"))
+    return 1;
   
   return 0;
 }
