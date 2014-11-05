@@ -1,0 +1,124 @@
+#!/bin/sh
+# libkeccak – Keccak-family hashing library
+# 
+# Copyright © 2014  Mattias Andrée (maandree@member.fsf.org)
+# 
+# This library is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+# 
+# You should have received a copy of the GNU Affero General Public License
+# along with this library.  If not, see <http://www.gnu.org/licenses/>.
+
+set -e
+
+export LD_LIBRARY_PATH=bin
+TRIES=10
+
+# List all flags that affect the object files
+list_test_flags ()
+{
+    cat <<EOF
+-fdata-sections -fcrossjumping -fexpensive-optimizations -ffunction-sections
+-fkeep-inline-functions -fomit-frame-pointer -freorder-blocks-and-partition
+-ftree-ter -falign-functions=0 -fira-algorithm=priority -fira-algorithm=CB
+-fira-region=all -fira-region=mixed -fira-region=one -fmerge-all-constants
+-fmerge-constants -fprofile-generate
+EOF
+}
+
+cppflags="-DIGNORE_BEHEXING"
+base_flags='-march=native -O0'
+test_flags=" $(echo $(list_test_flags)) "
+
+pass=1
+while true; do
+    exec 3>.benchmarks
+    
+    for _try in $(seq ${TRIES}); do
+	for test_flag in "" ${test_flags}; do
+	    flags="${test_flag} ${base_flags}"
+	    make -B all COPTIMISE="${flags}" CPPFLAGS="${cppflags} $*"
+	    make check
+	    if [ "${test_flag}" = "" ]; then
+		test_flag=zzz
+	    fi
+	    echo "$(bin/benchmark || echo error) ${test_flags}" >&3
+	done
+    done
+    
+    exec 3<&-
+    
+    ! grep ^error .benchmarks >/dev/null 2>/dev/null
+    
+    good_flag="$(sort < .benchmarks | cut -d ' ' -f 2 | sed 1q)"
+    if [ "${good_flag}" = zzz ]; then
+	if [ $pass = 1 ]; then
+	    pass=2
+	    base_flags="$(echo "${base_flags}" | sed -e 's/ -O0//')"
+	    test_flags="-O0 -O1 -O2 -O3 -Ofast -Os"
+	else
+	    echo
+	    echo
+	    echo "Good flags:"
+	    echo "${base_flags}"
+	    exit 0
+	fi
+    else
+	base_flags="${base_flags} ${good_flag}"
+	test_flags="$(echo "${test_flags}" | sed -e "s/ ${good_flag} / /")"
+    fi
+done
+
+#    None of these GCC flags affect the object files.
+# -faggressive-loop-optimizations -fauto-inc-dec -fbranch-target-load-optimize
+# -fbranch-target-load-optimize2 -fbtr-bb-exclusive -fcaller-saves -fcheck-data-deps
+# -fcombine-stack-adjustments -fconserve-stack -fcompare-elim -fcprop-registers
+# -fcse-follow-jumps -fcse-skip-blocks -fcx-fortran-rules -fcx-limited-range -fdce
+# -fdelete-null-pointer-checks -fdevirtualize -fdevirtualize-speculatively -fdse
+# -fearly-inlining -fipa-sra  -ffat-lto-objects -fbranch-probabilities
+# -fassociative-math -fforward-propagate -ffunction-sections -fforward-propagate
+# -ffast-math -ffinite-math-only -ffloat-store -fgcse -fgcse-after-reload -fgcse-las
+# -fgcse-lm -fgraphite-identity -fgcse-sm -fhoist-adjacent-loads -fif-conversion
+# -fif-conversion2 -findirect-inlining -finline-functions -finline-functions-called-once
+# -finline-small-functions -fipa-cp -fipa-cp-clone -fipa-pta -fipa-profile
+# -fipa-pure-const -fipa-reference -fira-hoist-pressure -fira-loop-pressure
+# -fno-ira-share-save-slots -fno-ira-share-spill-slots -fisolate-erroneous-paths-dereference
+# -fisolate-erroneous-paths-attribute -fivopts -fkeep-static-consts -flive-range-shrinkage
+# -floop-block -floop-interchange -floop-strip-mine -floop-nest-optimize
+# -floop-parallelize-all -fmodulo-sched -fmodulo-sched-allow-regmoves -fmove-loop-invariants
+# -fno-branch-count-reg -fno-defer-pop -fno-function-cse -fno-guess-branch-probability
+# -fno-defer-pop -fno-function-cse -fno-guess-branch-probability -fno-inline -fno-math-errno
+# -fno-peephole -fno-peephole2 -fno-sched-interblock -fno-sched-spec -fno-signed-zeros
+# -fno-toplevel-reorder -fno-trapping-math -fno-zero-initialized-in-bss
+# -foptimize-sibling-calls -fpartial-inlining -fpeel-loops -fpredictive-commoning
+# -fprefetch-loop-arrays -fprofile-report -fprofile-use -fprofile-values
+# -fprofile-reorder-functions -freciprocal-math -free -frename-registers -freorder-blocks
+# -frerun-cse-after-loop -freschedule-modulo-scheduled-loops -frounding-math
+# -fsched2-use-superblocks -fsched-pressure -fsched-spec-load -fsched-spec-load-dangerous
+# -fsched-group-heuristic -fsched-critical-path-heuristic -fsched-spec-insn-heuristic
+# -fsched-rank-heuristic -fsched-last-insn-heuristic -fsched-dep-count-heuristic
+# -fselective-scheduling -fselective-scheduling2 -fsel-sched-pipelining
+# -fsel-sched-pipelining-outer-loops -fshrink-wrap -fsignaling-nans
+# -fsingle-precision-constant -fstrict-overflow -fthread-jumps -ftracer -ftree-bit-ccp
+# -ftree-builtin-call-dce -ftree-ccp -ftree-ch -ftree-copyrename -ftree-dce
+# -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-fre -ftree-loop-if-convert
+# -ftree-loop-if-convert-stores -ftree-loop-im -ftree-phiprop -ftree-loop-distribution
+# -ftree-loop-distribute-patterns -ftree-loop-ivcanon -ftree-loop-linear
+# -ftree-loop-optimize -ftree-loop-vectorize -ftree-pre -ftree-partial-pre -ftree-pta
+# -ftree-reassoc -ftree-sink -ftree-slsr -ftree-sra -ftree-vectorize -ftree-vrp
+# -funit-at-a-time -funroll-all-loops -funroll-loops -funsafe-loop-optimizations
+# -funsafe-math-optimizations -funswitch-loops -fvariable-expansion-in-unroller
+# -fvect-cost-model -fvpt -fweb -fprofile-correction -freorder-functions
+# -fschedule-insns -fschedule-insns2 -fsplit-ivs-in-unroller -fsplit-wide-types
+# -fstrict-aliasing -ftree-coalesce-vars -ftree-copy-prop -ftree-switch-conversion
+# -ftree-switch-conversion -ftree-tail-merge -ftree-coalesce-inlined-vars
+# -falign-jumps=0 -falign-labels=0 -falign-loops=0 -ftree-parallelize-loops=10
+# -fsched-stalled-insns-dep=0 -fsched-stalled-insns=0
+

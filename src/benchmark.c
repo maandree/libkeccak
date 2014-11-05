@@ -72,7 +72,9 @@ int main(void)
   libkeccak_spec_t spec;
   libkeccak_state_t state;
   char hashsum[OUTPUT / 8];
+#ifndef IGNORE_BEHEXING
   char hexsum[OUTPUT / 8 * 2 + 1];
+#endif
   struct timespec start, end;
   long i, r;
   
