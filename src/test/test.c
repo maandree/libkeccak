@@ -130,11 +130,12 @@ static int test_state(libkeccak_spec_t* restrict spec)
  * @param   spec             The specification for the hashing
  * @param   suffix           The message suffix (padding prefix)
  * @param   message          The message to digest
+ * @param   bits             Bits at the end of `message` that does not make up a whole byte
  * @param   expected_answer  The expected answer, must be lowercase
  * @return                   Zero on success, -1 on error
  */
 static int test_digest_case(const libkeccak_spec_t* restrict spec, const char* restrict suffix,
-			    const char* restrict message, const char* restrict expected_answer)
+			    const char* restrict message, long bits, const char* restrict expected_answer)
 {
   libkeccak_state_t state;
   char* restrict hashsum;
@@ -151,7 +152,7 @@ static int test_digest_case(const libkeccak_spec_t* restrict spec, const char* r
   if (msg = strdup(message), msg == NULL)
     return perror("strdup"), -1;
   
-  libkeccak_digest(&state, msg, strlen(msg), 0, suffix, hashsum);
+  libkeccak_digest(&state, msg, strlen(msg) - !!bits, bits, suffix, hashsum);
   libkeccak_state_fast_destroy(&state);
   free(msg);
   
@@ -175,13 +176,35 @@ static int test_digest_case(const libkeccak_spec_t* restrict spec, const char* r
  */
 static int test_digest(void)
 {
-#define sha3(output, message)						\
-  (printf("Testing SHA3-"#output"(\""message"\"): "),			\
-   libkeccak_spec_sha3(&spec, output),					\
-   test_digest_case(&spec, LIBKECCAK_SHA3_SUFFIX, message, answer))
+#define sha3(output, message)							\
+  (printf("Testing SHA3-"#output"(%s): ", #message),				\
+   libkeccak_spec_sha3(&spec, output),						\
+   test_digest_case(&spec, LIBKECCAK_SHA3_SUFFIX, message, 0, answer))
+#define keccak(output, message)							\
+  (printf("Testing Keccak-"#output"(%s): ", #message),				\
+   libkeccak_spec_sha3(&spec, output) /* sic! */,				\
+   test_digest_case(&spec, "", message, 0, answer))
+#define keccak_bits(output, message, bits)					\
+  (printf("Testing Keccak-"#output"(%s-%i): ", #message, bits),			\
+   libkeccak_spec_sha3(&spec, output) /* sic! */,				\
+   test_digest_case(&spec, "", message, bits, answer))
+#define rawshake(output, message)						\
+  (printf("Testing RawSHAKE-"#output"(%s): ", #message),			\
+   libkeccak_spec_sha3(&spec, output),						\
+   test_digest_case(&spec, LIBKECCAK_RAWSHAKE_SUFFIX, message, 0, answer))
+#define rawshake_bits(output, message, bits)					\
+  (printf("Testing RawSHAKE-"#output"(%s-%i): ", #message, bits),		\
+   libkeccak_spec_sha3(&spec, output),						\
+   test_digest_case(&spec, LIBKECCAK_RAWSHAKE_SUFFIX, message, bits, answer))
+#define shake(output, message)							\
+  (printf("Testing SHAKE-"#output"(%s): ", #message),				\
+   libkeccak_spec_sha3(&spec, output),						\
+   test_digest_case(&spec, LIBKECCAK_SHAKE_SUFFIX, message, 0, answer))
+  
   
   libkeccak_spec_t spec;
   const char* answer;
+  
   
   answer = "6b4e03423667dbb73b6e15454f0eb1abd4597f9a1b078e3f5b5a6bc7";
   if (sha3(224, ""))  return -1;
@@ -195,9 +218,81 @@ static int test_digest(void)
   answer = "a69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a6"
            "15b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26";
   if (sha3(512, ""))  return -1;
+  
+  
+  answer = "f71837502ba8e10837bdd8d365adb85591895602fc552b48b7390abd";
+  if (keccak(224, ""))  return -1;
+  
+  answer = "c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
+  if (keccak(256, ""))  return -1;
+  
+  answer = "2c23146a63a29acf99e73b88f8c24eaa7dc60aa771780ccc006afbfa8fe2479b2dd2b21362337441ac12b515911957ff";
+  if (keccak(384, ""))  return -1;
+  
+  answer = "0eab42de4c3ceb9235fc91acffe746b29c29a8c366b7c60e4e67c466f36a4304"
+           "c00fa9caf9d87976ba469bcbe06713b435f091ef2769fb160cdab33d3670680e";
+  if (keccak(512, ""))  return -1;
 
+  
+  answer = "22c8017ac8bcf65f59d1b7e92c9d4c6739d25e34ce5cb608b24ff096";
+  if (sha3(224, "withdrew hypothesis snakebird qmc2"))  return -1;
+  
+  answer = "43808dde2662143dc4eed5dac5e98c74b06711829f02a3b121bd74f3";
+  if (sha3(224, "intensifierat sturdiness perl-image-exiftool vingla"))  return -1;
+  
+  answer = "d32b4ac86065774dee5eb5cdd2f67b4e86501086d7373884e8b20a36";
+  if (sha3(224, "timjan avogadro uppdriven lib32-llvm-amdgpu-snapshot"))  return -1;
+  
+  answer = "efbd76d45bfa952485148f8ad46143897f17c27ffdc8eb7287f9353b";
+  if (sha3(224, "grilo-plugins auditorium tull dissimilarity's"))  return -1;
+  
+  answer = "6705aa36ecf58f333e0e6364ac1d0b7931d402e13282127cfd6f876c";
+  if (sha3(224, "royalty tt yellowstone deficiencies"))  return -1;
+  
+  answer = "803a0ff09dda0df306e483a9f91b20a3dbbf9c2ebb8d0a3b28f3b9e0";
+  if (sha3(224, "kdegames-kdiamond tunisisk occurrence's outtalad"))  return -1;
+  
+  answer = "a64779aca943a6aef1d2e7c9a0f4e997f4dabd1f77112a22121d3ed5";
+  if (sha3(224, "chevalier slat's spindel representations"))  return -1;
+  
+  answer = "f0a3e0587af7723f0aa4719059d3f5107115a5b3667cd5209cc4d867";
+  if (sha3(224, "archery lexicographical equine veered"))  return -1;
+  
+  answer = "312e7e3c6403ab1a086155fb9a52b22a3d0d257876afd2b93fb7272e";
+  if (sha3(224, "splay washbasin opposing there"))  return -1;
+  
+  answer = "270ba05b764221ff5b5d94adfb4fdb1f36f07fe7c438904a5f3df071";
+  if (sha3(224, "faktum desist thundered klen"))  return -1;
+  
+  
+  answer = "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a";
+  if (keccak_bits(256, "\x02", 2))  return -1;
+  
+  answer = "3a1108d4a90a31b85a10bdce77f4bfbdcc5b1d70dd405686f8bbde834aa1a410";
+  if (keccak_bits(256, "\x03", 2))  return -1;
+  
+  answer = "46b9dd2b0ba88d13233b3feb743eeb243fcd52ea62b81b82b50c27646ed5762f";
+  if (keccak_bits(256, "\x0F", 4))  return -1;
+  
+  
+  answer = "3a1108d4a90a31b85a10bdce77f4bfbdcc5b1d70dd405686f8bbde834aa1a410";
+  if (rawshake(256, ""))  return -1;
+  
+  answer = "46b9dd2b0ba88d13233b3feb743eeb243fcd52ea62b81b82b50c27646ed5762f";
+  if (rawshake_bits(256, "\x03", 2))  return -1;
+  
+  answer = "46b9dd2b0ba88d13233b3feb743eeb243fcd52ea62b81b82b50c27646ed5762f";
+  if (shake(256, ""))  return -1;
+  
+  
   printf("\n");
   return 0;
+  
+#undef shake
+#undef rawshake_bits
+#undef rawshake
+#undef keccak_bits
+#undef keccak
 #undef sha3
 }
 
