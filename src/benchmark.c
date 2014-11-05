@@ -25,7 +25,14 @@
 #include <time.h>
 
 
-#define MESSAGE_LEN       34520  /* The size of the file LICENSE. */
+#ifndef MESSAGE_FILE
+# define MESSAGE_FILE      "LICENSE"
+#endif
+#ifndef MESSAGE_LEN
+# define MESSAGE_LEN       34520
+#endif
+
+
 #ifndef BITRATE
 # define BITRATE           1024
 #endif
@@ -69,12 +76,12 @@ int main(void)
   struct timespec start, end;
   long i, r;
   
-  /* Fill message with connent from the file LICENSE. */
+  /* Fill message with content from the file. */
   {
     int fd;
     ssize_t got;
     size_t ptr;
-    if (fd = open("LICENSE", O_RDONLY), fd < 0)
+    if (fd = open(MESSAGE_FILE, O_RDONLY), fd < 0)
       return perror("open"), 1;
     for (ptr = 0; ptr < MESSAGE_LEN; ptr += (size_t)got)
       if (got = read(fd, message, MESSAGE_LEN - ptr), got <= 0)
