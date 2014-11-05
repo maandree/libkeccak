@@ -556,6 +556,13 @@ static int test_file(const libkeccak_spec_t* restrict spec, const char* restrict
 }
 
 
+/**
+ * Basically, verify the correctness of the program.
+ * The current working path must be the root directory
+ * of the repository (the project directory).
+ * 
+ * @return  Zero on success, 1 on failure or incorrectness
+ */
 int main(void)
 {
   libkeccak_generalised_spec_t gspec;
