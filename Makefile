@@ -24,10 +24,10 @@ WARN = -Wall -Wextra -pedantic -Wdouble-promotion -Wformat=2 -Winit-self -Wmissi
 LDOPTIMISE =
 # -flto -flto-compression-level -flto-partition={1to1,balanced,mix,none} -flto-report -flto-report-wpa -fwpa
 
-OPTIMISE = -march=native -O0 \
-           -fdata-sections -fcrossjumping -fexpensive-optimizations                \
-           -ffunction-sections -fkeep-inline-functions -fomit-frame-pointer        \
-           -freorder-blocks-and-partition -ftree-ter -falign-functions=0
+COPTIMISE = -march=native -O0 \
+            -fdata-sections -fcrossjumping -fexpensive-optimizations                \
+            -ffunction-sections -fkeep-inline-functions -fomit-frame-pointer        \
+            -freorder-blocks-and-partition -ftree-ter -falign-functions=0
 
 # -fira-algorithm=priority -fira-algorithm=CB
 # -fira-region=all -fira-region=mixed -fira-region=one
@@ -79,7 +79,7 @@ OPTIMISE = -march=native -O0 \
 # -falign-jumps=0 -falign-labels=0 -falign-loops=0 -ftree-parallelize-loops=10
 # -fsched-stalled-insns-dep=0 -fsched-stalled-insns=0
 
-FLAGS = -std=gnu99 $(WARN) $(OPTIMISE)
+FLAGS = -std=gnu99 $(WARN)
 
 
 LIB_OBJ = digest files generalised-spec hex state
@@ -95,7 +95,7 @@ lib: bin/libkeccak.so.$(LIB_VERSION) bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak
 
 obj/libkeccak/%.o: src/libkeccak/%.c src/libkeccak.h src/libkeccak/*.h
 	@mkdir -p obj/libkeccak
-	$(CC) $(FLAGS) $(CFLAGS) $(CPPFLAGS) -fPIC -c -o $@ $<
+	$(CC) $(FLAGS) $(CFLAGS) $(COPTIMISE) $(CPPFLAGS) -fPIC -c -o $@ $<
 
 bin/libkeccak.so.$(LIB_VERSION): $(foreach O,$(LIB_OBJ),obj/libkeccak/$(O).o)
 	@mkdir -p bin
@@ -118,7 +118,7 @@ bin/test: bin/libkeccak.so $(foreach O,$(TEST_OBJ),obj/test/$(O).o)
 
 obj/test/%.o: src/test/%.c src/libkeccak/*.h src/libkeccak.h
 	@mkdir -p obj/test
-	$(CC) $(FLAGS) $(CFLAGS) $(CPPFLAGS) -Isrc -c -o $@ $<
+	$(CC) $(FLAGS) $(CFLAGS) $(CPPFLAGS) -Isrc -O3 -c -o $@ $<
 
 
 .PHONY: check
