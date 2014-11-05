@@ -28,7 +28,6 @@ list_test_flags ()
 -fdata-sections -fcrossjumping -fexpensive-optimizations -ffunction-sections
 -fkeep-inline-functions -fomit-frame-pointer -freorder-blocks-and-partition
 -ftree-ter -falign-functions=0 -fmerge-all-constants -fmerge-constants
--fprofile-generate
 EOF
 }
 
