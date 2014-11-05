@@ -121,6 +121,14 @@ obj/test/%.o: src/test/%.c src/libkeccak/*.h src/libkeccak.h
 	$(CC) $(FLAGS) $(CFLAGS) $(CPPFLAGS) -Isrc -c -o $@ $<
 
 
+.PHONY: check
+check: bin/test
+	env LD_LIBRARY_PATH=bin valgrind --leak-check=full bin/test
+	test $$(env LD_LIBRARY_PATH=bin valgrind bin/test 2>&1 >/dev/null | wc -l) = 14
+# Using valgrind 3.10.0, its output to standard error should consist of 14 lines,
+# the test itself never prints to standard error.
+
+
 
 .PHONY: clean
 clean:
