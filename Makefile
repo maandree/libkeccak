@@ -86,7 +86,7 @@ LIB_OBJ = digest files generalised-spec hex state
 
 
 .PHONY: all
-all: lib test
+all: lib test benchmark
 
 
 .PHONY: lib
@@ -118,6 +118,18 @@ bin/test: obj/test.o bin/libkeccak.so
 obj/test.o: src/test.c src/libkeccak/*.h src/libkeccak.h
 	@mkdir -p obj
 	$(CC) $(FLAGS) $(CFLAGS) $(CPPFLAGS) -Isrc -O3 -c -o $@ $<
+
+
+.PHONY: benchmark
+benchmark: bin/benchmark
+
+bin/benchmark: obj/benchmark.o bin/libkeccak.so
+	$(CC) $(FLAGS) $(LDFLAGS) -Lbin -lkeccak -o $@ $<
+
+obj/benchmark.o: src/benchmark.c src/libkeccak/*.h src/libkeccak.h
+	@mkdir -p obj
+	$(CC) $(FLAGS) $(CFLAGS) $(CPPFLAGS) -Isrc -O3 -c -o $@ $<
+
 
 
 .PHONY: check
