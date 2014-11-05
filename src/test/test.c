@@ -152,7 +152,8 @@ static int test_digest_case(const libkeccak_spec_t* restrict spec, const char* r
   if (msg = strdup(message), msg == NULL)
     return perror("strdup"), -1;
   
-  libkeccak_digest(&state, msg, strlen(msg) - !!bits, bits, suffix, hashsum);
+  if (libkeccak_digest(&state, msg, strlen(msg) - !!bits, bits, suffix, hashsum))
+    return perror("libkeccak_digest"), -1;
   libkeccak_state_fast_destroy(&state);
   free(msg);
   
@@ -326,8 +327,10 @@ static int test_update_case(const libkeccak_spec_t* restrict spec, const char* r
   if (msg = strdup(message), msg == NULL)
     return perror("strdup"), -1;
   
-  libkeccak_update(&state, msg, strlen(msg));
-  libkeccak_digest(&state, NULL, 0, 0, suffix, hashsum);
+  if (libkeccak_update(&state, msg, strlen(msg)))
+    return perror("libkeccak_update"), -1;
+  if (libkeccak_digest(&state, NULL, 0, 0, suffix, hashsum))
+    return perror("libkeccak_digest"), -1;
   libkeccak_state_fast_destroy(&state);
   free(msg);
   
@@ -400,6 +403,104 @@ static int test_update(void)
 }
 
 
+/**
+ * Run a test for `libkeccak_*squeeze` functions
+ * 
+ * @return  Zero on success, -1 on error
+ */
+static int test_squeeze_case(libkeccak_state_t* restrict state, const libkeccak_spec_t* restrict spec,
+			     long fast_squeezes, long squeezes, int fast_digest, char* restrict hashsum,
+			     char* restrict hexsum, const char* restrict expected_answer)
+{
+  static char message[] = "withdrew hypothesis snakebird qmc2";
+  long i;
+  int ok;
+  
+  libkeccak_state_reset(state);
+  if (libkeccak_digest(state, message, strlen(message), 0, LIBKECCAK_SHA3_SUFFIX, fast_digest ? NULL : hashsum))
+    return perror("libkeccak_digest"), -1;
+  
+  libkeccak_fast_squeeze(state, fast_squeezes);
+  for (i = fast_squeezes; i < squeezes; i++)
+    libkeccak_squeeze(state, hashsum);
+  
+  libkeccak_behex_lower(hexsum, hashsum, (spec->output + 7) / 8);
+  ok = !strcmp(hexsum, expected_answer);
+  printf("%s%s\n", ok ? "OK" : "Fail: ", ok ? "" : hexsum);
+  if (!ok)
+    printf("  r, c, n = %li, %li, %li\n", spec->bitrate, spec->capacity, spec->output);
+  
+  return ok - 1;
+}
+
+
+/**
+ * Test `libkeccak_*squeeze` functions
+ * 
+ * @return  Zero on success, -1 on error
+ */
+static int test_squeeze(void)
+{
+#define answer1  "03fe12b4b51d56d96377d927e5cd498fc4bc3aee389b2f2ff8393aa5"
+#define answer2  "0b8fb64ee5d8836956f49cbe4577afbc638c855c1d553452fc1eceb8"
+#define answer3  "1e03b4cd9eef3892a7b5e865fce393c4bc90120d9aea84d0a0dff3b8"
+#define answer4  "aac92fbfd22ce62e83ddaf2e61bd7bf696326e46d1327defa4530e20"
+  
+#define run_test(fast_squeezes, squeezes, fast_digest)  \
+  test_squeeze_case(&state, &spec, fast_squeezes, squeezes, fast_digest, hashsum, hexsum, answer##squeezes)
+  
+  libkeccak_spec_t spec;
+  libkeccak_state_t state;
+  char* restrict hashsum;
+  char* restrict hexsum;
+  
+  libkeccak_spec_sha3(&spec, 224);
+  if (hashsum = malloc((spec.output + 7) / 8), hashsum == NULL)
+    return perror("malloc"), -1;
+  if (hexsum = malloc((spec.output + 7) / 8 * 2 + 1), hexsum == NULL)
+    return perror("malloc"), -1;
+  if (libkeccak_state_initialise(&state, &spec))
+    return perror("libkeccak_state_initialise"), -1;
+  
+  printf("Testing squeeze functions with slow initial digest:\n");
+  printf("  1 extra squeeze,  including 0 fast squeezes: "), run_test(0, 1, 0);
+  printf("  2 extra squeezes, including 0 fast squeezes: "), run_test(0, 2, 0);
+  printf("  2 extra squeezes, including 1 fast squeeze:  "), run_test(1, 2, 0);
+  printf("  3 extra squeezes, including 0 fast squeezes: "), run_test(0, 3, 0);
+  printf("  3 extra squeezes, including 1 fast squeeze:  "), run_test(1, 3, 0);
+  printf("  3 extra squeezes, including 2 fast squeezes: "), run_test(2, 3, 0);
+  printf("  4 extra squeezes, including 0 fast squeezes: "), run_test(0, 4, 0);
+  printf("  4 extra squeezes, including 1 fast squeeze:  "), run_test(1, 4, 0);
+  printf("  4 extra squeezes, including 2 fast squeezes: "), run_test(2, 4, 0);
+  printf("  4 extra squeezes, including 3 fast squeezes: "), run_test(3, 4, 0);
+  printf("\n");
+  
+  printf("Testing squeeze functions with fast initial digest:\n");
+  printf("  1 extra squeeze,  including 0 fast squeezes: "), run_test(0, 1, 1);
+  printf("  2 extra squeezes, including 0 fast squeezes: "), run_test(0, 2, 1);
+  printf("  2 extra squeezes, including 1 fast squeeze:  "), run_test(1, 2, 1);
+  printf("  3 extra squeezes, including 0 fast squeezes: "), run_test(0, 3, 1);
+  printf("  3 extra squeezes, including 1 fast squeeze:  "), run_test(1, 3, 1);
+  printf("  3 extra squeezes, including 2 fast squeezes: "), run_test(2, 3, 1);
+  printf("  4 extra squeezes, including 0 fast squeezes: "), run_test(0, 4, 1);
+  printf("  4 extra squeezes, including 1 fast squeeze:  "), run_test(1, 4, 1);
+  printf("  4 extra squeezes, including 2 fast squeezes: "), run_test(2, 4, 1);
+  printf("  4 extra squeezes, including 3 fast squeezes: "), run_test(3, 4, 1);
+  printf("\n");
+  
+  libkeccak_state_fast_destroy(&state);
+  free(hashsum);
+  free(hexsum);
+  return 0;
+  
+#undef run_test
+#undef answer4
+#undef answer3
+#undef answer2
+#undef answer1
+}
+
+
 int main(void)
 {
   libkeccak_generalised_spec_t gspec;
@@ -426,6 +527,7 @@ int main(void)
   if (test_state(&spec))  return 1;
   if (test_digest())      return 1;
   if (test_update())      return 1;
+  if (test_squeeze())     return 1;
   
   return 0;
 }
