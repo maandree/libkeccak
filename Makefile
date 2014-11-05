@@ -133,7 +133,7 @@ bin/libkeccak.so:
 .PHONY: test
 test: bin/test
 
-bin/test: lib $(foreach O,$(TEST_OBJ),obj/test/$(O).o)
+bin/test: bin/libkeccak.so $(foreach O,$(TEST_OBJ),obj/test/$(O).o)
 	$(CC) $(FLAGS) $(LDFLAGS) -Lbin -lkeccak -o $@ $(foreach O,$(TEST_OBJ),obj/test/$(O).o)
 
 obj/test/%.o: src/test/%.c src/libkeccak/*.h src/libkeccak.h
