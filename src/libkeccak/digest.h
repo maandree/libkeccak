@@ -47,7 +47,7 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
  * @return           Zero on success, -1 on error
  */
 __attribute__((nonnull(1)))
-int libkeccak_digest(libkeccak_state_t* restrict state, char* restrict msg, size_t msglen,
+int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
 		     size_t bits, const char* restrict suffix, char* restrict hashsum);
 
 

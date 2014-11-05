@@ -392,14 +392,13 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
  * @param   hashsum  Output paramter for the hashsum, may be `NULL`
  * @return           Zero on success, -1 on error
  */
-int libkeccak_digest(libkeccak_state_t* restrict state, char* restrict msg, size_t msglen,
+int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
 		     size_t bits, const char* restrict suffix, char* restrict hashsum)
 {
   long rr = state->r >> 3, i;
   long ww = state->w >> 3;
   long nn = (state->n + 7) >> 3;
   size_t ext, suffix_len = suffix ? __builtin_strlen(suffix) : 0;
-  const char* restrict message = msg;
   char* restrict new;
   
   if (msg == NULL)
@@ -407,8 +406,7 @@ int libkeccak_digest(libkeccak_state_t* restrict state, char* restrict msg, size
   else
     {
       msglen += bits >> 3;
-      if ((bits &= 7))
-	msg[msglen] &= (char)((1 << bits) - 1);
+      bits &= 7;
     }
   
   ext = msglen + ((bits + suffix_len + 7) >> 3) + (size_t)rr;
@@ -422,11 +420,11 @@ int libkeccak_digest(libkeccak_state_t* restrict state, char* restrict msg, size
     }
   
   if (msglen)
-    __builtin_memcpy(state->M + state->mptr, message, msglen * sizeof(char));
+    __builtin_memcpy(state->M + state->mptr, msg, msglen * sizeof(char));
   state->mptr += msglen;
   
   if (bits)
-    state->M[state->mptr] = message[msglen];
+    state->M[state->mptr] = msg[msglen] & (char)((1 << bits) - 1);
   if (__builtin_expect(!!suffix_len, 1))
     {
       if (bits == 0)
