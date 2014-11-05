@@ -112,6 +112,20 @@ int libkeccak_state_initialise(libkeccak_state_t* restrict state, const libkecca
 
 
 /**
+ * Reset a state according to hashing specifications
+ * 
+ * @param   state  The state that should be reset
+ * @return         Zero on success, -1 on error
+ */
+__attribute__((nonnull, nothrow, unused))
+static inline void libkeccak_state_reset(libkeccak_state_t* restrict state)
+{
+  state->mptr = 0;
+  __builtin_memset(state->S, 0, sizeof(state->S));
+}
+
+
+/**
  * Release resources allocation for a state without wiping sensitive data
  * 
  * @param  state  The state that should be destroyed
