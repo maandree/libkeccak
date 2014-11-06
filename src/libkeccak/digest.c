@@ -144,7 +144,7 @@ void libkeccak_f_round(libkeccak_state_t* restrict state, int_fast64_t rc)
 static __attribute__((nonnull, nothrow, hot))
 void libkeccak_f_round64(libkeccak_state_t* restrict state, int_fast64_t rc)
 {
-  register int_fast64_t* restrict A = state->S;
+  int_fast64_t* restrict A = state->S;
   int_fast64_t B[25];
   int_fast64_t C[5];
   int_fast64_t da, db, dc, dd, de;
