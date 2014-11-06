@@ -297,7 +297,8 @@ static __attribute__((nonnull, nothrow))
 void libkeccak_absorption_phase(libkeccak_state_t* restrict state, size_t len)
 {
   /* TODO optimise function */
-  long rr = state->r >> 3, ww = state->w >> 3;
+  long rr = state->r >> 3;
+  long ww = state->w >> 3;
   long i = (long)len / rr;
   const char* restrict message = state->M;
   if (__builtin_expect(ww >= 8, 1)) /* ww > 8 is impossible, it is just for optimisation possibilities. */
@@ -336,22 +337,24 @@ static __attribute__((nonnull, nothrow, hot))
 void libkeccak_squeezing_phase(register libkeccak_state_t* restrict state, long rr,
 			       long nn, long ww, register char* restrict hashsum)
 {
-  /* TODO optimise this */
-  long i, j = 0, k, ptr = 0, ni = rr > 25 ? 25 : rr, olen = state->n;
-  int_fast64_t v;
+  register int_fast64_t v;
+  register long ni = rr > 25 ? 25 : rr;
+  auto long olen = state->n;
+  auto long i, j = 0;
+  register long k;
   while (olen > 0)
     {
       for (i = 0; (i < ni) && (j < nn); i++)
 	{
 	  v = state->S[LANE_TRANSPOSE_MAP[i]];
 	  for (k = 0; (k++ < ww) && (j++ < nn); v >>= 8)
-	    hashsum[ptr++] = (char)v;
+	    *hashsum++ = (char)v;
 	}
       if (olen -= state->r, olen > 0)
 	libkeccak_f(state);
     }
   if (state->n & 7)
-    hashsum[nn - 1] &= (char)((1 << (state->n & 7)) - 1);
+    hashsum[-1] &= (char)((1 << (state->n & 7)) - 1);
 }
 
 
