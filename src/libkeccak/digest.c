@@ -150,7 +150,7 @@ void libkeccak_f_round64(libkeccak_state_t* restrict state, int_fast64_t rc)
   int_fast64_t da, db, dc, dd, de;
   
   /* θ step (step 1 and 2 of 3). */
-#define X(N)  C[N] = (A[N * 5] ^ A[N * 5 + 1]) ^ (A[N * 5 + 2] ^ A[N * 5 + 3]) ^ A[N * 5 + 4];
+#define X(N)  C[N] = A[N * 5] ^ A[N * 5 + 1] ^ A[N * 5 + 2] ^ A[N * 5 + 3] ^ A[N * 5 + 4];
   LIST_5
 #undef X
   
