@@ -101,12 +101,13 @@ void libkeccak_f_round(libkeccak_state_t* restrict state, int_fast64_t rc)
   int_fast64_t* restrict A = state->S;
   int_fast64_t B[25];
   int_fast64_t C[5];
-  int_fast64_t da, db, dc, dd, de, wmod = state->wmod;
+  int_fast64_t da, db, dc, dd, de;
+  int_fast64_t wmod = state->wmod;
   long w = state->w;
   
   /* θ step (step 1 and 2 of 3). */
-#define X(N)  C[N] = (A[N * 5] ^ A[N * 5 + 1]) ^ (A[N * 5 + 2] ^ A[N * 5 + 3]) ^ A[N * 5 + 4];
-  LIST_25
+#define X(N)  C[N] = A[N * 5] ^ A[N * 5 + 1] ^ A[N * 5 + 2] ^ A[N * 5 + 3] ^ A[N * 5 + 4];
+  LIST_5
 #undef X
   
   da = C[4] ^ rotate64(C[1], 1);
@@ -143,7 +144,7 @@ void libkeccak_f_round(libkeccak_state_t* restrict state, int_fast64_t rc)
 static __attribute__((nonnull, nothrow, hot))
 void libkeccak_f_round64(libkeccak_state_t* restrict state, int_fast64_t rc)
 {
-  int_fast64_t* restrict A = state->S;
+  register int_fast64_t* restrict A = state->S;
   int_fast64_t B[25];
   int_fast64_t C[5];
   int_fast64_t da, db, dc, dd, de;
