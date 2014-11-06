@@ -409,11 +409,12 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
 		     size_t bits, const char* restrict suffix, char* restrict hashsum)
 {
   /* TODO optimise function */
+  char* restrict new;
   long rr = state->r >> 3;
   long ww = state->w >> 3;
   long nn = (state->n + 7) >> 3;
-  size_t ext, suffix_len = suffix ? __builtin_strlen(suffix) : 0;
-  char* restrict new;
+  size_t suffix_len = suffix ? __builtin_strlen(suffix) : 0;
+  size_t ext;
   long i;
   
   if (msg == NULL)
