@@ -213,10 +213,11 @@ void libkeccak_f(register libkeccak_state_t* restrict state)
  * @return           The lane
  */
 static inline __attribute__((nonnull, nothrow, pure, warn_unused_result, gnu_inline))
-int_fast64_t libkeccak_to_lane(const char* restrict message, size_t msglen, long rr, long ww, size_t off)
+int_fast64_t libkeccak_to_lane(register const char* restrict message, register size_t msglen,
+			       register long rr, long ww, size_t off)
 {
-  /* TODO optimise this, and the parameters */
-  long n = (long)((msglen < (size_t)rr ? msglen : (size_t)rr) - off);
+  /* XXX optimise parameters ww and off */
+  register long n = (long)((msglen < (size_t)rr ? msglen : (size_t)rr) - off);
   int_fast64_t rc = 0;
   message += off;
   while (ww--)
@@ -238,10 +239,10 @@ int_fast64_t libkeccak_to_lane(const char* restrict message, size_t msglen, long
  * @return           The lane
  */
 static inline __attribute__((nonnull, nothrow, pure, hot, warn_unused_result, gnu_inline))
-int_fast64_t libkeccak_to_lane64(const char* restrict message, size_t msglen, long rr, size_t off)
+int_fast64_t libkeccak_to_lane64(register const char* restrict message, register size_t msglen,
+				 register long rr, size_t off)
 {
-  /* TODO optimise this, and the parameters */
-  long n = (long)((msglen < (size_t)rr ? msglen : (size_t)rr) - off);
+  register long n = (long)((msglen < (size_t)rr ? msglen : (size_t)rr) - off);
   int_fast64_t rc = 0;
   message += off;
 #define X(N)  if (__builtin_expect(N < n, 1))  rc |= (int_fast64_t)(unsigned char)(message[N]) << (N * 8);  \
@@ -294,15 +295,14 @@ void libkeccak_pad10star1(libkeccak_state_t* restrict state, size_t bits)
  * @param  len    The number of bytes from `state->M` to absorb
  */
 static __attribute__((nonnull, nothrow))
-void libkeccak_absorption_phase(libkeccak_state_t* restrict state, size_t len)
+void libkeccak_absorption_phase(register libkeccak_state_t* restrict state, register size_t len)
 {
-  /* TODO optimise function */
-  long rr = state->r >> 3;
-  long ww = state->w >> 3;
-  long i = (long)len / rr;
-  const char* restrict message = state->M;
+  register long rr = state->r >> 3;
+  long ww = state->w >> 3; /* XXX should this be register or auto? (also in libkeccak_to_lane) */
+  register long n = (long)len / rr;
+  register const char* restrict message = state->M;
   if (__builtin_expect(ww >= 8, 1)) /* ww > 8 is impossible, it is just for optimisation possibilities. */
-    while (i--)
+    while (n--)
       {
 #define X(N)  state->S[N] ^= libkeccak_to_lane64(message, len, rr, (size_t)(LANE_TRANSPOSE_MAP[N] * 8));
 	LIST_25
@@ -312,8 +312,9 @@ void libkeccak_absorption_phase(libkeccak_state_t* restrict state, size_t len)
 	len -= (size_t)rr;
       }
   else
-    while (i--)
+    while (n--)
       {
+	/* XXX should this be rerolled? */
 #define X(N)  state->S[N] ^= libkeccak_to_lane(message, len, rr, ww, (size_t)(LANE_TRANSPOSE_MAP[N] * ww));
 	LIST_25
 #undef X
@@ -368,11 +369,10 @@ void libkeccak_squeezing_phase(register libkeccak_state_t* restrict state, long 
  */
 int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen)
 {
-  /* TODO optimise function */
   size_t len;
-  char* restrict new;
+  auto char* restrict new;
   
-  if (state->mptr + msglen > state->mlen)
+  if (__builtin_expect(state->mptr + msglen > state->mlen, 0))
     {
       state->mlen += msglen;
       new = realloc(state->M, state->mlen * sizeof(char)); /* FIXME insecure */
@@ -380,6 +380,7 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
 	return state->mlen -= msglen, -1;
       state->M = new;
     }
+  
   __builtin_memcpy(state->M + state->mptr, msg, msglen * sizeof(char));
   state->mptr += msglen;
   len = state->mptr;
@@ -408,19 +409,17 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
 		     size_t bits, const char* restrict suffix, char* restrict hashsum)
 {
   /* TODO optimise function */
-  long rr = state->r >> 3, i;
+  long rr = state->r >> 3;
   long ww = state->w >> 3;
   long nn = (state->n + 7) >> 3;
   size_t ext, suffix_len = suffix ? __builtin_strlen(suffix) : 0;
   char* restrict new;
+  long i;
   
   if (msg == NULL)
     msglen = bits = 0;
   else
-    {
-      msglen += bits >> 3;
-      bits &= 7;
-    }
+    msglen += bits >> 3, bits &= 7;
   
   ext = msglen + ((bits + suffix_len + 7) >> 3) + (size_t)rr;
   if (state->mptr + ext > state->mlen)
