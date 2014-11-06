@@ -58,7 +58,7 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
  * @param  times  The number of rounds
  */
 __attribute__((nonnull, nothrow))
-void libkeccak_simple_squeeze(libkeccak_state_t* restrict state, long times);
+void libkeccak_simple_squeeze(register libkeccak_state_t* restrict state, register long times);
 
 
 /**
@@ -68,7 +68,7 @@ void libkeccak_simple_squeeze(libkeccak_state_t* restrict state, long times);
  * @param  times  The number of digests
  */
 __attribute__((nonnull, nothrow))
-void libkeccak_fast_squeeze(libkeccak_state_t* restrict state, long times);
+void libkeccak_fast_squeeze(register libkeccak_state_t* restrict state, register long times);
 
 
 /**
@@ -78,7 +78,7 @@ void libkeccak_fast_squeeze(libkeccak_state_t* restrict state, long times);
  * @param  hashsum  Output paramter for the hashsum
  */
 __attribute__((nonnull, nothrow))
-void libkeccak_squeeze(libkeccak_state_t* restrict state, char* restrict hashsum);
+void libkeccak_squeeze(register libkeccak_state_t* restrict state, register char* restrict hashsum);
 
 
 #endif

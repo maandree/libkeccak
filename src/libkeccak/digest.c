@@ -333,10 +333,10 @@ void libkeccak_absorption_phase(libkeccak_state_t* restrict state, size_t len)
  * @param  hashsum  Output paramter for the hashsum
  */
 static __attribute__((nonnull, nothrow, hot))
-void libkeccak_squeezing_phase(libkeccak_state_t* restrict state,
-			       long rr, long nn, long ww, char* restrict hashsum)
+void libkeccak_squeezing_phase(register libkeccak_state_t* restrict state, long rr,
+			       long nn, long ww, register char* restrict hashsum)
 {
-  /* TODO optimise function */
+  /* TODO optimise this */
   long i, j = 0, k, ptr = 0, ni = rr > 25 ? 25 : rr, olen = state->n;
   int_fast64_t v;
   while (olen > 0)
@@ -468,9 +468,8 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
  * @param  state  The hashing state
  * @param  times  The number of rounds
  */
-void libkeccak_simple_squeeze(libkeccak_state_t* restrict state, long times)
+void libkeccak_simple_squeeze(register libkeccak_state_t* restrict state, register long times)
 {
-  /* TODO optimise function */
   while (times--)
     libkeccak_f(state);
 }
@@ -482,9 +481,8 @@ void libkeccak_simple_squeeze(libkeccak_state_t* restrict state, long times)
  * @param  state  The hashing state
  * @param  times  The number of digests
  */
-void libkeccak_fast_squeeze(libkeccak_state_t* restrict state, long times)
+void libkeccak_fast_squeeze(register libkeccak_state_t* restrict state, register long times)
 {
-  /* TODO optimise function */
   times *= (state->n - 1) / state->r + 1;
   while (times--)
     libkeccak_f(state);
@@ -497,11 +495,9 @@ void libkeccak_fast_squeeze(libkeccak_state_t* restrict state, long times)
  * @param  state    The hashing state
  * @param  hashsum  Output paramter for the hashsum
  */
-void libkeccak_squeeze(libkeccak_state_t* restrict state, char* restrict hashsum)
+void libkeccak_squeeze(register libkeccak_state_t* restrict state, register char* restrict hashsum)
 {
-  /* TODO optimise function */
-  long ww = state->w >> 3, nn = (state->n + 7) >> 3, rr = state->r >> 3;
   libkeccak_f(state);
-  libkeccak_squeezing_phase(state, rr, nn, ww, hashsum);
+  libkeccak_squeezing_phase(state, state->r >> 3, (state->n + 7) >> 3, state->w >> 3, hashsum);
 }
 
