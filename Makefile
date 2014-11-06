@@ -92,6 +92,11 @@ check: bin/test
 # the test itself never prints to standard error.
 
 
+.PHONY: run-benchmark
+run-benchmark: bin/benchmark
+	for i in $$(seq 7) ; do env LD_LIBRARY_PATH=bin bin/benchmark ; done | median
+
+
 
 .PHONY: clean
 clean:
