@@ -24,7 +24,7 @@ WARN = -Wall -Wextra -pedantic -Wdouble-promotion -Wformat=2 -Winit-self -Wmissi
 LDOPTIMISE =
 # -flto -flto-compression-level -flto-partition={1to1,balanced,mix,none} -flto-report -flto-report-wpa -fwpa
 
-COPTIMISE = -fkeep-inline-functions -falign-functions=0 -fdata-sections -Ofast
+COPTIMISE = -falign-functions=0 -fkeep-inline-functions -fmerge-all-constants -Ofast
 FLAGS = -std=gnu99 $(WARN)
 
 

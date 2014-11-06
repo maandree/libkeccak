@@ -59,7 +59,7 @@ while true; do
     
     ! grep ^error .benchmarks >/dev/null 2>/dev/null
     
-    good_flag="$(sort -n < .benchmarks | cut -d ' ' -f 2 | sed 1q)"
+    good_flag="$(median < .benchmarks | sort -n | cut -d ' ' -f 2 | sed 1q)"
     if [ "${good_flag}" = zzz ] || [ $pass = 2 ]; then
 	if [ $pass = 1 ]; then
 	    pass=2
