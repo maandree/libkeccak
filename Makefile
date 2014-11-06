@@ -21,10 +21,13 @@ WARN = -Wall -Wextra -pedantic -Wdouble-promotion -Wformat=2 -Winit-self -Wmissi
        -Wsuggest-attribute=noreturn -Wsuggest-attribute=pure -Wsuggest-attribute=format          \
        -Wnormalized=nfkc
 
-LDOPTIMISE =
-# -flto -flto-compression-level -flto-partition={1to1,balanced,mix,none} -flto-report -flto-report-wpa -fwpa
-
+# These have not been extensively tested but appear to:
+#     * Produce produce false warnings
+#     * Slowdown the library's performance
+#   -flto -flto-compression-level -flto-partition={1to1,balanced,mix,none} -flto-report -flto-report-wpa -fwpa
 COPTIMISE = -falign-functions=0 -fkeep-inline-functions -fmerge-all-constants -Ofast
+LDOPTIMISE =
+
 FLAGS = -std=gnu99 $(WARN)
 
 
