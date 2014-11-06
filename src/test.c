@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
+/* TODO we need to test other state sizes */
 #include <libkeccak.h>
 
 #include <stdio.h>
