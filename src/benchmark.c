@@ -154,7 +154,7 @@ int main(void)
   libkeccak_state_fast_destroy(&state);
   return 0;
   
-#if (FAST_SQUEEZE_RUNS == 0) && (SLOW_SQUEEZE_RUNS == 0)
+#if (UPDATE_RUNS == 0) && (SLOW_SQUEEZE_RUNS == 0)
   (void) i;
 #endif
 }
