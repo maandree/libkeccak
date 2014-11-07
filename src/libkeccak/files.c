@@ -43,7 +43,7 @@ int libkeccak_generalised_sum_fd(int fd, libkeccak_state_t* restrict state,
   ssize_t got;
   struct stat attr;
   size_t blksize = 4096;
-  char* chunk;
+  char* restrict chunk;
   
   if (libkeccak_state_initialise(state, spec) < 0)
     return -1;
