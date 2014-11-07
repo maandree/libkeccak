@@ -1,0 +1,12 @@
+Just for fun:
+  Keccak-3200 by using int128_t and extending the
+  round constants (of course this is problematic because
+  the construction of the round constants are designed
+  to for at most 64 bits so we will get that the higher
+  halfs are equal to the next's lower half; hopefully
+  this does not matter)
+
+Test parallelisation and acceleration.
+
+Do not forget the todos in the code.
+
