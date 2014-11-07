@@ -408,14 +408,11 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
 int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
 		     size_t bits, const char* restrict suffix, char* restrict hashsum)
 {
-  /* TODO optimise function */
-  char* restrict new;
-  long rr = state->r >> 3;
-  long ww = state->w >> 3;
-  long nn = (state->n + 7) >> 3;
-  size_t suffix_len = suffix ? __builtin_strlen(suffix) : 0;
-  size_t ext;
-  long i;
+  auto char* restrict new;
+  register long rr = state->r >> 3;
+  auto size_t suffix_len = suffix ? __builtin_strlen(suffix) : 0;
+  register size_t ext;
+  register long i;
   
   if (msg == NULL)
     msglen = bits = 0;
@@ -423,7 +420,7 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
     msglen += bits >> 3, bits &= 7;
   
   ext = msglen + ((bits + suffix_len + 7) >> 3) + (size_t)rr;
-  if (state->mptr + ext > state->mlen)
+  if (__builtin_expect(state->mptr + ext > state->mlen, 0))
     {
       state->mlen += ext;
       new = realloc(state->M, state->mlen * sizeof(char)); /* FIXME insecure */
@@ -456,7 +453,7 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
   libkeccak_absorption_phase(state, state->mptr);
   
   if (hashsum != NULL)
-    libkeccak_squeezing_phase(state, rr, nn, ww, hashsum);
+    libkeccak_squeezing_phase(state, rr, (state->n + 7) >> 3, state->w >> 3, hashsum);
   else
     for (i = (state->n - 1) / state->r; i--;)
       libkeccak_f(state);
