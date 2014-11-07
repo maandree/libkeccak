@@ -260,15 +260,14 @@ int_fast64_t libkeccak_to_lane64(register const char* restrict message, register
  *                `state->M` should have `state->r / 8` bytes left over at the end
  * @param  bits   The number of bits in the end of the message that does not make a whole byte
  */
-static __attribute__((nonnull, nothrow))
-void libkeccak_pad10star1(libkeccak_state_t* restrict state, size_t bits)
+static inline __attribute__((nonnull, nothrow, gnu_inline))
+void libkeccak_pad10star1(register libkeccak_state_t* restrict state, register size_t bits)
 {
-  /* TODO optimise function */
-  size_t r = (size_t)(state->r);
-  size_t nrf = state->mptr - !!bits;
-  size_t len = (nrf << 3) | bits;
-  size_t ll = len % r;
-  char b = (char)(bits ? (state->M[nrf] | (1 << bits)) : 1);
+  register size_t r = (size_t)(state->r);
+  register size_t nrf = state->mptr - !!bits;
+  register size_t len = (nrf << 3) | bits;
+  register size_t ll = len % r;
+  register char b = (char)(bits ? (state->M[nrf] | (1 << bits)) : 1);
   
   if ((r - 8 <= ll) && (ll <= r - 2))
     {
