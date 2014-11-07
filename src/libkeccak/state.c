@@ -42,7 +42,7 @@ int libkeccak_state_initialise(libkeccak_state_t* restrict state, const libkecca
   if (x & 0x0CL)  state->l |= 2,  x >>= 2;
   if (x & 0x02L)  state->l |= 1;
   state->nr = 12 + (state->l << 1);
-  state->wmod = (state->w == 64) ? ~0LL : ((1LL << state->w) - 1);
+  state->wmod = (state->w == 64) ? ~0LL : (int_fast64_t)((1ULL << state->w) - 1);
   for (x = 0; x < 25; x++)
     state->S[x] = 0;
   state->mptr = 0;

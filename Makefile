@@ -97,7 +97,7 @@ obj/benchmark.o: src/benchmark.c src/libkeccak/*.h src/libkeccak.h
 
 
 .PHONY: check
-check: bin/test
+check: bin/test bin/libkeccak.so
 	@test $$(sha256sum LICENSE | cut -d ' ' -f 1) = \
 	      57c8ff33c9c0cfc3ef00e650a1cc910d7ee479a8bc509f6c9209a7c2a11399d6 || \
 	      ( echo 'The file LICENSE is incorrect, test will fail!' ; false )
@@ -108,7 +108,7 @@ check: bin/test
 
 
 .PHONY: run-benchmark
-run-benchmark: bin/benchmark
+run-benchmark: bin/benchmark bin/libkeccak.so
 	for i in $$(seq 7) ; do env LD_LIBRARY_PATH=bin bin/benchmark ; done | median
 
 

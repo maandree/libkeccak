@@ -76,7 +76,7 @@ static const uint_fast64_t RC[] =
  * @param   wmod:int_fast64_t  `state->wmod`
  * @return  :int_fast64_t      The value rotated
  */
-#define rotate(x, n, w, wmod)  ((((x) >> (w - ((n) % w))) + ((x) << ((n) % w))) & wmod)
+#define rotate(x, n, w, wmod)  ((((x) >> ((w) - ((n) % (w)))) + ((x) << ((n) % (w)))) & (wmod))
 
 
 /**
@@ -106,11 +106,12 @@ void libkeccak_f_round(register libkeccak_state_t* restrict state, register int_
   int_fast64_t wmod = state->wmod;
   long w = state->w;
   
-  /* θ step (step 1 and 2 of 3). */
+  /* θ step (step 1 of 3). */
 #define X(N)  C[N] = A[N * 5] ^ A[N * 5 + 1] ^ A[N * 5 + 2] ^ A[N * 5 + 3] ^ A[N * 5 + 4];
   LIST_5
 #undef X
   
+  /* θ step (step 2 of 3). */
   da = C[4] ^ rotate64(C[1], 1);
   dd = C[2] ^ rotate64(C[4], 1);
   db = C[0] ^ rotate64(C[2], 1);
@@ -151,11 +152,12 @@ void libkeccak_f_round64(register libkeccak_state_t* restrict state, register in
   int_fast64_t C[5];
   int_fast64_t da, db, dc, dd, de;
   
-  /* θ step (step 1 and 2 of 3). */
+  /* θ step (step 1 of 3). */
 #define X(N)  C[N] = A[N * 5] ^ A[N * 5 + 1] ^ A[N * 5 + 2] ^ A[N * 5 + 3] ^ A[N * 5 + 4];
   LIST_5
 #undef X
   
+  /* θ step (step 2 of 3). */
   da = C[4] ^ rotate64(C[1], 1);
   dd = C[2] ^ rotate64(C[4], 1);
   db = C[0] ^ rotate64(C[2], 1);
@@ -197,7 +199,7 @@ void libkeccak_f(register libkeccak_state_t* restrict state)
       libkeccak_f_round64(state, (int_fast64_t)(RC[i]));
   else
     for (; i < nr; i++)
-      libkeccak_f_round(state, (int_fast64_t)(RC[i]) & wmod);
+      libkeccak_f_round(state, (int_fast64_t)(RC[i] & wmod));
       /* XXX Should the state hold its own masked copy of RC? */
 }
 

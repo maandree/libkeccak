@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
-/* TODO we need to test other state sizes */
 #include <libkeccak.h>
 
 #include <stdio.h>
@@ -200,6 +199,10 @@ static int test_digest(void)
   (printf("  Testing SHAKE-"#semicapacity"(%s, %i): ", #message, output),		\
    libkeccak_spec_shake(&spec, semicapacity, output),					\
    test_digest_case(&spec, LIBKECCAK_SHAKE_SUFFIX, message, 0, answer))
+#define keccak_g(b, c, o, message)							\
+  (printf("  Testing Keccak[%i,%i,%i](%s): ", b, c, o, #message),			\
+   spec.bitrate = b, spec.capacity = c, spec.output = o,				\
+   test_digest_case(&spec, "", message, 0, answer))
   
   
   libkeccak_spec_t spec;
@@ -234,7 +237,7 @@ static int test_digest(void)
   answer = "0eab42de4c3ceb9235fc91acffe746b29c29a8c366b7c60e4e67c466f36a4304"
            "c00fa9caf9d87976ba469bcbe06713b435f091ef2769fb160cdab33d3670680e";
   if (keccak(512, ""))  return -1;
-
+  
   
   answer = "22c8017ac8bcf65f59d1b7e92c9d4c6739d25e34ce5cb608b24ff096";
   if (sha3(224, "withdrew hypothesis snakebird qmc2"))  return -1;
@@ -287,9 +290,38 @@ static int test_digest(void)
   if (shake(256, 128, ""))  return -1;
   
   
+  answer = "65070cdd6f91c0aadcfc470895a2606c828bce7ce3fa723418c9013de9225351";
+  if (keccak_g(1024, 1600 - 1024, 256, "capitol's kvistfri broadly raping"))  return -1;
+  
+  answer = "e6f86ebc15b962f73f36f36fc8a84c3ae84b1c1023bfd4c5f1829389135aecc3";
+  if (keccak_g(512, 1600 - 512, 256, "capitol's kvistfri broadly raping"))  return -1;
+  
+  answer = "420b97fc88962c87ec2adaa8f48d74d9ff4ea7ae7d691f9c33b8713ca1d3d573";
+  if (keccak_g(256, 1600 - 256, 256, "capitol's kvistfri broadly raping"))  return -1;
+  
+  answer = "524790afbe4706d938b6f753e14104f556890e2a415e211b0564d60499db0333";
+  if (keccak_g(512, 800 - 512, 256, "capitol's kvistfri broadly raping"))  return -1;
+  
+  answer = "04a6b4ad08b3018eefba0fb756272d949ac0f71c26f836d31dd13b28b884aa0f";
+  if (keccak_g(256, 800 - 256, 256, "capitol's kvistfri broadly raping"))  return -1;
+  
+  answer = "d56f547791225e54460e6274ed31e57b7085820c11d65f1f322a16a3352c85ed";
+  if (keccak_g(256, 400 - 256, 256, "capitol's kvistfri broadly raping"))  return -1;
+  
+  answer = "ceec066a57b9b31a5a0661df7bafec4183a26d0ed81e50bc958471f84fa347a7";
+  if (keccak_g(128, 400 - 128, 256, "capitol's kvistfri broadly raping"))  return -1;
+  
+  answer = "b18f679c7105a72a993f70fa5adb3f17ef7ccffaffb4dc0f6fed74aa2f565194";
+  if (keccak_g(128, 200 - 128, 256, "capitol's kvistfri broadly raping"))  return -1;
+  
+  answer = "9b845c1ecc2b1b3a48ba42ef29ccc4b348da8ab15074a870d8e799ca33c15e4b";
+  if (keccak_g(64, 200 - 64, 256, "capitol's kvistfri broadly raping"))  return -1;
+  
+  
   printf("\n");
   return 0;
   
+#undef keccak_g
 #undef shake
 #undef rawshake_bits
 #undef rawshake
