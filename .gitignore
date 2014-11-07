@@ -12,6 +12,7 @@ obj/
 *.so
 *.su
 *.gch
+*.a
 *.info
 *.pdf
 *.ps

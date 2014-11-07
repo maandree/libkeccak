@@ -34,12 +34,19 @@ FLAGS = -std=gnu99 $(WARN)
 LIB_OBJ = digest files generalised-spec hex state
 
 
+.PHONY: default
+default: lib test
+
 .PHONY: all
 all: lib test benchmark
 
 
 .PHONY: lib
-lib: bin/libkeccak.so.$(LIB_VERSION) bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak.so
+lib: so a
+
+
+.PHONY: so
+so: bin/libkeccak.so.$(LIB_VERSION) bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak.so
 
 obj/libkeccak/%.o: src/libkeccak/%.c src/libkeccak.h src/libkeccak/*.h
 	@mkdir -p obj/libkeccak
@@ -56,6 +63,14 @@ bin/libkeccak.so.$(LIB_MAJOR):
 bin/libkeccak.so:
 	@mkdir -p bin
 	ln -sf libkeccak.so.$(LIB_VERSION) $@
+
+
+.PHONY: a
+a: bin/libkeccak.a
+
+bin/libkeccak.a: $(foreach O,$(LIB_OBJ),obj/libkeccak/$(O).o)
+	@mkdir -p bin
+	ar rcs $@ $^
 
 
 .PHONY: test

@@ -1,0 +1,31 @@
+RUNTIME DEPENDENCIES:
+
+	libc
+
+
+BUILD DEPENDENCIES:
+
+	libc
+	gcc
+	make
+	coreutils
+	binutils
+
+
+CHECK DEPENDENCIES:
+
+	libc
+	valgrind
+	make
+	coreutils
+
+
+BENCHMARK DEPENDENCIES:
+
+	libc
+	make
+	coreutils
+	median
+	grep (only needed for src/benchmark-flags)
+	sed (only needed for src/benchmark-flags)
+
