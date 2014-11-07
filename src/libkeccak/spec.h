@@ -82,6 +82,13 @@
  */
 #define LIBKECCAK_SPEC_ERROR_WORD_NON_2_POTENT  8
 
+/**
+ * Invalid `libkeccak_spec_t` values: `.bitrate + `.capacity`
+ * is a not multiple of 100, and thus the word size is not
+ * a multiple of 8
+ */
+#define LIBKECCAK_SPEC_ERROR_WORD_MOD_8  9
+
 
 
 /**
@@ -159,7 +166,8 @@ void libkeccak_spec_rawshake(libkeccak_spec_t* restrict spec, long x, long d)
 static inline __attribute__((nonnull, nothrow, unused, warn_unused_result, pure))
 int libkeccak_spec_check(const libkeccak_spec_t* restrict spec)
 {
-  long state_size = spec->capacity + spec->bitrate, n_state_size;
+  long state_size = spec->capacity + spec->bitrate;
+  long word_size = state_size / 25, n_word_size;
   if (spec->bitrate <= 0)   return LIBKECCAK_SPEC_ERROR_BITRATE_NONPOSITIVE;
   if (spec->bitrate % 8)    return LIBKECCAK_SPEC_ERROR_BITRATE_MOD_8;
   if (spec->capacity <= 0)  return LIBKECCAK_SPEC_ERROR_CAPACITY_NONPOSITIVE;
@@ -167,12 +175,12 @@ int libkeccak_spec_check(const libkeccak_spec_t* restrict spec)
   if (spec->output <= 0)    return LIBKECCAK_SPEC_ERROR_OUTPUT_NONPOSITIVE;
   if (state_size > 1600)    return LIBKECCAK_SPEC_ERROR_STATE_TOO_LARGE;
   if (state_size % 25)      return LIBKECCAK_SPEC_ERROR_STATE_MOD_25;
-  state_size /= 25;
+  if (word_size % 8)        return LIBKECCAK_SPEC_ERROR_WORD_MOD_8;
   
   /* This is a portable implementation of `(x & -x) != x` which assumes
    * two's complement, which of course is always satisfied by GCC, but anyway... */
-  n_state_size = ((~state_size) ^ (LONG_MIN & ~LONG_MAX)) + 1;
-  if ((state_size & n_state_size) != state_size)
+  n_word_size = ((~word_size) ^ (LONG_MIN & ~LONG_MAX)) + 1;
+  if ((word_size & n_word_size) != word_size)
     return LIBKECCAK_SPEC_ERROR_WORD_NON_2_POTENT;
   
   return 0;
