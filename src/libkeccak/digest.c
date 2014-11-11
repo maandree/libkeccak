@@ -76,7 +76,7 @@ static const uint_fast64_t RC[] =
  * @param   wmod:int_fast64_t  `state->wmod`
  * @return  :int_fast64_t      The value rotated
  */
-#define rotate(x, n, w, wmod)  ((((x) >> ((w) - ((n) % (w)))) + ((x) << ((n) % (w)))) & (wmod))
+#define rotate(x, n, w, wmod)  ((((x) >> ((w) - ((n) % (w)))) | ((x) << ((n) % (w)))) & (wmod))
 
 
 /**
