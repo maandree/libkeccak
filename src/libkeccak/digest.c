@@ -340,7 +340,7 @@ void libkeccak_squeezing_phase(register libkeccak_state_t* restrict state, long 
 			       long nn, long ww, register char* restrict hashsum)
 {
   register int_fast64_t v;
-  register long ni = rr > 25 ? 25 : rr;
+  register long ni = rr / ww;
   auto long olen = state->n;
   auto long i, j = 0;
   register long k;
