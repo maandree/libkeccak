@@ -290,6 +290,38 @@ static int test_digest(void)
   if (shake(256, 128, ""))  return -1;
   
   
+  answer = "65070cdd6f91c0aadcfc470895a2606c828bce7ce3fa723418c9013de92253515713cce8"
+           "d2098be1c82df40b40e375549c0eeb655f92d718f01f147ba1c7c67844c7ba8b11492cd6";
+  if (keccak_g(1024, 1600 - 1024, 576, "capitol's kvistfri broadly raping"))  return -1;
+  
+  answer = "65070cdd6f91c0aadcfc470895a2606c828bce7ce3fa723418c9013de92253515713cce8"
+           "d2098be1c82df40b40e375549c0eeb655f92d718f01f147ba1c7c67844c7ba8b11492cd6"
+           "143466958504c110522f772fe746573b1dc905f943ed1ec6ecf858575798596beeca4eb6"
+           "bb7bea635bcea6331315728fb57866370bf1ad5d";
+  if (keccak_g(1024, 1600 - 1024, 1024, "capitol's kvistfri broadly raping"))  return -1;
+  
+  answer = "65070cdd6f91c0aadcfc470895a2606c828bce7ce3fa723418c9013de92253515713cce8"
+           "d2098be1c82df40b40e375549c0eeb655f92d718f01f147ba1c7c67844c7ba8b11492cd6"
+           "143466958504c110522f772fe746573b1dc905f943ed1ec6ecf858575798596beeca4eb6"
+           "bb7bea635bcea6331315728fb57866370bf1ad5decbc56d28d47ce53f18376d9f5531551"
+           "7a976d52dd3f98b7025e0b3c513c6d17d40462cddb5406d693bbe859a136af5375b5dd6e"
+           "3478934b00aa6cd44aa7ae2cd0271d83fbab699b";
+  if (keccak_g(1024, 1600 - 1024, 1600, "capitol's kvistfri broadly raping"))  return -1;
+  
+  answer = "65070cdd6f91c0aadcfc470895a2606c828bce7ce3fa723418c9013de92253515713cce8"
+           "d2098be1c82df40b40e375549c0eeb655f92d718f01f147ba1c7c67844c7ba8b11492cd6"
+           "143466958504c110522f772fe746573b1dc905f943ed1ec6ecf858575798596beeca4eb6"
+           "bb7bea635bcea6331315728fb57866370bf1ad5decbc56d28d47ce53f18376d9f5531551"
+           "7a976d52dd3f98b7025e0b3c513c6d17d40462cddb5406d693bbe859a136af5375b5dd6e"
+           "3478934b00aa6cd44aa7ae2cd0271d83fbab699b9c58351bf7d26586b9c32282f1ac6356"
+           "1981b79791d7ab2b6e01f5b8e6cf0cab8b2076fd82bd99df015a602cdda5684162fea982"
+           "0f5a441c4620f549fbaf4e818201f292dbf4f6c9f82af8aa80b4124984da6f65b2874e0e"
+           "f01d042c08e9aedbb6ce4c10526e38c1a4e8b108c4f14b066f9d42640687b55124b081da"
+           "a9f9ae4232f313740b4fb787545dc19e7778f7082b3fa5824d2400c012be1a6c5ade7149"
+           "e452d310752fa9ebb964ab36fde0c8f46f47a0e2c9b20f24e3cca904bbedaa7ea176f662"
+           "33cd2d95";
+  if (keccak_g(1024, 1600 - 1024, 3200, "capitol's kvistfri broadly raping"))  return -1;
+  
   answer = "65070cdd6f91c0aadcfc470895a2606c828bce7ce3fa723418c9013de9225351";
   if (keccak_g(1024, 1600 - 1024, 256, "capitol's kvistfri broadly raping"))  return -1;
   

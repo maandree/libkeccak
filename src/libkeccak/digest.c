@@ -71,7 +71,7 @@ static const uint_fast64_t RC[] =
  * Rotate a word
  * 
  * @param   x:int_fast64_t     The value to rotate
- * @param   n:long             Rotation steps, may not be zero
+ * @param   n:long             Rotation steps, may be zero mod `w`
  * @param   w:long             `state->w`
  * @param   wmod:int_fast64_t  `state->wmod`
  * @return  :int_fast64_t      The value rotated
@@ -86,7 +86,7 @@ static const uint_fast64_t RC[] =
  * @param   n:long          Rotation steps, may not be zero
  * @return   :int_fast64_t  The value rotated
  */
-#define rotate64(x, n)  ((int_fast64_t)(((uint64_t)(x) >> (64L - (n))) + ((uint64_t)(x) << (n))))
+#define rotate64(x, n)  ((int_fast64_t)(((uint64_t)(x) >> (64L - (n))) | ((uint64_t)(x) << (n))))
 
 
 /**
@@ -112,11 +112,11 @@ void libkeccak_f_round(register libkeccak_state_t* restrict state, register int_
 #undef X
   
   /* θ step (step 2 of 3). */
-  da = C[4] ^ rotate64(C[1], 1);
-  dd = C[2] ^ rotate64(C[4], 1);
-  db = C[0] ^ rotate64(C[2], 1);
-  de = C[3] ^ rotate64(C[0], 1);
-  dc = C[1] ^ rotate64(C[3], 1);
+  da = C[4] ^ rotate(C[1], 1, w, wmod);
+  dd = C[2] ^ rotate(C[4], 1, w, wmod);
+  db = C[0] ^ rotate(C[2], 1, w, wmod);
+  de = C[3] ^ rotate(C[0], 1, w, wmod);
+  dc = C[1] ^ rotate(C[3], 1, w, wmod);
   
   /* ρ and π steps, with last two part of θ. */
 #define X(bi, ai, dv, r)  B[bi] = rotate(A[ai] ^ dv, r, w, wmod)
