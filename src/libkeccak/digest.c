@@ -100,7 +100,6 @@ static const uint_fast64_t RC[] =
 static __attribute__((nonnull, nothrow, hot))
 void libkeccak_f_round(register libkeccak_state_t* restrict state, register int_fast64_t rc)
 {
-  /* XXX should any loop be rerolled? */
   int_fast64_t* restrict A = state->S;
   int_fast64_t B[25];
   int_fast64_t C[5];
@@ -148,7 +147,6 @@ void libkeccak_f_round(register libkeccak_state_t* restrict state, register int_
 static __attribute__((nonnull, nothrow, hot))
 void libkeccak_f_round64(register libkeccak_state_t* restrict state, register int_fast64_t rc)
 {
-  /* XXX should any loop be rerolled? */
   int_fast64_t* restrict A = state->S;
   int_fast64_t B[25];
   int_fast64_t C[5];
