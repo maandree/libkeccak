@@ -5,8 +5,8 @@
 
 
 # The version of the library.
-LIB_MAJOR = 1
-LIB_MINOR = 0
+LIB_MAJOR = 0
+LIB_MINOR = 1
 LIB_VERSION = $(LIB_MAJOR).$(LIB_MINOR)
 
 
