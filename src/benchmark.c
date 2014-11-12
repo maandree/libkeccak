@@ -99,7 +99,7 @@ int main(void)
     return perror("libkeccak_state_initialise"), 1;
   
   /* Get start-time. */
-  if (clock_gettime(CLOCK_MONOTONIC_RAW, &start) < 0)
+  if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start) < 0)
     return perror("clock_gettime"), 1;
   
   /* Run benchmarking loop. */
@@ -137,7 +137,7 @@ int main(void)
     }
   
   /* Get end-time. */
-  if (clock_gettime(CLOCK_MONOTONIC_RAW, &end) < 0)
+  if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end) < 0)
     return perror("clock_gettime"), -1;
   
   /* Print execution-time. */
