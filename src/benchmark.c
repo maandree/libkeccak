@@ -108,12 +108,12 @@ int main(void)
       /* Updates. */
 #if UPDATE_RUNS > 0
       for (i = 0; i < UPDATE_RUNS; i++)
-	if (libkeccak_update(&state, message, MESSAGE_LEN) < 0)
+	if (libkeccak_fast_update(&state, message, MESSAGE_LEN) < 0)
 	  return perror("libkeccak_update"), 1;
 #endif
       
       /* Digest. */
-      if (libkeccak_digest(&state, NULL, 0, 0, NULL, hashsum) < 0)
+      if (libkeccak_fast_digest(&state, NULL, 0, 0, NULL, hashsum) < 0)
 	return perror("libkeccak_digest"), 1;
 #ifndef IGNORE_BEHEXING
       libkeccak_behex_lower(hexsum, hashsum, OUTPUT / 8);

@@ -25,6 +25,20 @@
 
 /**
  * Absorb more of the message to the Keccak sponge
+ * without wiping sensitive data when possible
+ * 
+ * @param   state   The hashing state
+ * @param   msg     The partial message
+ * @param   msglen  The length of the partial message
+ * @return          Zero on success, -1 on error
+ */
+__attribute__((nonnull))
+int libkeccak_fast_update(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen);
+
+
+/**
+ * Absorb more of the message to the Keccak sponge
+ * and wipe sensitive data when possible
  * 
  * @param   state   The hashing state
  * @param   msg     The partial message
@@ -37,6 +51,24 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
 
 /**
  * Absorb the last part of the message and squeeze the Keccak sponge
+ * without wiping sensitive data when possible
+ * 
+ * @param   state    The hashing state
+ * @param   msg      The rest of the message, may be `NULL`, may be modified
+ * @param   msglen   The length of the partial message
+ * @param   bits     The number of bits at the end of the message not covered by `msglen`
+ * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
+ * @param   hashsum  Output paramter for the hashsum, may be `NULL`
+ * @return           Zero on success, -1 on error
+ */
+__attribute__((nonnull(1)))
+int libkeccak_fast_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
+			  size_t bits, const char* restrict suffix, char* restrict hashsum);
+
+
+/**
+ * Absorb the last part of the message and squeeze the Keccak sponge
+ * and wipe sensitive data when possible
  * 
  * @param   state    The hashing state
  * @param   msg      The rest of the message, may be `NULL`, may be modified

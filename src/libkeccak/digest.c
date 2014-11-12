@@ -18,6 +18,8 @@
  */
 #include "digest.h"
 
+#include "state.h"
+
 
 
 /**
@@ -362,13 +364,14 @@ void libkeccak_squeezing_phase(register libkeccak_state_t* restrict state, long 
 
 /**
  * Absorb more of the message to the Keccak sponge
+ * without wiping sensitive data when possible
  * 
  * @param   state   The hashing state
  * @param   msg     The partial message
  * @param   msglen  The length of the partial message
  * @return          Zero on success, -1 on error
  */
-int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen)
+int libkeccak_fast_update(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen)
 {
   size_t len;
   auto char* restrict new;
@@ -376,7 +379,7 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
   if (__builtin_expect(state->mptr + msglen > state->mlen, 0))
     {
       state->mlen += msglen;
-      new = realloc(state->M, state->mlen * sizeof(char)); /* FIXME insecure */
+      new = realloc(state->M, state->mlen * sizeof(char));
       if (new == NULL)
 	return state->mlen -= msglen, -1;
       state->M = new;
@@ -396,7 +399,115 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
 
 
 /**
+ * Absorb more of the message to the Keccak sponge
+ * and wipe sensitive data when possible
+ * 
+ * @param   state   The hashing state
+ * @param   msg     The partial message
+ * @param   msglen  The length of the partial message
+ * @return          Zero on success, -1 on error
+ */
+int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen)
+{
+  size_t len;
+  auto char* restrict new;
+  
+  if (__builtin_expect(state->mptr + msglen > state->mlen, 0))
+    {
+      state->mlen += msglen;
+      new = malloc(state->mlen * sizeof(char));
+      if (new == NULL)
+	return state->mlen -= msglen, -1;
+      libkeccak_state_wipe_message(state);
+      free(state->M);
+      state->M = new;
+    }
+  
+  __builtin_memcpy(state->M + state->mptr, msg, msglen * sizeof(char));
+  state->mptr += msglen;
+  len = state->mptr;
+  len -= state->mptr % (size_t)((state->r * state->b) >> 3);
+  state->mptr -= len;
+  
+  libkeccak_absorption_phase(state, len);
+  __builtin_memmove(state->M, state->M + len, state->mptr * sizeof(char));
+  
+  return 0;
+}
+
+
+/**
  * Absorb the last part of the message and squeeze the Keccak sponge
+ * without wiping sensitive data when possible
+ * 
+ * @param   state    The hashing state
+ * @param   msg      The rest of the message, may be `NULL`, may be modified
+ * @param   msglen   The length of the partial message
+ * @param   bits     The number of bits at the end of the message not covered by `msglen`
+ * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
+ * @param   hashsum  Output paramter for the hashsum, may be `NULL`
+ * @return           Zero on success, -1 on error
+ */
+int libkeccak_fast_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
+			  size_t bits, const char* restrict suffix, char* restrict hashsum)
+{
+  auto char* restrict new;
+  register long rr = state->r >> 3;
+  auto size_t suffix_len = suffix ? __builtin_strlen(suffix) : 0;
+  register size_t ext;
+  register long i;
+  
+  if (msg == NULL)
+    msglen = bits = 0;
+  else
+    msglen += bits >> 3, bits &= 7;
+  
+  ext = msglen + ((bits + suffix_len + 7) >> 3) + (size_t)rr;
+  if (__builtin_expect(state->mptr + ext > state->mlen, 0))
+    {
+      state->mlen += ext;
+      new = realloc(state->M, state->mlen * sizeof(char));
+      if (new == NULL)
+	return state->mlen -= ext, -1;
+      state->M = new;
+    }
+  
+  if (msglen)
+    __builtin_memcpy(state->M + state->mptr, msg, msglen * sizeof(char));
+  state->mptr += msglen;
+  
+  if (bits)
+    state->M[state->mptr] = msg[msglen] & (char)((1 << bits) - 1);
+  if (__builtin_expect(!!suffix_len, 1))
+    {
+      if (bits == 0)
+	state->M[state->mptr] = 0;
+      while (suffix_len--)
+	{
+	  state->M[state->mptr] |= (char)((*suffix++ & 1) << bits++);
+	  if (bits == 8)
+	    bits = 0, state->M[++(state->mptr)] = 0;
+	}
+    }
+  if (bits)
+    state->mptr++;
+  
+  libkeccak_pad10star1(state, bits);
+  libkeccak_absorption_phase(state, state->mptr);
+  
+  if (hashsum != NULL)
+    libkeccak_squeezing_phase(state, rr, (state->n + 7) >> 3, state->w >> 3, hashsum);
+  else
+    for (i = (state->n - 1) / state->r; i--;)
+      libkeccak_f(state);
+  
+  return 0;
+}
+
+
+/**
+ * Absorb the last part of the message and squeeze the Keccak sponge
+ * and wipe sensitive data when possible
  * 
  * @param   state    The hashing state
  * @param   msg      The rest of the message, may be `NULL`, may be modified
@@ -424,9 +535,11 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
   if (__builtin_expect(state->mptr + ext > state->mlen, 0))
     {
       state->mlen += ext;
-      new = realloc(state->M, state->mlen * sizeof(char)); /* FIXME insecure */
+      new = malloc(state->mlen * sizeof(char));
       if (new == NULL)
 	return state->mlen -= ext, -1;
+      libkeccak_state_wipe_message(state);
+      free(state->M);
       state->M = new;
     }
   

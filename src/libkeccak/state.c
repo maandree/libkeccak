@@ -53,22 +53,40 @@ int libkeccak_state_initialise(libkeccak_state_t* restrict state, const libkecca
 
 
 /**
- * Wipe sensitive data wihout freeing any data, this is intended
- * be called from `libkeccak_state_destroy`
+ * Wipe data in the state's message wihout freeing any data
+ * 
+ * @param  state  The state that should be wipe
+ */
+void libkeccak_state_wipe_message(volatile libkeccak_state_t* restrict state)
+{
+  volatile char* restrict M = state->M;
+  size_t i;
+  for (i = 0; i < state->mptr; i++)
+    M[i] = 0;
+}
+
+/**
+ * Wipe data in the state's sponge wihout freeing any data
+ * 
+ * @param  state  The state that should be wipe
+ */
+void libkeccak_state_wipe_sponge(volatile libkeccak_state_t* restrict state)
+{
+  volatile int_fast64_t* restrict S = state->S;
+  size_t i;
+  for (i = 0; i < 25; i++)
+    S[i] = 0;
+}
+
+/**
+ * Wipe sensitive data wihout freeing any data
  * 
  * @param  state  The state that should be wipe
  */
 void libkeccak_state_wipe(volatile libkeccak_state_t* restrict state)
 {
-  volatile int_fast64_t* restrict S;
-  volatile char* restrict M;
-  size_t i;
-  S = state->S;
-  M = state->M;
-  for (i = 0; i < 25; i++)
-    S[i] = 0;
-  for (i = 0; i < state->mptr; i++)
-    M[i] = 0;
+  libkeccak_state_wipe_message(state);
+  libkeccak_state_wipe_sponge(state);
 }
 
 

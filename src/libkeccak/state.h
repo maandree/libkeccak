@@ -141,12 +141,27 @@ void libkeccak_state_fast_destroy(libkeccak_state_t* restrict state)
 
 
 /**
- * Wipe sensitive data wihout freeing any data, this is intended
- * be called from `libkeccak_state_destroy`
+ * Wipe data in the state's message wihout freeing any data
  * 
  * @param  state  The state that should be wipe
  */
 __attribute__((leaf, nonnull, nothrow, optimize("-O0")))
+void libkeccak_state_wipe_message(volatile libkeccak_state_t* restrict state);
+
+/**
+ * Wipe data in the state's sponge wihout freeing any data
+ * 
+ * @param  state  The state that should be wipe
+ */
+__attribute__((leaf, nonnull, nothrow, optimize("-O0")))
+void libkeccak_state_wipe_sponge(volatile libkeccak_state_t* restrict state);
+
+/**
+ * Wipe sensitive data wihout freeing any data
+ * 
+ * @param  state  The state that should be wipe
+ */
+__attribute__((nonnull, nothrow, optimize("-O0")))
 void libkeccak_state_wipe(volatile libkeccak_state_t* restrict state);
 
 
