@@ -26,10 +26,10 @@
 
 
 #ifndef MESSAGE_FILE
-# define MESSAGE_FILE      "LICENSE"
+# define MESSAGE_FILE     "LICENSE"
 #endif
 #ifndef MESSAGE_LEN
-# define MESSAGE_LEN       34520
+# define MESSAGE_LEN      34520
 #endif
 
 
