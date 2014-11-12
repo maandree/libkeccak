@@ -37,7 +37,7 @@
 typedef struct libkeccak_state
 {
   /**
-   * The lanes (state)
+   * The lanes (state/sponge)
    */
   int_fast64_t S[25];
   

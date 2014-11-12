@@ -202,7 +202,6 @@ void libkeccak_f(register libkeccak_state_t* restrict state)
   else
     for (; i < nr; i++)
       libkeccak_f_round(state, (int_fast64_t)(RC[i] & wmod));
-      /* XXX Should the state hold its own masked copy of RC? */
 }
 
 
