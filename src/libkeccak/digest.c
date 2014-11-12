@@ -218,9 +218,8 @@ void libkeccak_f(register libkeccak_state_t* restrict state)
  */
 static inline __attribute__((nonnull, nothrow, pure, warn_unused_result, gnu_inline))
 int_fast64_t libkeccak_to_lane(register const char* restrict message, register size_t msglen,
-			       register long rr, long ww, size_t off)
+			       register long rr, register long ww, size_t off)
 {
-  /* XXX optimise parameters ww and off */
   register long n = (long)((msglen < (size_t)rr ? msglen : (size_t)rr) - off);
   int_fast64_t rc = 0;
   message += off;
@@ -301,7 +300,7 @@ static __attribute__((nonnull, nothrow))
 void libkeccak_absorption_phase(register libkeccak_state_t* restrict state, register size_t len)
 {
   register long rr = state->r >> 3;
-  long ww = state->w >> 3; /* XXX should this be register or auto? (also in libkeccak_to_lane) */
+  register long ww = state->w >> 3;
   register long n = (long)len / rr;
   register const char* restrict message = state->M;
   if (__builtin_expect(ww >= 8, 1)) /* ww > 8 is impossible, it is just for optimisation possibilities. */
@@ -317,7 +316,6 @@ void libkeccak_absorption_phase(register libkeccak_state_t* restrict state, regi
   else
     while (n--)
       {
-	/* XXX should this be rerolled? */
 #define X(N)  state->S[N] ^= libkeccak_to_lane(message, len, rr, ww, (size_t)(LANE_TRANSPOSE_MAP[N] * ww));
 	LIST_25
 #undef X
