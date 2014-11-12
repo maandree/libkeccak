@@ -29,3 +29,9 @@ BENCHMARK DEPENDENCIES:
 	grep (only needed for src/benchmark-flags)
 	sed (only needed for src/benchmark-flags)
 
+
+INSTALL DEPENDENCIES:
+
+	make
+	coreutils
+

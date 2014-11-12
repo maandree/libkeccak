@@ -4,6 +4,32 @@
 # without any warranty.
 
 
+# The package path prefix, if you want to install to another root, set DESTDIR to that root.
+PREFIX = /usr
+# The library path excluding prefix.
+LIB = /lib
+# The library header path excluding prefix.
+INCLUDE = /include
+# The resource path excluding prefix.
+DATA = /share
+# The library path including prefix.
+LIBDIR = $(PREFIX)$(LIB)
+# The library header including prefix.
+INCLUDEDIR = $(PREFIX)$(INCLUDE)
+# The resource path including prefix.
+DATADIR = $(PREFIX)$(DATA)
+# The generic documentation path including prefix.
+DOCDIR = $(DATADIR)/doc
+# The info manual documentation path including prefix.
+INFODIR = $(DATADIR)/info
+# The license base path including prefix.
+LICENSEDIR = $(DATADIR)/licenses
+
+# The name of the package as it should be installed.
+PKGNAME = libkeccak
+
+
+
 # The version of the library.
 LIB_MAJOR = 0
 LIB_MINOR = 1
@@ -110,6 +136,77 @@ check: bin/test bin/libkeccak.so
 .PHONY: run-benchmark
 run-benchmark: bin/benchmark bin/libkeccak.so
 	for i in $$(seq 7) ; do env LD_LIBRARY_PATH=bin bin/benchmark ; done | median
+
+
+
+.PHONY: install
+install: install-base
+
+.PHONY: install-all
+install-all: install-base
+
+.PHONY: install-base
+install-base: install-lib install-copyright
+
+.PHONY: install-lib
+install-lib: install-headers install-dynamic-lib install-static-lib
+
+.PHONY: install-headers
+install-headers:
+	install -dm755 -- "$(DESTDIR)$(INCLUDEDIR)"
+	install -dm755 -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak"
+	install -m644 -- src/libkeccak.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak.h"
+	install -m644 -- src/libkeccak/digest.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/digest.h"
+	install -m644 -- src/libkeccak/files.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/files.h"
+	install -m644 -- src/libkeccak/generalised-spec.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/generalised-spec.h"
+	install -m644 -- src/libkeccak/hex.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/hex.h"
+	install -m644 -- src/libkeccak/spec.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/spec.h"
+	install -m644 -- src/libkeccak/state.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/state.h"
+
+.PHONY: install-dynamic-lib
+install-dynamic-lib: bin/libkeccak.so.$(LIB_VERSION)
+	install -dm755 -- "$(DESTDIR)$(LIBDIR)"
+	install -m755 bin/libkeccak.so.$(LIB_VERSION) -- "$(DESTDIR)$(LIBDIR)/libkeccak.so.$(LIB_VERSION)"
+	ln -sf libkeccak.so.$(LIB_VERSION) -- "$(DESTDIR)$(LIBDIR)/libkeccak.so.$(LIB_MAJOR)"
+	ln -sf libkeccak.so.$(LIB_VERSION) -- "$(DESTDIR)$(LIBDIR)/libkeccak.so"
+
+.PHONY: install-static-lib
+install-static-lib: bin/libkeccak.a
+	install -dm755 -- "$(DESTDIR)$(LIBDIR)"
+	install -m644 bin/libkeccak.a -- "$(DESTDIR)$(LIBDIR)/libkeccak.a"
+
+.PHONY: install-copyright
+install-copyright: install-copying install-license
+
+.PHONY: install-copying
+install-copying:
+	install -dm755 -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
+	install -m644 COPYING -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/COPYING"
+
+.PHONY: install-license
+install-license:
+	install -dm755 -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
+	install -m644 LICENSE -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
+
+
+
+.PHONY: uninstall
+uninstall:
+	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak.h"
+	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/digest.h"
+	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/files.h"
+	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/generalised-spec.h"
+	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/hex.h"
+	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/spec.h"
+	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/state.h"
+	-rmdir -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak"
+	-rm -- "$(DESTDIR)$(LIBDIR)/libkeccak.so.$(LIB_VERSION)"
+	-rm -- "$(DESTDIR)$(LIBDIR)/libkeccak.so.$(LIB_MAJOR)"
+	-rm -- "$(DESTDIR)$(LIBDIR)/libkeccak.so"
+	-rm -- "$(DESTDIR)$(LIBDIR)/libkeccak.a"
+	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/COPYING"
+	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
+	-rmdir -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
 
 
 
