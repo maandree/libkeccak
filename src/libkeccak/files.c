@@ -26,7 +26,8 @@
 
 
 /**
- * Calculate a Keccak-family hashsum of a file
+ * Calculate a Keccak-family hashsum of a file,
+ * the content of the file is assumed non-sensitive
  * 
  * @param   fd       The file descriptor of the file to hash
  * @param   state    The hashing state, should not be initialised (memory leak otherwise)
@@ -59,10 +60,10 @@ int libkeccak_generalised_sum_fd(int fd, libkeccak_state_t* restrict state,
       got = read(fd, chunk, blksize);
       if (got < 0)   return -1;
       if (got == 0)  break;
-      if (libkeccak_update(state, chunk, (size_t)got) < 0)
+      if (libkeccak_fast_update(state, chunk, (size_t)got) < 0)
 	return -1;
     }
   
-  return libkeccak_digest(state, NULL, 0, 0, suffix, hashsum);
+  return libkeccak_fast_digest(state, NULL, 0, 0, suffix, hashsum);
 }
 

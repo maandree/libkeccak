@@ -24,7 +24,8 @@
 
 
 /**
- * Calculate a Keccak-family hashsum of a file
+ * Calculate a Keccak-family hashsum of a file,
+ * the content of the file is assumed non-sensitive
  * 
  * @param   fd       The file descriptor of the file to hash
  * @param   state    The hashing state, should not be initialised (memory leak otherwise)
@@ -41,7 +42,8 @@ int libkeccak_generalised_sum_fd(int fd, libkeccak_state_t* restrict state,
 
 
 /**
- * Calculate the Keccak hashsum of a file
+ * Calculate the Keccak hashsum of a file,
+ * the content of the file is assumed non-sensitive
  * 
  * @param   fd       The file descriptor of the file to hash
  * @param   state    The hashing state, should not be initialised (memory leak otherwise)
@@ -59,7 +61,8 @@ int libkeccak_keccaksum_fd(int fd, libkeccak_state_t* restrict state,
 
 
 /**
- * Calculate the SHA3 hashsum of a file
+ * Calculate the SHA3 hashsum of a file,
+ * the content of the file is assumed non-sensitive
  * 
  * @param   fd       The file descriptor of the file to hash
  * @param   state    The hashing state, should not be initialised (memory leak otherwise)
@@ -79,7 +82,8 @@ int libkeccak_sha3sum_fd(int fd, libkeccak_state_t* restrict state,
 
 
 /**
- * Calculate the RawSHAKE hashsum of a file
+ * Calculate the RawSHAKE hashsum of a file,
+ * the content of the file is assumed non-sensitive
  * 
  * @param   fd            The file descriptor of the file to hash
  * @param   state         The hashing state, should not be initialised (memory leak otherwise)
@@ -100,7 +104,8 @@ int libkeccak_rawshakesum_fd(int fd, libkeccak_state_t* restrict state,
 
 
 /**
- * Calculate the SHAKE hashsum of a file
+ * Calculate the SHAKE hashsum of a file,
+ * the content of the file is assumed non-sensitive
  * 
  * @param   fd            The file descriptor of the file to hash
  * @param   state         The hashing state, should not be initialised (memory leak otherwise)
