@@ -330,7 +330,7 @@ void libkeccak_absorption_phase(register libkeccak_state_t* restrict state, regi
  * @param  rr       The bitrate in bytes
  * @param  nn       The output size in bytes, rounded up to whole bytes
  * @param  ww       The word size in bytes
- * @param  hashsum  Output paramter for the hashsum
+ * @param  hashsum  Output parameter for the hashsum
  */
 static __attribute__((nonnull, nothrow, hot))
 void libkeccak_squeezing_phase(register libkeccak_state_t* restrict state, long rr,
@@ -440,7 +440,7 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
  * @param   msglen   The length of the partial message
  * @param   bits     The number of bits at the end of the message not covered by `msglen`
  * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
- * @param   hashsum  Output paramter for the hashsum, may be `NULL`
+ * @param   hashsum  Output parameter for the hashsum, may be `NULL`
  * @return           Zero on success, -1 on error
  */
 int libkeccak_fast_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
@@ -509,7 +509,7 @@ int libkeccak_fast_digest(libkeccak_state_t* restrict state, const char* restric
  * @param   msglen   The length of the partial message
  * @param   bits     The number of bits at the end of the message not covered by `msglen`
  * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
- * @param   hashsum  Output paramter for the hashsum, may be `NULL`
+ * @param   hashsum  Output parameter for the hashsum, may be `NULL`
  * @return           Zero on success, -1 on error
  */
 int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
@@ -602,7 +602,7 @@ void libkeccak_fast_squeeze(register libkeccak_state_t* restrict state, register
  * Squeeze out another digest
  * 
  * @param  state    The hashing state
- * @param  hashsum  Output paramter for the hashsum
+ * @param  hashsum  Output parameter for the hashsum
  */
 void libkeccak_squeeze(register libkeccak_state_t* restrict state, register char* restrict hashsum)
 {
