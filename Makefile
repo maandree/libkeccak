@@ -76,11 +76,11 @@ so: bin/libkeccak.so.$(LIB_VERSION) bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak.
 
 obj/libkeccak/%.o: src/libkeccak/%.c src/libkeccak.h src/libkeccak/*.h
 	@mkdir -p obj/libkeccak
-	$(CC) $(FLAGS) $(CFLAGS) $(COPTIMISE) $(CPPFLAGS) -fPIC -c -o $@ $<
+	$(CC) $(FLAGS) $(COPTIMISE) -fPIC -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
 
 bin/libkeccak.so.$(LIB_VERSION): $(foreach O,$(LIB_OBJ),obj/libkeccak/$(O).o)
 	@mkdir -p bin
-	$(CC) $(FLAGS) $(LDFLAGS) $(LDOPTIMISE) -shared -Wl,-soname,libkeccak.so.$(LIB_MAJOR) -o $@ $^
+	$(CC) $(FLAGS) $(LDOPTIMISE) -shared -Wl,-soname,libkeccak.so.$(LIB_MAJOR) -o $@ $^ $(LDFLAGS)
 
 bin/libkeccak.so.$(LIB_MAJOR):
 	@mkdir -p bin
@@ -103,22 +103,22 @@ bin/libkeccak.a: $(foreach O,$(LIB_OBJ),obj/libkeccak/$(O).o)
 test: bin/test
 
 bin/test: obj/test.o bin/libkeccak.so bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak.so.$(LIB_VERSION)
-	$(CC) $(FLAGS) $(LDFLAGS) -Lbin -lkeccak -o $@ $<
+	$(CC) $(FLAGS) -Lbin -lkeccak -o $@ $< $(LDFLAGS)
 
 obj/test.o: src/test.c src/libkeccak/*.h src/libkeccak.h
 	@mkdir -p obj
-	$(CC) $(FLAGS) $(CFLAGS) $(CPPFLAGS) -Isrc -O3 -c -o $@ $<
+	$(CC) $(FLAGS) -Isrc -O3 -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
 
 
 .PHONY: benchmark
 benchmark: bin/benchmark
 
 bin/benchmark: obj/benchmark.o bin/libkeccak.so bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak.so.$(LIB_VERSION)
-	$(CC) $(FLAGS) $(LDFLAGS) -Lbin -lkeccak -o $@ $<
+	$(CC) $(FLAGS) -Lbin -lkeccak -o $@ $< $(LDFLAGS)
 
 obj/benchmark.o: src/benchmark.c src/libkeccak/*.h src/libkeccak.h
 	@mkdir -p obj
-	$(CC) $(FLAGS) $(CFLAGS) $(CPPFLAGS) -Isrc -O3 -c -o $@ $<
+	$(CC) $(FLAGS) -Isrc -O3 -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
 
 
 
