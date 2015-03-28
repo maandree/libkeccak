@@ -103,7 +103,7 @@ bin/libkeccak.a: $(foreach O,$(LIB_OBJ),obj/libkeccak/$(O).o)
 test: bin/test
 
 bin/test: obj/test.o bin/libkeccak.so bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak.so.$(LIB_VERSION)
-	$(CC) $(FLAGS) -Lbin -lkeccak -o $@ $< $(LDFLAGS)
+	$(CC) $(FLAGS) -o $@ $< -Lbin -lkeccak $(LDFLAGS)
 
 obj/test.o: src/test.c src/libkeccak/*.h src/libkeccak.h
 	@mkdir -p obj
@@ -114,7 +114,7 @@ obj/test.o: src/test.c src/libkeccak/*.h src/libkeccak.h
 benchmark: bin/benchmark
 
 bin/benchmark: obj/benchmark.o bin/libkeccak.so bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak.so.$(LIB_VERSION)
-	$(CC) $(FLAGS) -Lbin -lkeccak -o $@ $< $(LDFLAGS)
+	$(CC) $(FLAGS) -o $@ $< -Lbin -lkeccak $(LDFLAGS)
 
 obj/benchmark.o: src/benchmark.c src/libkeccak/*.h src/libkeccak.h
 	@mkdir -p obj
