@@ -57,7 +57,7 @@ LDOPTIMISE =
 FLAGS = -std=gnu99 $(WARN)
 
 
-LIB_OBJ = digest files generalised-spec hex state
+LIB_OBJ = digest files generalised-spec hex state mac/hmac
 
 
 .PHONY: default
@@ -75,7 +75,7 @@ lib: so a
 so: bin/libkeccak.so.$(LIB_VERSION) bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak.so
 
 obj/libkeccak/%.o: src/libkeccak/%.c src/libkeccak.h src/libkeccak/*.h
-	@mkdir -p obj/libkeccak
+	@mkdir -p $$(dirname $@)
 	$(CC) $(FLAGS) $(COPTIMISE) -fPIC -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
 
 bin/libkeccak.so.$(LIB_VERSION): $(foreach O,$(LIB_OBJ),obj/libkeccak/$(O).o)
@@ -155,6 +155,7 @@ install-lib: install-headers install-dynamic-lib install-static-lib
 install-headers:
 	install -dm755 -- "$(DESTDIR)$(INCLUDEDIR)"
 	install -dm755 -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak"
+	install -dm755 -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/mac"
 	install -m644 -- src/libkeccak.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak.h"
 	install -m644 -- src/libkeccak/digest.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/digest.h"
 	install -m644 -- src/libkeccak/files.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/files.h"
@@ -162,6 +163,7 @@ install-headers:
 	install -m644 -- src/libkeccak/hex.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/hex.h"
 	install -m644 -- src/libkeccak/spec.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/spec.h"
 	install -m644 -- src/libkeccak/state.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/state.h"
+	install -m644 -- src/libkeccak/mac/hmac.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/mac/hmac.h"
 
 .PHONY: install-dynamic-lib
 install-dynamic-lib: bin/libkeccak.so.$(LIB_VERSION)
@@ -199,6 +201,8 @@ uninstall:
 	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/hex.h"
 	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/spec.h"
 	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/state.h"
+	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/mac/hmac.h"
+	-rmdir -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/mac"
 	-rmdir -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak"
 	-rm -- "$(DESTDIR)$(LIBDIR)/libkeccak.so.$(LIB_VERSION)"
 	-rm -- "$(DESTDIR)$(LIBDIR)/libkeccak.so.$(LIB_MAJOR)"

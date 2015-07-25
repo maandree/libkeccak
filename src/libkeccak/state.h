@@ -30,7 +30,7 @@
 
 
 /**
- * Satastructure that describes the state of a hashing process
+ * Datastructure that describes the state of a hashing process
  * 
  * The `char`-size of the output hashsum is calculated by `(.n + 7) / 8`
  */
@@ -114,11 +114,10 @@ int libkeccak_state_initialise(libkeccak_state_t* restrict state, const libkecca
 /**
  * Reset a state according to hashing specifications
  * 
- * @param   state  The state that should be reset
- * @return         Zero on success, -1 on error
+ * @param  state  The state that should be reset
  */
-__attribute__((nonnull, nothrow, unused))
-static inline void libkeccak_state_reset(libkeccak_state_t* restrict state)
+static inline __attribute__((nonnull, nothrow, unused))
+void libkeccak_state_reset(libkeccak_state_t* restrict state)
 {
   state->mptr = 0;
   __builtin_memset(state->S, 0, sizeof(state->S));
@@ -184,8 +183,8 @@ void libkeccak_state_destroy(volatile libkeccak_state_t* restrict state)
 /**
  * Wrapper for `libkeccak_state_initialise` that also allocates the states
  * 
- * @param   spec   The specifications for the state
- * @return         The state, `NULL` on error
+ * @param   spec  The specifications for the state
+ * @return        The state, `NULL` on error
  */
 static inline __attribute__((nonnull, unused, warn_unused_result))
 libkeccak_state_t* libkeccak_state_create(const libkeccak_spec_t* restrict spec)
@@ -241,8 +240,8 @@ int libkeccak_state_copy(libkeccak_state_t* restrict dest, const libkeccak_state
 /**
  * A wrapper for `libkeccak_state_copy` that also allocates the duplicate
  * 
- * @param   src   The state to duplicate
- * @return        The duplicate, `NULL` on error
+ * @param   src  The state to duplicate
+ * @return       The duplicate, `NULL` on error
  */
 static inline __attribute__((nonnull, unused, warn_unused_result))
 libkeccak_state_t* libkeccak_state_duplicate(const libkeccak_state_t* restrict src)
