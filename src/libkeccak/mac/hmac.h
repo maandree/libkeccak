@@ -66,12 +66,12 @@ typedef struct libkeccak_hmac_state
   
   /**
    * Buffer used to temporarily store bit shift message if
-   * `key_length` is not zero modulus 8
+   * `.key_length` is not zero modulus 8
    */
   char* restrict buffer;
   
   /**
-   * The allocation size of `buffer`
+   * The allocation size of `.buffer`
    */
   size_t buffer_size;
   
@@ -341,7 +341,7 @@ size_t libkeccak_hmac_unmarshal_skip(const char* restrict data)
  * @param   msglen  The length of the partial message, in bytes
  * @return          Zero on success, -1 on error
  */
-__attribute__((nonnull))
+__attribute__((nonnull(1)))
 int libkeccak_hmac_fast_update(libkeccak_hmac_state_t* restrict state, const char* restrict msg, size_t msglen);
 
 
@@ -354,12 +354,46 @@ int libkeccak_hmac_fast_update(libkeccak_hmac_state_t* restrict state, const cha
  * @param   msglen  The length of the partial message, in bytes
  * @return          Zero on success, -1 on error
  */
-__attribute__((nonnull))
+__attribute__((nonnull(1)))
 int libkeccak_hmac_update(libkeccak_hmac_state_t* restrict state, const char* restrict msg, size_t msglen);
 
 
-/* TODO libkeccak_hmac_fast_digest(); */
-/* TODO libkeccak_hmac_digest(); */
+/**
+ * Absorb the last part of the message and fetch the hash
+ * without wiping sensitive data when possible
+ * 
+ * You may use `&(state->sponge)` for continued squeezing
+ * 
+ * @param   state    The hashing state
+ * @param   msg      The rest of the message, may be `NULL`, may be modified
+ * @param   msglen   The length of the partial message
+ * @param   bits     The number of bits at the end of the message not covered by `msglen`
+ * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
+ * @param   hashsum  Output parameter for the hashsum, may be `NULL`
+ * @return           Zero on success, -1 on error
+ */
+__attribute__((nonnull(1)))
+int libkeccak_hmac_fast_digest(libkeccak_hmac_state_t* restrict state, const char* restrict msg, size_t msglen,
+			       size_t bits, const char* restrict suffix, char* restrict hashsum);
+
+
+/**
+ * Absorb the last part of the message and fetch the hash
+ * and wipe sensitive data when possible
+ * 
+ * You may use `&(state->sponge)` for continued squeezing
+ * 
+ * @param   state    The hashing state
+ * @param   msg      The rest of the message, may be `NULL`, may be modified
+ * @param   msglen   The length of the partial message
+ * @param   bits     The number of bits at the end of the message not covered by `msglen`
+ * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
+ * @param   hashsum  Output parameter for the hashsum, may be `NULL`
+ * @return           Zero on success, -1 on error
+ */
+__attribute__((nonnull(1)))
+int libkeccak_hmac_digest(libkeccak_hmac_state_t* restrict state, const char* restrict msg, size_t msglen,
+			  size_t bits, const char* restrict suffix, char* restrict hashsum);
 
 
 #endif

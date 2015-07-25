@@ -34,6 +34,14 @@
 
 
 
+static void* (*volatile my_explicit_memset)(void*, int, size_t) = memset;
+static __attribute__((optimize("-O0")))
+void my_explicit_bzero(void* ptr, size_t size)
+{
+  (*my_explicit_memset)(ptr, 0, size);
+}
+
+
 /**
  * Change to HMAC-hashing key on the state
  * 
@@ -185,7 +193,6 @@ size_t libkeccak_hmac_unmarshal(libkeccak_hmac_state_t* restrict state, const ch
  * @param   msglen  The length of the partial message, in bytes
  * @return          Zero on success, -1 on error
  */
-__attribute__((nonnull))
 int libkeccak_hmac_fast_update(libkeccak_hmac_state_t* restrict state, const char* restrict msg, size_t msglen)
 {
   char* old;
@@ -200,6 +207,9 @@ int libkeccak_hmac_fast_update(libkeccak_hmac_state_t* restrict state, const cha
 	state->leftover = state->key_ipad[(state->key_length >> 3)];
       state->key_ipad = NULL;
     }
+  
+  if ((msg == NULL) || (msglen == 0))
+    return 0;
   
   if (!(state->key_length & 7))
     return libkeccak_fast_update(&(state->sponge), msg, msglen);
@@ -231,7 +241,6 @@ int libkeccak_hmac_fast_update(libkeccak_hmac_state_t* restrict state, const cha
  * @param   msglen  The length of the partial message, in bytes
  * @return          Zero on success, -1 on error
  */
-__attribute__((nonnull))
 int libkeccak_hmac_update(libkeccak_hmac_state_t* restrict state, const char* restrict msg, size_t msglen)
 {
   size_t i;
@@ -245,6 +254,9 @@ int libkeccak_hmac_update(libkeccak_hmac_state_t* restrict state, const char* re
 	state->leftover = state->key_ipad[(state->key_length >> 3)];
       state->key_ipad = NULL;
     }
+  
+  if ((msg == NULL) || (msglen == 0))
+    return 0;
   
   if (!(state->key_length & 7))
     return libkeccak_update(&(state->sponge), msg, msglen);
@@ -266,8 +278,173 @@ int libkeccak_hmac_update(libkeccak_hmac_state_t* restrict state, const char* re
   
   r = libkeccak_update(&(state->sponge), state->buffer, msglen);
   saved_errno = errno;
-  __builtin_memset(state->buffer, 0, msglen);
+  my_explicit_bzero(state->buffer, msglen);
   errno = saved_errno;
   return r;
+}
+
+
+/**
+ * Absorb the last part of the message and fetch the hash
+ * without wiping sensitive data when possible
+ * 
+ * You may use `&(state->sponge)` for continued squeezing
+ * 
+ * @param   state    The hashing state
+ * @param   msg      The rest of the message, may be `NULL`, may be modified
+ * @param   msglen   The length of the partial message
+ * @param   bits     The number of bits at the end of the message not covered by `msglen`
+ * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
+ * @param   hashsum  Output parameter for the hashsum, may be `NULL`
+ * @return           Zero on success, -1 on error
+ */
+int libkeccak_hmac_fast_digest(libkeccak_hmac_state_t* restrict state, const char* restrict msg, size_t msglen,
+			       size_t bits, const char* restrict suffix, char* restrict hashsum)
+{
+  size_t hashsize = state->sponge.n >> 3;
+  char* tmp = malloc(((state->sponge.n + 7) >> 3) * sizeof(char));
+  char leftover[2];
+  size_t newlen;
+  int saved_errno;
+  
+  if (tmp == NULL)
+    return -1;
+  
+  if (!(state->key_length & 7))
+    {
+      if (libkeccak_fast_digest(&(state->sponge), msg, msglen, bits, suffix, tmp) < 0)
+	goto fail;
+      goto stage_2;
+    }
+  
+  if (libkeccak_hmac_fast_update(state, msg, msglen) < 0)
+    goto fail;
+  leftover[0] = state->leftover;
+  if (bits)
+    {
+      leftover[0] |= msg[msglen] >> (state->key_length & 7);
+      leftover[1] = ((unsigned char)(msg[msglen])) << (8 - (state->key_length & 7));
+    }
+  newlen = (state->key_length & 7) + bits;
+  if (libkeccak_fast_digest(&(state->sponge), leftover, newlen >> 3, newlen & 7, suffix, tmp) < 0)
+    goto fail;
+  
+ stage_2:
+  
+  bits = state->sponge.n & 7;
+  state->key_ipad = state->key_opad;
+  if (libkeccak_hmac_fast_update(state, NULL, 0) < 0)
+    goto fail;
+  
+  if (!(state->key_length & 7))
+    {
+      if (libkeccak_fast_digest(&(state->sponge), tmp, hashsize, bits, suffix, hashsum) < 0)
+	goto fail;
+      goto stage_3;
+    }
+  
+  if (libkeccak_hmac_fast_update(state, tmp, hashsize) < 0)
+    goto fail;
+  leftover[0] = state->leftover;
+  if (bits)
+    {
+      leftover[0] |= tmp[hashsize] >> (state->key_length & 7);
+      leftover[1] = ((unsigned char)(tmp[hashsize])) << (8 - (state->key_length & 7));
+    }
+  newlen = (state->key_length & 7) + bits;
+  if (libkeccak_fast_digest(&(state->sponge), leftover, newlen >> 3, newlen & 7, suffix, tmp) < 0)
+    goto fail;
+  
+ stage_3:
+  
+  free(tmp);
+  return 0;
+ fail:
+  saved_errno = errno;
+  free(tmp);
+  return errno = saved_errno, -1;
+}
+
+
+/**
+ * Absorb the last part of the message and fetch the hash
+ * and wipe sensitive data when possible
+ * 
+ * You may use `&(state->sponge)` for continued squeezing
+ * 
+ * @param   state    The hashing state
+ * @param   msg      The rest of the message, may be `NULL`, may be modified
+ * @param   msglen   The length of the partial message
+ * @param   bits     The number of bits at the end of the message not covered by `msglen`
+ * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
+ * @param   hashsum  Output parameter for the hashsum, may be `NULL`
+ * @return           Zero on success, -1 on error
+ */
+int libkeccak_hmac_digest(libkeccak_hmac_state_t* restrict state, const char* restrict msg, size_t msglen,
+			  size_t bits, const char* restrict suffix, char* restrict hashsum)
+{
+  size_t hashsize = state->sponge.n >> 3;
+  char* tmp = malloc(((state->sponge.n + 7) >> 3) * sizeof(char));
+  char leftover[2];
+  size_t newlen;
+  int saved_errno;
+  
+  if (tmp == NULL)
+    return -1;
+  
+  if (!(state->key_length & 7))
+    {
+      if (libkeccak_digest(&(state->sponge), msg, msglen, bits, suffix, tmp) < 0)
+	goto fail;
+      goto stage_2;
+    }
+  
+  if (libkeccak_hmac_update(state, msg, msglen) < 0)
+    goto fail;
+  leftover[0] = state->leftover;
+  if (bits)
+    {
+      leftover[0] |= msg[msglen] >> (state->key_length & 7);
+      leftover[1] = ((unsigned char)(msg[msglen])) << (8 - (state->key_length & 7));
+    }
+  newlen = (state->key_length & 7) + bits;
+  if (libkeccak_digest(&(state->sponge), leftover, newlen >> 3, newlen & 7, suffix, tmp) < 0)
+    goto fail;
+  
+ stage_2:
+  
+  bits = state->sponge.n & 7;
+  state->key_ipad = state->key_opad;
+  if (libkeccak_hmac_update(state, NULL, 0) < 0)
+    goto fail;
+  
+  if (!(state->key_length & 7))
+    {
+      if (libkeccak_digest(&(state->sponge), tmp, hashsize, bits, suffix, hashsum) < 0)
+	goto fail;
+      goto stage_3;
+    }
+  
+  if (libkeccak_hmac_update(state, tmp, hashsize) < 0)
+    goto fail;
+  leftover[0] = state->leftover;
+  if (bits)
+    {
+      leftover[0] |= tmp[hashsize] >> (state->key_length & 7);
+      leftover[1] = ((unsigned char)(tmp[hashsize])) << (8 - (state->key_length & 7));
+    }
+  newlen = (state->key_length & 7) + bits;
+  if (libkeccak_digest(&(state->sponge), leftover, newlen >> 3, newlen & 7, suffix, tmp) < 0)
+    goto fail;
+  
+ stage_3:
+  my_explicit_bzero(tmp, ((state->sponge.n + 7) >> 3) * sizeof(char));
+  free(tmp);
+  return 0;
+ fail:
+  saved_errno = errno;
+  my_explicit_bzero(tmp, ((state->sponge.n + 7) >> 3) * sizeof(char));
+  free(tmp);
+  return errno = saved_errno, -1;
 }
 
