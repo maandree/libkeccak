@@ -19,6 +19,8 @@
 #include "generalised-spec.h"
 
 
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #define have(v)      (spec->v != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC)
 #define copy(v)      (v = spec->v)
 #define deft(v, dv)  (have_##v ? v : (dv))
@@ -37,9 +39,6 @@
 int libkeccak_degeneralise_spec(libkeccak_generalised_spec_t* restrict spec,
 				libkeccak_spec_t* restrict output_spec)
 {
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-  
   long state_size, word_size, capacity, bitrate, output;
   const int have_state_size = have(state_size);
   const int have_word_size  = have(word_size);
@@ -128,12 +127,12 @@ int libkeccak_degeneralise_spec(libkeccak_generalised_spec_t* restrict spec,
   spec->word_size  = state_size / 25;
   
   return 0;
-  
-# pragma GCC diagnostic pop
 }
 
 
 #undef deft
 #undef copy
 #undef have
+
+# pragma GCC diagnostic pop
 
