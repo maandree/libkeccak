@@ -42,7 +42,7 @@ int libkeccak_state_initialise(libkeccak_state_t* restrict state, const libkecca
   if (x & 0x0CL)  state->l |= 2,  x >>= 2;
   if (x & 0x02L)  state->l |= 1;
   state->nr = 12 + (state->l << 1);
-  state->wmod = (state->w == 64) ? ~0LL : (int_fast64_t)((1ULL << state->w) - 1);
+  state->wmod = (state->w == 64) ? ~0LL : (int64_t)((1ULL << state->w) - 1);
   for (x = 0; x < 25; x++)
     state->S[x] = 0;
   state->mptr = 0;
@@ -72,7 +72,7 @@ void libkeccak_state_wipe_message(volatile libkeccak_state_t* restrict state)
  */
 void libkeccak_state_wipe_sponge(volatile libkeccak_state_t* restrict state)
 {
-  volatile int_fast64_t* restrict S = state->S;
+  volatile int64_t* restrict S = state->S;
   size_t i;
   for (i = 0; i < 25; i++)
     S[i] = 0;
@@ -123,7 +123,7 @@ size_t libkeccak_state_marshal(const libkeccak_state_t* restrict state, char* re
   set(long, n);
   set(long, b);
   set(long, w);
-  set(int_fast64_t, wmod);
+  set(int64_t, wmod);
   set(long, l);
   set(long, nr);
   memcpy(data, state->S, sizeof(state->S));
@@ -152,7 +152,7 @@ size_t libkeccak_state_unmarshal(libkeccak_state_t* restrict state, const char* 
   get(long, n);
   get(long, b);
   get(long, w);
-  get(int_fast64_t, wmod);
+  get(int64_t, wmod);
   get(long, l);
   get(long, nr);
   memcpy(state->S, data, sizeof(state->S));
@@ -178,7 +178,7 @@ size_t libkeccak_state_unmarshal(libkeccak_state_t* restrict state, const char* 
  */
 size_t libkeccak_state_unmarshal_skip(const char* restrict data)
 {
-  data += (7 * sizeof(long) + 26 * sizeof(int_fast64_t)) / sizeof(char);
+  data += (7 * sizeof(long) + 26 * sizeof(int64_t)) / sizeof(char);
   return sizeof(libkeccak_state_t) - sizeof(char*) + *(const size_t*)data * sizeof(char);
 }
 

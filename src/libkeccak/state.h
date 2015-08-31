@@ -39,7 +39,7 @@ typedef struct libkeccak_state
   /**
    * The lanes (state/sponge)
    */
-  int_fast64_t S[25];
+  int64_t S[25];
   
   /**
    * The bitrate
@@ -69,7 +69,7 @@ typedef struct libkeccak_state
   /**
    * The word mask
    */
-  int_fast64_t wmod;
+  int64_t wmod;
   
   /**
    * ℓ, the binary logarithm of the word size
