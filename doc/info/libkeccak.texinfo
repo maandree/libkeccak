@@ -83,7 +83,55 @@ with support for bit-oriented data.
 @node Overview
 @chapter Overview
 
-Lorem ipsum
+libkeccak is a free software bit-oriented implementation
+of the cryptographic hash function Keccak and its subsets
+SHA-3 (Secure Hash Algorithm@tie{}3), RawSHAKE and SHAKE.
+
+Being bit-oriented means that it supports messages of length
+consisting of a non-whole number of bytes.
+
+Keccak is a generic and tunable cryptographic hash function
+that can be used for all customary tasks that required a
+cryptographic hash function:
+@itemize @bullet{}
+@item
+Password verification@footnote{Using additional squeezes, but not using iterated hashing.}
+@item
+Proof-of-work
+@item
+File and data identification
+@item
+Data integrity
+@item
+Pseudorandom generation@footnote{Although not too random, since entropi is not utilised.}
+@item
+Key derivation
+@end itemize
+
+libkeccak support secure erasure of sensitive data,
+marshalling of hashing state, and indefinite output length.
+It also has builting functions for hashing files and
+wrapping the hash functions with HMAC@footnote{Although
+doing so is unnecessary because the key can securely be
+prepended to the message when using Keccak to produce
+a message authentication code.}. This library implements
+the Keccak algorithm using a lanewise implementation.
+libkeccak must compelling feature however is that it is
+licensed under the strongest free software license:
+GNU Affero General Public License version@tie{}3
+(see @ref{GNU Affero General Public License},) which
+gives the user the four essential freedoms:
+@itemize @bullet{}
+@item
+The freedom to run the program as you wish, for any purpose (freedom 0).
+@item
+The freedom to study how the program works, and change it so it does your computing as you wish (freedom 1). Access to the source code is a precondition for this.
+@item
+The freedom to redistribute copies so you can help your neighbor (freedom 2).
+@item
+The freedom to distribute copies of your modified versions to others (freedom 3). By doing this you can give the whole community a chance to benefit from your changes. Access to the source code is a precondition for this.
+@end itemize
+
 
 
 
