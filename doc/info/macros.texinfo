@@ -1,0 +1,10 @@
+@iftex
+@macro e{a}
+(@email{\a\})
+@end macro
+@end iftex
+@ifnottex
+@macro e{a}
+@email{\a\}
+@end macro
+@end ifnottex

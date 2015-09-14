@@ -1,0 +1,112 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@documentencoding UTF-8
+@include macros.texinfo
+@copying
+@c --------------------------------------------------------------------------------
+Copyright @copyright{} 2015  Mattias Andrée @e{maandree@@member.fsf.org}
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version@tie{}1.3
+or any later version published by the Free Software Foundation; with the
+Invariant Sections being the ``GNU Affero General Public License'', the
+``GNU Free Documentation License'', with no Front-Cover Texts, and with
+no Back-Cover Texts. A copy of the license is included in the section
+entitled ``GNU Free Documentation License''.
+@end quotation
+@c --------------------------------------------------------------------------------
+@end copying
+
+
+@setfilename libkeccak.info
+@settitle libkeccak -- Library for the Keccak-family hash functions
+@documentlanguage en_GB
+@finalout
+@frenchspacing on
+@afourpaper
+
+@c @paragraphindent asis
+@c @firstparagraphindent none
+@c @exampleindent asis
+
+@dircategory Libraries
+@direntry
+* libkeccak: (libkeccak).       Library for the Keccak-family hash functions.
+@end direntry
+
+@documentdescription
+Developer reference manual for libkeccak, a library
+for hashing with Keccak, SHA-3 RawSHAKE and SHAKE,
+with support for bit-oriented data.
+@end documentdescription
+@c %**end of header
+
+
+
+@ifnottex
+@node Top
+@top libkeccak -- Library for the Keccak-family hash functions
+@insertcopying
+@end ifnottex
+
+@titlepage
+@title libkeccak
+@subtitle Library for the Keccak-family hash functions
+
+@author by Mattias Andrée (maandree)
+
+@page
+@center `Kecak! Kecak! Kecak! Kecak! Kecak! Kecak! Kecak! Kecak! …'
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@contents
+
+
+
+@menu
+* Overview::                                  Brief overview of libkeccak.
+
+* GNU Affero General Public License::         Copying and sharing libkeccak.
+* GNU Free Documentation License::            Copying and sharing this manual.
+
+* Concept index::                             Index of concepts.
+* Data type index::                           Index of data types.
+* Function index::                            Index of functions.
+@end menu
+@c TODO @detailmenu (`C-c C-u m`)
+
+
+
+@node Overview
+@chapter Overview
+
+Lorem ipsum
+
+
+
+@node GNU Affero General Public License
+@appendix GNU Affero General Public License
+@include agpl-3.0.texinfo
+
+@node GNU Free Documentation License
+@appendix GNU Free Documentation License
+@include fdl-1.3.texinfo
+
+@node Concept index
+@unnumbered Concept index
+@printindex cp
+
+@node Data type index
+@unnumbered Data type index
+@printindex tp
+
+@node Function index
+@unnumbered Function index
+@printindex fn
+
+
+@bye
+

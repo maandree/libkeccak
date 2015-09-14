@@ -61,10 +61,10 @@ LIB_OBJ = digest files generalised-spec hex state mac/hmac
 
 
 .PHONY: default
-default: lib test
+default: lib test info
 
 .PHONY: all
-all: lib test benchmark
+all: lib test benchmark doc
 
 
 .PHONY: lib
@@ -121,6 +121,46 @@ obj/benchmark.o: src/benchmark.c src/libkeccak/*.h src/libkeccak.h
 	$(CC) $(FLAGS) -Isrc -O3 -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
 
 
+.PHONY: doc
+doc: info pdf ps dvi
+
+.PHONY: info
+info: bin/libkeccak.info
+
+.PHONY: pdf
+pdf: bin/libkeccak.pdf
+
+.PHONY: ps
+ps: bin/libkeccak.ps
+
+.PHONY: dvi
+dvi: bin/libkeccak.dvi
+
+
+bin/%.info: doc/info/%.texinfo doc/info/*.texinfo
+	@mkdir -p bin
+	$(MAKEINFO) $(TEXIFLAGS) $<
+	mv $*.info bin
+
+bin/%.pdf: doc/info/%.texinfo doc/info/*.texinfo
+	@! test -d obj/pdf || rm -rf obj/pdf
+	@mkdir -p obj/pdf bin
+	cd obj/pdf && texi2pdf $(TEXIFLAGS) ../../$< < /dev/null
+	mv obj/pdf/$*.pdf $@
+
+bin/%.dvi: doc/info/%.texinfo doc/info/*.texinfo
+	@! test -d obj/dvi || rm -rf obj/dvi
+	@mkdir -p obj/dvi bin
+	cd obj/dvi && $(TEXI2DVI) $(TEXIFLAGS) ../../$< < /dev/null
+	mv obj/dvi/$*.dvi $@
+
+bin/%.ps: doc/info/%.texinfo doc/info/*.texinfo
+	@! test -d obj/ps || rm -rf obj/ps
+	@mkdir -p obj/ps bin
+	cd obj/ps && texi2pdf $(TEXIFLAGS) --ps ../../$< < /dev/null
+	mv obj/ps/$*.ps $@
+
+
 
 .PHONY: check
 check: bin/test bin/libkeccak.so bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak.so.$(LIB_VERSION)
@@ -140,10 +180,10 @@ run-benchmark: bin/benchmark bin/libkeccak.so bin/libkeccak.so.$(LIB_MAJOR) bin/
 
 
 .PHONY: install
-install: install-base
+install: install-base install-info
 
 .PHONY: install-all
-install-all: install-base
+install-all: install-base install-doc
 
 .PHONY: install-base
 install-base: install-lib install-copyright
@@ -190,6 +230,28 @@ install-license:
 	install -dm755 -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
 	install -m644 LICENSE -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
 
+.PHONY: install-doc
+install-doc: install-info install-pdf install-ps install-dvi
+
+.PHONY: install-info
+install-info: bin/libkeccak.info
+	install -dm755 -- "$(DESTDIR)$(INFODIR)"
+	install -m644 $< -- "$(DESTDIR)$(INFODIR)/libkeccak.info"
+
+.PHONY: install-pdf
+install-pdf: bin/libkeccak.pdf
+	install -dm755 -- "$(DESTDIR)$(DOCDIR)"
+	install -m644 $< -- "$(DESTDIR)$(DOCDIR)/libkeccak.pdf"
+
+.PHONY: install-ps
+install-ps: bin/libkeccak.ps
+	install -dm755 -- "$(DESTDIR)$(DOCDIR)"
+	install -m644 $< -- "$(DESTDIR)$(DOCDIR)/libkeccak.ps"
+
+.PHONY: install-dvi
+install-dvi: bin/libkeccak.dvi
+	install -dm755 -- "$(DESTDIR)$(DOCDIR)"
+	install -m644 $< -- "$(DESTDIR)$(DOCDIR)/libkeccak.dvi"
 
 
 .PHONY: uninstall
@@ -208,6 +270,10 @@ uninstall:
 	-rm -- "$(DESTDIR)$(LIBDIR)/libkeccak.so.$(LIB_MAJOR)"
 	-rm -- "$(DESTDIR)$(LIBDIR)/libkeccak.so"
 	-rm -- "$(DESTDIR)$(LIBDIR)/libkeccak.a"
+	-rm -- "$(DESTDIR)$(INFODIR)/libkeccak.info"
+	-rm -- "$(DESTDIR)$(DOCDIR)/libkeccak.pdf"
+	-rm -- "$(DESTDIR)$(DOCDIR)/libkeccak.ps"
+	-rm -- "$(DESTDIR)$(DOCDIR)/libkeccak.dvi"
 	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/COPYING"
 	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
 	-rmdir -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
