@@ -186,7 +186,7 @@ void libkeccak_state_destroy(volatile libkeccak_state_t* restrict state)
  * @param   spec  The specifications for the state
  * @return        The state, `NULL` on error
  */
-static inline __attribute__((nonnull, unused, warn_unused_result))
+static inline __attribute__((nonnull, unused, warn_unused_result, malloc))
 libkeccak_state_t* libkeccak_state_create(const libkeccak_spec_t* restrict spec)
 {
   libkeccak_state_t* restrict state = malloc(sizeof(libkeccak_state_t));
@@ -243,7 +243,7 @@ int libkeccak_state_copy(libkeccak_state_t* restrict dest, const libkeccak_state
  * @param   src  The state to duplicate
  * @return       The duplicate, `NULL` on error
  */
-static inline __attribute__((nonnull, unused, warn_unused_result))
+static inline __attribute__((nonnull, unused, warn_unused_result, malloc))
 libkeccak_state_t* libkeccak_state_duplicate(const libkeccak_state_t* restrict src)
 {
   libkeccak_state_t* restrict dest = malloc(sizeof(libkeccak_state_t));

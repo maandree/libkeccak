@@ -131,7 +131,7 @@ int libkeccak_hmac_initialise(libkeccak_hmac_state_t* restrict state, const libk
  * @param   key_length  The length of key, in bits
  * @return              The state, `NULL` on error
  */
-static inline __attribute__((nonnull, unused, warn_unused_result))
+static inline __attribute__((nonnull, unused, warn_unused_result, malloc))
 libkeccak_hmac_state_t* libkeccak_hmac_create(const libkeccak_spec_t* restrict spec,
 					      const char* restrict key, size_t key_length)
 {
@@ -257,7 +257,7 @@ int libkeccak_hmac_copy(libkeccak_hmac_state_t* restrict dest, const libkeccak_h
  * @param   src  The state to duplicate
  * @return       The duplicate, `NULL` on error
  */
-static inline __attribute__((nonnull, unused, warn_unused_result))
+static inline __attribute__((nonnull, unused, warn_unused_result, malloc))
 libkeccak_hmac_state_t* libkeccak_hmac_duplicate(const libkeccak_hmac_state_t* restrict src)
 {
   libkeccak_hmac_state_t* restrict dest = malloc(sizeof(libkeccak_hmac_state_t));
