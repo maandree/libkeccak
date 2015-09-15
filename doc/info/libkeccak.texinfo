@@ -68,6 +68,7 @@ with support for bit-oriented data.
 
 @menu
 * Overview::                                  Brief overview of libkeccak.
+* Linking::                                   How to use libkeccak in your software.
 
 * GNU Affero General Public License::         Copying and sharing libkeccak.
 * GNU Free Documentation License::            Copying and sharing this manual.
@@ -125,13 +126,32 @@ gives the user the four essential freedoms:
 @item
 The freedom to run the program as you wish, for any purpose (freedom 0).
 @item
-The freedom to study how the program works, and change it so it does your computing as you wish (freedom 1). Access to the source code is a precondition for this.
+The freedom to study how the program works, and change it so it does your computing as you wish (freedom 1).
 @item
 The freedom to redistribute copies so you can help your neighbor (freedom 2).
 @item
-The freedom to distribute copies of your modified versions to others (freedom 3). By doing this you can give the whole community a chance to benefit from your changes. Access to the source code is a precondition for this.
+The freedom to distribute copies of your modified versions to others (freedom 3).
 @end itemize
 
+
+
+@node Linking
+@chapter Linking
+
+libkeccak's API is C standard library independent. This means
+that libkeccak does not need to be compiled with the same
+C standard library as software using it. However, the header
+files contain @code{__attributes__}:s for GCC, if these are
+incompatible with your compiler, your should temporarily define
+a macro named @code{__attributes__} to remove all attributes.
+
+Because of libkeccak's simplicity it does not have a pkg-config
+file. Instead, you only need to specify the flag @code{-lkeccak}
+when linking your binaries. No flags are required during compilation
+(of object files.)
+
+To make libkeccak's API available, include the header file
+@file{<libkeccak.h>} in your source files.
 
 
 
