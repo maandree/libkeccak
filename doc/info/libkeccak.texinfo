@@ -69,6 +69,7 @@ with support for bit-oriented data.
 @menu
 * Overview::                                  Brief overview of libkeccak.
 * Linking::                                   How to use libkeccak in your software.
+* Selecting hash function::                   Selecting and tuning the function.
 
 * GNU Affero General Public License::         Copying and sharing libkeccak.
 * GNU Free Documentation License::            Copying and sharing this manual.
@@ -133,6 +134,9 @@ The freedom to redistribute copies so you can help your neighbor (freedom 2).
 The freedom to distribute copies of your modified versions to others (freedom 3).
 @end itemize
 
+This implementation is limited to state sizes up to,
+and including, 1600 bits.
+
 
 
 @node Linking
@@ -152,6 +156,152 @@ when linking your binaries. No flags are required during compilation
 
 To make libkeccak's API available, include the header file
 @file{<libkeccak.h>} in your source files.
+
+
+
+@node Selecting hash function
+@chapter Selecting hash function
+
+Keccak-based hash functions have three parameters:
+@itemize @bullet{}
+@item
+the bitrate,
+@item
+the capacity, and
+@item
+the output size.
+@end itemize
+@noindent
+Selecting these is the first step when using the library.
+
+The structure @code{libkeccak_spec_t} (@code{struct libkeccak_spec}),
+is to specify these parameters. For the less tunable functions
+SHA-3, RawSHAKE and SHAKE, these values can be set with the functions
+@table @code
+@item libkeccak_spec_sha3
+Sets the parameters for SHA-3. It has two parameters:
+@itemize @bullet{}
+@item
+Pointer to the @code{libkeccak_spec_t} where the settings shall be stored.
+@item
+The output size, that is the value appended to the name.
+@end itemize
+
+@item libkeccak_spec_rawshake
+Sets the parameters for RawSHAKE (or SHAKE). It has three parameters:
+@itemize @bullet{}
+@item
+Pointer to the @code{libkeccak_spec_t} where the settings shall be stored.
+@item
+The semicapacity, that is the value appended to the name.
+@item
+The output size.
+@end itemize
+
+@item libkeccak_spec_shake
+Identical to @code{libkeccak_spec_rawshake}. Intended for SHAKE
+rather than RawSHAKE.
+@end table
+
+For Keccak, these values shall be selected individually by hand.
+Once the values have been selected, they can be checked for errors
+with the function @code{libkeccak_spec_check}. It takes a pointer
+to the specifications as its only parameters and returns zero if
+there are no errors. If however there are errors, one of the values,
+with somewhat self-explanatory names,@footnote{Their meaning is
+documented in the header file @file{<libkeccak/spec.h>}.} will
+be returned:
+@itemize @bullet{}
+@item
+@code{LIBKECCAK_SPEC_ERROR_BITRATE_NONPOSITIVE}
+@item
+@code{LIBKECCAK_SPEC_ERROR_BITRATE_MOD_8}
+@item
+@code{LIBKECCAK_SPEC_ERROR_CAPACITY_NONPOSITIVE}
+@item
+@code{LIBKECCAK_SPEC_ERROR_CAPACITY_MOD_8}
+@item
+@code{LIBKECCAK_SPEC_ERROR_OUTPUT_NONPOSITIVE}
+@item
+@code{LIBKECCAK_SPEC_ERROR_STATE_TOO_LARGE}
+@item
+@code{LIBKECCAK_SPEC_ERROR_STATE_MOD_25}
+@item
+@code{LIBKECCAK_SPEC_ERROR_WORD_NON_2_POTENT}
+@item
+@code{LIBKECCAK_SPEC_ERROR_WORD_MOD_8}
+@end itemize
+
+@code{libkeccak_spec_t}'s members are:
+@table @code
+@item bitrate
+The bitrate, in bits.
+@item capacity
+The capacity, in bits.
+@item output
+The output size, in bits.
+@end table
+
+It is also possible to select some but not all of the parameters.
+For this, the structure @code{libkeccak_generalised_spec_t}
+(@code{struct libkeccak_generalised_spec}) is used. It extends
+@code{libkeccak_spec_t} with two additional parameters
+@table @code
+@item state_size
+The state size, in bits.
+@item word_size
+The word size, in bits.
+@end table
+
+By feeding a pointer to a @code{libkeccak_generalised_spec_t},
+to the function @code{ibkeccak_generalised_spec_initialise},
+all its members are set to @code{LIBKECCAK_GENERALISED_SPEC_AUTOMATIC},
+a sentinel value that specifies that the parameter shall be
+set automatically, to its default that depends on the other
+parameters.
+
+Once the members of a @code{libkeccak_generalised_spec_t} has
+been set, it can be converted to a @code{libkeccak_spec_t},
+which is neccessary for using the specifications. When doing
+so, automatic values will be given a proper value.
+
+To do this, the function @code{libkeccak_degeneralise_spec}
+is used. It takes two parameters:
+@itemize @bullet{}
+@item
+Input pointer to the @code{libkeccak_generalised_spec_t}.
+@item
+Output pointer to a @code{libkeccak_spec_t}.
+@end itemize
+@noindent
+On success, zero is returned, otherwise one of the values, with
+somewhat self-explanatory names,@footnote{Their meaning is documented
+in the header file @file{<libkeccak/generalised-spec.h>}.} will be
+returned:
+@itemize @bullet{}
+@item
+@code{LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_NONPOSITIVE}
+@item
+@code{LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_TOO_LARGE}
+@item
+@code{LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_MOD_25}
+@item
+@code{LIBKECCAK_GENERALISED_SPEC_ERROR_WORD_NONPOSITIVE}
+@item
+@code{LIBKECCAK_GENERALISED_SPEC_ERROR_WORD_TOO_LARGE}
+@item
+@code{LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_WORD_INCOHERENCY}
+@item
+@code{LIBKECCAK_GENERALISED_SPEC_ERROR_CAPACITY_NONPOSITIVE}
+@item
+@code{LIBKECCAK_GENERALISED_SPEC_ERROR_CAPACITY_MOD_8}
+@item
+@code{LIBKECCAK_GENERALISED_SPEC_ERROR_BITRATE_NONPOSITIVE}
+@item
+@code{LIBKECCAK_GENERALISED_SPEC_ERROR_BITRATE_MOD_8}
+@item
+@code{LIBKECCAK_GENERALISED_SPEC_ERROR_OUTPUT_NONPOSITIVE}
+@end itemize
 
 
 
