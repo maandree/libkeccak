@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <string.h>
 
 
 
@@ -120,7 +121,7 @@ static inline __attribute__((nonnull, nothrow, unused))
 void libkeccak_state_reset(libkeccak_state_t* restrict state)
 {
   state->mptr = 0;
-  __builtin_memset(state->S, 0, sizeof(state->S));
+  memset(state->S, 0, sizeof(state->S));
 }
 
 
