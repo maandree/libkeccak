@@ -219,11 +219,15 @@ void libkeccak_state_fast_free(libkeccak_state_t* restrict state)
 static inline __attribute__((unused, optimize("-O0")))
 void libkeccak_state_free(volatile libkeccak_state_t* restrict state)
 {
+#ifdef __GNUC__
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wcast-qual"
+#endif
   libkeccak_state_destroy(state);
   free((libkeccak_state_t*)state);
+#ifdef __GNUC__
 # pragma GCC diagnostic pop
+#endif
 }
 
 
