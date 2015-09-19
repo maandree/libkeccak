@@ -70,6 +70,7 @@ with support for bit-oriented data.
 * Overview::                                  Brief overview of libkeccak.
 * Linking::                                   How to use libkeccak in your software.
 * Selecting hash function::                   Selecting and tuning the function.
+* State of the hashing::                      The structure used to keep track of the hashing process.
 
 * GNU Affero General Public License::         Copying and sharing libkeccak.
 * GNU Free Documentation License::            Copying and sharing this manual.
@@ -302,6 +303,136 @@ returned:
 @item
 @code{LIBKECCAK_GENERALISED_SPEC_ERROR_OUTPUT_NONPOSITIVE}
 @end itemize
+
+
+
+@node State of the hashing
+@chapter State of the hashing
+
+Hashing of a message is done by feeding segments of the
+message to functions until all of the message has been
+processed, and than the users may repeat the last phase
+any number of times. Because functions are called multiple
+times, the state of the process need to be stored in
+a state structure. The structure used in libkeccak to
+keep track of the state is called @code{libkeccak_state_t}
+(@code{struct libkeccak_state}).
+
+Before you can use the functions for hashing a message,
+you must allocate a state and initialise it.
+To initialise a state, use the function
+@code{libkeccak_state_initialise}. Its first argument
+should be a pointer to the state variable, that is,
+a @code{libkeccak_state_t*}. The second argument should
+be a pointer to the specifications, that is, a
+@code{const libkeccak_spec_t*}, see @ref{Selecting hash function}.
+@code{libkeccak_state_initialise} till return zero
+upon successful completion, and otherwise set
+@code{errno} to describe the error and return @code{-1}.
+
+Once done with a state structure, you should release
+allocated resources that are stored in the structure.
+This can be done either by calling the function
+@code{libkeccak_state_destroy} or by calling the function
+@code{libkeccak_state_fast_destroy}. These two functions
+are almost identical, both takes a pointer to the
+state as its only parameter, and neither return a value.
+However, @code{libkeccak_state_fast_destroy} will only
+release allocations used by the state; @code{libkeccak_state_destroy}
+will also securely release all sensitive information
+in the state, by calling the function @code{libkeccak_state_wipe}:
+the state of the sponge, by calling the function
+@code{libkeccak_state_wipe_sponge}, and the message
+buffer, by calling the function @code{libkeccak_state_wipe_message}.
+@code{libkeccak_state_wipe}, @code{libkeccak_state_wipe_sponge}
+and @code{libkeccak_state_wipe_message} takes a
+pointer to the state as their only parameter, and
+none of them have a return value.
+
+An alternative to destroying a state, you can reset
+it if you want to reuse it to hash another message
+using the same hashing function specifications.
+This is done by calling @code{libkeccak_state_reset}
+instead of @code{libkeccak_state_fast_destroy}.
+It takes a pointer to the state as its only parameter
+and does not return a value.
+
+If you want to use dynamic instead of static allocation
+for the state, instead of calling @code{malloc} and
+@code{free} yourself, libkeccak offers functions that
+does this for you:
+@table @code
+@item libkeccak_state_create
+Identical to @code{libkeccak_state_initialise}, except
+it does have the first parameter, but it has the second
+parameter (the specifications). It returns a pointer
+to the allocate state upon successful completion, and
+returns @code{NULL} on error, in which case, @code{errno}
+is set to describe the error.
+
+@item libkeccak_state_fast_free
+Identical to @code{libkeccak_state_fast_destroy}, except
+it also frees the allocation of the state.
+
+@item libkeccak_state_free
+Identical to @code{libkeccak_state_destroy}, except
+it also frees the allocation of the state.
+@end table
+
+libkeccak also has two functions for copying a state:
+@table @code
+@item libkeccak_state_copy
+Takes an output pointer to a state as its first parameter,
+and a pointer to the state to copy as its second parameter.
+The content of the second parameter will be duplicated into
+the first parameter. The state passed in the first parameter
+must not be initialised, lest you will suffer a memory leak.
+The function returns zero upon successful completion, and
+on error, sets @code{errno} to describe the error and returns
+@code{-1}.
+
+@item libkeccak_state_duplicate
+Identical to @code{libkeccak_state_copy}, except it only
+has one parameter, a pointer to the state to copy, and
+returns a pointer to a state it has allocated and copied
+the state to. On error, @code{errno} is set to describe the
+error and @code{NULL} is returned.
+@end table
+
+The library also offers functions for marshalling a state,
+which can be useful when implementing programs that can
+reexecuted into updated version of itself.
+@table @code
+@item libkeccak_state_marshal_size
+Takes a pointer to a state to marshal as its only parameter,
+and returns the number of bytes required to marshal it.
+
+@item libkeccak_state_marshal
+Takes a pointer to a state to marshal as its first parameter,
+and the buffer, to where the state shall be marshalled, as
+its second parameter. The function will marshal the state
+into the buffer and return the number of bytes written,
+which will be the same as @code{libkeccak_state_marshal_size}
+returns for the state.
+
+@item libkeccak_state_unmarshal
+Takes an output pointer for the unmarshalled state as its
+first parameter, and the buffer where the state is marshalled
+as its second parameter. The function will unmarshal the
+state from the buffer and store it into the pointer passed
+to the first parameter. The function will then return the
+number of read bytes, which will be the same as
+@code{libkeccak_state_marshal_size} and @code{libkeccak_state_marshal}
+returned for the state when it was marshalled, as what they
+will return if called again with the unmarshalled function.
+On error, @code{errno} is set to describe the error and zero
+is returned.
+
+@item libkeccak_state_unmarshal_skip
+Figures out how many bytes the marshalled state uses,
+so that the buffers pointer can be incremented with
+this value to skip pass the marshalled state.
+@end table
 
 
 
