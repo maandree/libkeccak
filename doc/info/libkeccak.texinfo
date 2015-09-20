@@ -72,6 +72,7 @@ with support for bit-oriented data.
 * Selecting hash function::                   Selecting and tuning the function.
 * State of the hashing::                      The structure used to keep track of the hashing process.
 * Hashing messages::                          Functions used to hash a message.
+* Hexadecimal hashes::                        Converting between binary and hexadecimal.
 
 * GNU Affero General Public License::         Copying and sharing libkeccak.
 * GNU Free Documentation License::            Copying and sharing this manual.
@@ -481,7 +482,7 @@ The number of bits at the end of the message that
 are not covered by the third argument. This enables
 messages of non-whole byte length.
 @item
-A @code{NUL}-terminated string of ASCII ones and zeroes,
+A NUL-terminated string of ASCII ones and zeroes,
 describing the additional bits to suffix the message;
 or @code{NULL} if none. This is used to select between
 Keccak, SHA-3, RawSHAKE and SHAKE. Use one of the constants:
@@ -497,7 +498,7 @@ For Keccak.
 @end table
 @item
 Output buffer for the hash, in binary. Should be
-allocated to fit @code{(state.n + 7) / 8} @code{char}:s,
+allocated to fit @code{(state.n + 7) / 8} @w{@code{char}:s},
 where @code{state} is the state variable. Alternatively
 it may be @code{NULL}, in which case the hash is not
 retrieved.
@@ -521,7 +522,46 @@ digests. The number of digests is specified in the second parameter.
 @item libkeccak_squeeze
 Squeeze out another digest. The hash will be stored in the
 second parameter, which should be allocated to fit
-@code{(state.n + 7) / 8} @code{char}:s.
+@code{(state.n + 7) / 8} @w{@code{char}:s}.
+@end table
+
+
+
+@node Hexadecimal hashes
+@chapter Hexadecimal hashes
+
+The functions that return hashes: @code{libkeccak_digest},
+@code{libkeccak_fast_digest} and @code{libkeccak_squeeze},
+store the hashes in binary format. However, it must often
+preferred to have hashes in hexadecimal, so that they are
+human-readable. This library hash two functions for
+converting from binary to hexadecimal, and one function
+for converting from hexadecimal to binary. Neither of
+these functions have a return value.
+@table @code
+@item libkeccak_behex_lower
+@itemx libkeccak_behex_upper
+Convert from binary to hexadecimal. @code{libkeccak_behex_lower}
+converts to lowercase hexadecimal, and @code{libkeccak_behex_upper}
+converts to uppercase hexadecimal. Their first parameter
+is the output buffer for the hexadecimal representation,
+which will be NUL-terminated, it should be allocated to
+fit @code{2 * n + 1} @w{@code{char}:s}, where @code{n} is
+the length of the input hash. The second parameter is
+the input hash, in binary. The third, and final, parameter
+is the length of the input bash.
+
+@item libkeccak_unhex
+Convert from hexadecimal to binary. Both uppercase and
+lowercase, as well as mixed case, is supported as input.
+The first parameter is the output buffer for the binary
+representation, it should be allocated to fit
+@code{strlen(hashsum) / 2} @w{@code{char}:s}, where
+@code{hashsum} is the hash in hexadecimal, the input;
+this is the number of bytes that will be stored in
+the output. The second, and final, parameter is the
+hash in hexadecimal, with must be NUL-terminated,
+and have an even length.
 @end table
 
 
