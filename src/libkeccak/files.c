@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <alloca.h>
+#include <errno.h>
 
 
 /**
@@ -58,8 +59,14 @@ int libkeccak_generalised_sum_fd(int fd, libkeccak_state_t* restrict state,
   for (;;)
     {
       got = read(fd, chunk, blksize);
-      if (got < 0)   return -1;
-      if (got == 0)  break;
+      if (got < 0)
+	{
+	  if (errno == EINTR)
+	    continue;
+	  return -1;
+	}
+      if (got == 0)
+	break;
       if (libkeccak_fast_update(state, chunk, (size_t)got) < 0)
 	return -1;
     }
