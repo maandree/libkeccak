@@ -71,6 +71,7 @@ with support for bit-oriented data.
 * Linking::                                   How to use libkeccak in your software.
 * Selecting hash function::                   Selecting and tuning the function.
 * State of the hashing::                      The structure used to keep track of the hashing process.
+* Hashing messages::                          Functions used to hash a message.
 
 * GNU Affero General Public License::         Copying and sharing libkeccak.
 * GNU Free Documentation License::            Copying and sharing this manual.
@@ -432,6 +433,95 @@ is returned.
 Figures out how many bytes the marshalled state uses,
 so that the buffers pointer can be incremented with
 this value to skip pass the marshalled state.
+@end table
+
+
+
+@node Hashing messages
+@chapter Hashing messages
+
+Once a state has been initialised, a message can be hashed.
+To hash a message the functions @code{libkeccak_update} and
+@code{libkeccak_digest} are used, or its variants that do
+not securely release sensitive information:
+@code{libkeccak_fast_update} and @code{libkeccak_fast_digest},
+these are otherwise identical to @code{libkeccak_update}
+and @code{libkeccak_fast_update}, respectively.
+@table @code
+@item libkeccak_update
+This function shall be called while you do not know that
+you have reached the end of the message. It has three
+parameters:
+@itemize @bullet{}
+@item
+A pointer to the state. See @ref{State of the hashing}.
+@item
+The beginning of the chunk of the message to process.
+@item
+The number of bytes in the message to process.
+@end itemize
+Note that a part of the message is input, not necessarily
+the entire message. The chunks must be input sequentially.
+The funtion returns zero upon success completion. On error,
+@code{errno} is set to describe the error and @code{-1} is
+returned. The input chunk should not be empty.
+
+@item libkeccak_digest
+This function shall be called either with the last chunk
+of the message, or when all chunks as been input to
+@code{libkeccak_update} or @code{libkeccak_fast_update}.
+The function's first three parameters are the same as
+for @code{libkeccak_update}, however, the chunk may be
+@code{NULL} and then length zero if all chunks have
+been processed by @code{libkeccak_update} or @code{libkeccak_fast_update}.
+However, it also has three additional parameters:
+@itemize @bullet{}
+@item
+The number of bits at the end of the message that
+are not covered by the third argument. This enables
+messages of non-whole byte length.
+@item
+A @code{NUL}-terminated string of ASCII ones and zeroes,
+describing the additional bits to suffix the message;
+or @code{NULL} if none. This is used to select between
+Keccak, SHA-3, RawSHAKE and SHAKE. Use one of the constants:
+@table @asis
+@item @code{LIBKECCAK_SHA3_SUFFIX} or @code{"01"}
+For SHA-3.
+@item @code{LIBKECCAK_RAWSHAKE_SUFFIX} or @code{"11"}
+For RawSHAKE.
+@item @code{LIBKECCAK_SHAKE_SUFFIX} or @code{"1111"}
+For SHAKE.
+@item @code{NULL} or @code{""}
+For Keccak.
+@end table
+@item
+Output buffer for the hash, in binary. Should be
+allocated to fit @code{(state.n + 7) / 8} @code{char}:s,
+where @code{state} is the state variable. Alternatively
+it may be @code{NULL}, in which case the hash is not
+retrieved.
+@end itemize
+The funtion returns zero upon success completion. On error,
+@code{errno} is set to describe the error and @code{-1} is
+returned. The input chunk should not be empty.
+@end table
+
+libkeccak also has three functions for repeating the squeeze
+phase. Neither of these function have a return value, and
+their first parameter is a pointer to the state.
+@table @code
+@item libkeccak_simple_squeeze
+Perform a number of additional rounds of @sc{Keccak}--@i{f}.
+The number of rounds is specified in the second parameter.
+@item libkeccak_fast_squeeze
+Perform a number of additional rounds of @sc{Keccak}--@i{f}.
+The number will be exactly enough to get a number of additional
+digests. The number of digests is specified in the second parameter.
+@item libkeccak_squeeze
+Squeeze out another digest. The hash will be stored in the
+second parameter, which should be allocated to fit
+@code{(state.n + 7) / 8} @code{char}:s.
 @end table
 
 
