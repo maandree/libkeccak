@@ -512,10 +512,10 @@ phase. Neither of these function have a return value, and
 their first parameter is a pointer to the state.
 @table @code
 @item libkeccak_simple_squeeze
-Perform a number of additional rounds of @sc{Keccak}--@i{f}.
+Perform a number of additional rounds of @w{@sc{Keccak}--@i{f}}.
 The number of rounds is specified in the second parameter.
 @item libkeccak_fast_squeeze
-Perform a number of additional rounds of @sc{Keccak}--@i{f}.
+Perform a number of additional rounds of @w{@sc{Keccak}--@i{f}}.
 The number will be exactly enough to get a number of additional
 digests. The number of digests is specified in the second parameter.
 @item libkeccak_squeeze
