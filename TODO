@@ -10,3 +10,6 @@ Test parallelisation and acceleration.
 
 Measure cycles per byte.
 
+Fix todos in the texinfo file.
+Add man pages.
+

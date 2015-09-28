@@ -74,6 +74,7 @@ with support for bit-oriented data.
 * Hashing messages::                          Functions used to hash a message.
 * Hexadecimal hashes::                        Converting between binary and hexadecimal.
 * Hashing files::                             Functions used to hash entire files.
+* Message authentication::                    Functions used for message authentication codes.
 
 * GNU Affero General Public License::         Copying and sharing libkeccak.
 * GNU Free Documentation License::            Copying and sharing this manual.
@@ -628,6 +629,93 @@ otherwise identical to @code{libkeccak_rawshakesum_fd}.
 
 
 
+@node Message authentication
+@chapter Message authentication
+
+libkeccak supports HMAC. Note that secure message
+authentication codes can be trivially be created
+with Keccak by simple prepending the key to the
+message; although it will not be HMAC. This makes
+Keccak a good hash function alternative for people
+who knows next to nothing about cryptography.
+
+To keep track of the hashing state, the structure
+@code{libkeccak_hmac_state_t} (@code{struct libkeccak_hmac_state})
+is used. It has a number of methods analogous to
+those for @code{libkeccak_state_t}:
+@table @code
+@item libkeccak_hmac_initialise
+Has for parameters: pointer to a @code{libkeccak_hmac_state_t}
+to initialise, hashing specifications (@code{const libkeccak_spec_t*}),
+binary key, and the length of the key.
+
+@item libkeccak_hmac_create
+Similar to @code{libkeccak_hmac_initialise}. It does
+not have a @code{libkeccak_hmac_state_t*} as an output
+parameter, rather it returns one.
+
+@item libkeccak_hmac_reset
+Resets the sponge and the sets the key, by
+calling @code{libkeccak_hmac_set_key}. IT
+has three paramters: pointer to the
+@code{libkeccak_hmac_state_t}, the binary key,
+and the length of the key.
+The key will not be set if the second
+argument is @code{NULL}.
+
+@item libkeccak_hmac_wipe
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item libkeccak_hmac_fast_destroy
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item libkeccak_hmac_destroy
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item libkeccak_hmac_fast_free
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item void libkeccak_hmac_free
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item libkeccak_hmac_copy
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item libkeccak_hmac_duplicate
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item libkeccak_hmac_marshal_size
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item libkeccak_hmac_marshal
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item libkeccak_hmac_unmarshal
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item libkeccak_hmac_unmarshal_skip
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item libkeccak_hmac_fast_update
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item libkeccak_hmac_update
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item libkeccak_hmac_fast_digest
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+
+@item libkeccak_hmac_digest
+Perfectly analogous to the @code{libkeccak_state_t} counterpart.
+@end table
+
+It also has the method @code{libkeccak_hmac_set_key} which
+can be used set the key. This function is identical to
+@code{libkeccak_hmac_reset}, except it will not reset the
+sponge, and the second argument must not be @code{NULL}.
+
+
+
 @node GNU Affero General Public License
 @appendix GNU Affero General Public License
 @include agpl-3.0.texinfo
@@ -650,4 +738,7 @@ otherwise identical to @code{libkeccak_rawshakesum_fd}.
 
 
 @bye
+
+TODO add indices
+TODO examples
 
