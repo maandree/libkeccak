@@ -73,6 +73,7 @@ with support for bit-oriented data.
 * State of the hashing::                      The structure used to keep track of the hashing process.
 * Hashing messages::                          Functions used to hash a message.
 * Hexadecimal hashes::                        Converting between binary and hexadecimal.
+* Hashing files::                             Functions used to hash entire files.
 
 * GNU Affero General Public License::         Copying and sharing libkeccak.
 * GNU Free Documentation License::            Copying and sharing this manual.
@@ -81,7 +82,6 @@ with support for bit-oriented data.
 * Data type index::                           Index of data types.
 * Function index::                            Index of functions.
 @end menu
-@c TODO @detailmenu (`C-c C-u m`)
 
 
 
@@ -562,6 +562,68 @@ this is the number of bytes that will be stored in
 the output. The second, and final, parameter is the
 hash in hexadecimal, with must be NUL-terminated,
 and have an even length.
+@end table
+
+
+
+@node Hashing files
+@chapter Hashing files
+
+libkeccak provides functions for calculating
+hashes of files directly, from a file descriptor.
+
+The generalised function is named
+@code{libkeccak_generalised_sum_fd}. It has
+five parameters:
+@itemize @bullet{}
+@item
+The file descriptor.
+@item
+A pointer to a state variable. Must not be
+initalised, lest you will suffer a memory leak.
+@item
+The specifications for the hashing functions.
+@item
+The message suffix.
+@item
+The output buffer for the binary hash.
+It must have an allocation size of at least
+@code{(spec->output / 8) * sizeof(char)},
+where @code{spec} is the third argument, or
+be @code{NULL}.
+@end itemize
+@code{libkeccak_generalised_sum_fd} returns
+zero upon successful completion. On error,
+@code{errno} is set to describe the error,
+and @code{-1} is returned.
+
+There are also algorithm specific functions.
+@table @code
+@item libkeccak_keccaksum_fd
+This function is used for Keccak without message
+suffix. It is identical to @code{libkeccak_generalised_sum_fd}
+sans the fourth parameter (the message suffix.)
+
+@item libkeccak_sha3sum_fd
+This function is used for SHA-3. It is similar
+to @code{libkeccak_generalised_sum_fd}, however
+it does not have the fourth parameter, and the
+third parameter is simple the the output size.
+The output buffer must have and allocation size
+of at least @code{(output / 8) * sizeof(char)},
+where @code{output} is the third parameter, or
+be @code{NULL}.
+
+@item libkeccak_rawshakesum_fd
+This function is used for RawSHAKE, it is
+otherwise identical to @code{libkeccak_sha3sum_fd},
+except it as a parameter for the semicapacity
+before the output size, that is to say, as its
+third parameter.
+
+@item libkeccak_shakesum_fd
+This function is used for SHAKE, it is
+otherwise identical to @code{libkeccak_rawshakesum_fd}.
 @end table
 
 
