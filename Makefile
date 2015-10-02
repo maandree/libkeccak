@@ -74,7 +74,7 @@ lib: so a
 .PHONY: so
 so: bin/libkeccak.so.$(LIB_VERSION) bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak.so
 
-obj/libkeccak/%.o: src/libkeccak/%.c src/libkeccak.h src/libkeccak/*.h
+obj/libkeccak/%.o: src/libkeccak/%.c src/libkeccak.h src/libkeccak/*.h src/libkeccak/*/*.h
 	@mkdir -p $$(dirname $@)
 	$(CC) $(FLAGS) $(COPTIMISE) -fPIC -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
 
@@ -203,6 +203,7 @@ install-headers:
 	install -m644 -- src/libkeccak/hex.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/hex.h"
 	install -m644 -- src/libkeccak/spec.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/spec.h"
 	install -m644 -- src/libkeccak/state.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/state.h"
+	install -m644 -- src/libkeccak/internal.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/internal.h"
 	install -m644 -- src/libkeccak/mac/hmac.h "$(DESTDIR)$(INCLUDEDIR)/libkeccak/mac/hmac.h"
 
 .PHONY: install-dynamic-lib
@@ -263,6 +264,7 @@ uninstall:
 	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/hex.h"
 	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/spec.h"
 	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/state.h"
+	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/internal.h"
 	-rm -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/mac/hmac.h"
 	-rmdir -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak/mac"
 	-rmdir -- "$(DESTDIR)$(INCLUDEDIR)/libkeccak"

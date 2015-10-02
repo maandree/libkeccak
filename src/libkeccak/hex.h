@@ -20,6 +20,8 @@
 #define LIBKECCAK_HEX_H  1
 
 
+#include "internal.h"
+
 #include <stddef.h>
 
 
@@ -30,7 +32,7 @@
  * @param  hashsum  The hashsum to convert
  * @param  n        The size of `hashsum`
  */
-__attribute__((leaf, nonnull, nothrow))
+LIBKECCAK_GCC_ONLY(__attribute__((leaf, nonnull, nothrow)))
 void libkeccak_behex_lower(char* restrict output, const char* restrict hashsum, size_t n);
 
 
@@ -41,7 +43,7 @@ void libkeccak_behex_lower(char* restrict output, const char* restrict hashsum, 
  * @param  hashsum  The hashsum to convert
  * @param  n        The size of `hashsum`
  */
-__attribute__((leaf, nonnull, nothrow))
+LIBKECCAK_GCC_ONLY(__attribute__((leaf, nonnull, nothrow)))
 void libkeccak_behex_upper(char* restrict output, const char* restrict hashsum, size_t n);
 
 
@@ -52,7 +54,7 @@ void libkeccak_behex_upper(char* restrict output, const char* restrict hashsum, 
  * @param  output   Output array, should have an allocation size of at least `strlen(hashsum) / 2`
  * @param  hashsum  The hashsum to convert
  */
-__attribute__((leaf, nonnull, nothrow))
+LIBKECCAK_GCC_ONLY(__attribute__((leaf, nonnull, nothrow)))
 void libkeccak_unhex(char* restrict output, const char* restrict hashsum);
 
 

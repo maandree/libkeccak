@@ -28,6 +28,7 @@
 
 #include "../spec.h"
 #include "../state.h"
+#include "../internal.h"
 
 #include <stddef.h>
 #include <stdint.h>
@@ -94,7 +95,7 @@ typedef struct libkeccak_hmac_state
  * @param   key_length  The length of key, in bits
  * @return              Zero on success, -1 on error
  */
-__attribute__((nonnull(1), unused))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull(1), unused)))
 int libkeccak_hmac_set_key(libkeccak_hmac_state_t* restrict state, const char* restrict key, size_t key_length);
 
 
@@ -107,7 +108,8 @@ int libkeccak_hmac_set_key(libkeccak_hmac_state_t* restrict state, const char* r
  * @param   key_length  The length of key, in bits
  * @return              Zero on success, -1 on error
  */
-static inline __attribute__((nonnull))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull)))
+static inline
 int libkeccak_hmac_initialise(libkeccak_hmac_state_t* restrict state, const libkeccak_spec_t* restrict spec,
 			      const char* restrict key, size_t key_length)
 {
@@ -131,7 +133,8 @@ int libkeccak_hmac_initialise(libkeccak_hmac_state_t* restrict state, const libk
  * @param   key_length  The length of key, in bits
  * @return              The state, `NULL` on error
  */
-static inline __attribute__((nonnull, unused, warn_unused_result, malloc))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, unused, warn_unused_result, malloc)))
+static inline
 libkeccak_hmac_state_t* libkeccak_hmac_create(const libkeccak_spec_t* restrict spec,
 					      const char* restrict key, size_t key_length)
 {
@@ -152,7 +155,8 @@ libkeccak_hmac_state_t* libkeccak_hmac_create(const libkeccak_spec_t* restrict s
  * @param   key_length  The length of key, in bits, ignored if `key == NULL`
  * @return              Zero on success, -1 on error
  */
-static inline __attribute__((nonnull(1), unused))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull(1), unused)))
+static inline
 int libkeccak_hmac_reset(libkeccak_hmac_state_t* restrict state, const char* restrict key, size_t key_length)
 {
   libkeccak_state_reset(&(state->sponge));
@@ -165,7 +169,7 @@ int libkeccak_hmac_reset(libkeccak_hmac_state_t* restrict state, const char* res
  * 
  * @param  state  The state that should be wipe
  */
-__attribute__((nonnull, nothrow, optimize("-O0")))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, optimize("-O0"))))
 void libkeccak_hmac_wipe(volatile libkeccak_hmac_state_t* restrict state);
 
 
@@ -194,7 +198,8 @@ void libkeccak_hmac_fast_destroy(libkeccak_hmac_state_t* restrict state)
  * 
  * @param  state  The state that should be destroyed
  */
-static inline __attribute__((unused, optimize("-O0")))
+LIBKECCAK_GCC_ONLY(__attribute__((unused, optimize("-O0"))))
+static inline
 void libkeccak_hmac_destroy(volatile libkeccak_hmac_state_t* restrict state)
 {
   if (state == NULL)
@@ -216,7 +221,8 @@ void libkeccak_hmac_destroy(volatile libkeccak_hmac_state_t* restrict state)
  * 
  * @param  state  The state that should be freed
  */
-static inline __attribute__((unused))
+LIBKECCAK_GCC_ONLY(__attribute__((unused)))
+static inline
 void libkeccak_hmac_fast_free(libkeccak_hmac_state_t* restrict state)
 {
   libkeccak_hmac_fast_destroy(state);
@@ -229,7 +235,8 @@ void libkeccak_hmac_fast_free(libkeccak_hmac_state_t* restrict state)
  * 
  * @param  state  The state that should be freed
  */
-static inline __attribute__((unused, optimize("-O0")))
+LIBKECCAK_GCC_ONLY(__attribute__((unused, optimize("-O0"))))
+static inline
 void libkeccak_hmac_free(volatile libkeccak_hmac_state_t* restrict state)
 {
 #ifdef __GNUC__
@@ -251,7 +258,7 @@ void libkeccak_hmac_free(volatile libkeccak_hmac_state_t* restrict state)
  * @param   src   The state to duplicate
  * @return        Zero on success, -1 on error
  */
-__attribute__((nonnull))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull)))
 int libkeccak_hmac_copy(libkeccak_hmac_state_t* restrict dest, const libkeccak_hmac_state_t* restrict src);
 
 
@@ -261,7 +268,8 @@ int libkeccak_hmac_copy(libkeccak_hmac_state_t* restrict dest, const libkeccak_h
  * @param   src  The state to duplicate
  * @return       The duplicate, `NULL` on error
  */
-static inline __attribute__((nonnull, unused, warn_unused_result, malloc))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, unused, warn_unused_result, malloc)))
+static inline
 libkeccak_hmac_state_t* libkeccak_hmac_duplicate(const libkeccak_hmac_state_t* restrict src)
 {
   libkeccak_hmac_state_t* restrict dest = malloc(sizeof(libkeccak_hmac_state_t));
@@ -279,7 +287,8 @@ libkeccak_hmac_state_t* libkeccak_hmac_duplicate(const libkeccak_hmac_state_t* r
  * @param   state  The state as it will be marshalled by a subsequent call to `libkeccak_hamc_marshal`
  * @return         The allocation size needed for the buffer to which the state will be marshalled
  */
-static inline __attribute__((nonnull, nothrow, unused, warn_unused_result, pure))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, unused, warn_unused_result, pure)))
+static inline
 size_t libkeccak_hmac_marshal_size(const libkeccak_hmac_state_t* restrict state)
 {
   return libkeccak_state_marshal_size(&(state->sponge)) + sizeof(size_t) +
@@ -294,7 +303,8 @@ size_t libkeccak_hmac_marshal_size(const libkeccak_hmac_state_t* restrict state)
  * @param   data   The output buffer
  * @return         The number of bytes stored to `data`
  */
-static inline __attribute__((nonnull, nothrow))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow)))
+static inline
 size_t libkeccak_hmac_marshal(const libkeccak_hmac_state_t* restrict state, char* restrict data)
 {
   size_t written = libkeccak_state_marshal(&(state->sponge), data);
@@ -316,7 +326,7 @@ size_t libkeccak_hmac_marshal(const libkeccak_hmac_state_t* restrict state, char
  * @param   data   The input buffer
  * @return         The number of bytes read from `data`, 0 on error
  */
-__attribute__((nonnull))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull)))
 size_t libkeccak_hmac_unmarshal(libkeccak_hmac_state_t* restrict state, const char* restrict data);
 
 
@@ -327,7 +337,8 @@ size_t libkeccak_hmac_unmarshal(libkeccak_hmac_state_t* restrict state, const ch
  * @param   data  The data buffer
  * @return        The byte size of the stored state
  */
-static inline __attribute__((nonnull, nothrow, warn_unused_result, pure))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, warn_unused_result, pure)))
+static inline
 size_t libkeccak_hmac_unmarshal_skip(const char* restrict data)
 {
   size_t skip = libkeccak_state_unmarshal_skip(data);
@@ -345,7 +356,7 @@ size_t libkeccak_hmac_unmarshal_skip(const char* restrict data)
  * @param   msglen  The length of the partial message, in bytes
  * @return          Zero on success, -1 on error
  */
-__attribute__((nonnull(1)))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull(1))))
 int libkeccak_hmac_fast_update(libkeccak_hmac_state_t* restrict state, const char* restrict msg, size_t msglen);
 
 
@@ -358,7 +369,7 @@ int libkeccak_hmac_fast_update(libkeccak_hmac_state_t* restrict state, const cha
  * @param   msglen  The length of the partial message, in bytes
  * @return          Zero on success, -1 on error
  */
-__attribute__((nonnull(1)))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull(1))))
 int libkeccak_hmac_update(libkeccak_hmac_state_t* restrict state, const char* restrict msg, size_t msglen);
 
 
@@ -376,7 +387,7 @@ int libkeccak_hmac_update(libkeccak_hmac_state_t* restrict state, const char* re
  * @param   hashsum  Output parameter for the hashsum, may be `NULL`
  * @return           Zero on success, -1 on error
  */
-__attribute__((nonnull(1)))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull(1))))
 int libkeccak_hmac_fast_digest(libkeccak_hmac_state_t* restrict state, const char* restrict msg, size_t msglen,
 			       size_t bits, const char* restrict suffix, char* restrict hashsum);
 
@@ -395,7 +406,7 @@ int libkeccak_hmac_fast_digest(libkeccak_hmac_state_t* restrict state, const cha
  * @param   hashsum  Output parameter for the hashsum, may be `NULL`
  * @return           Zero on success, -1 on error
  */
-__attribute__((nonnull(1)))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull(1))))
 int libkeccak_hmac_digest(libkeccak_hmac_state_t* restrict state, const char* restrict msg, size_t msglen,
 			  size_t bits, const char* restrict suffix, char* restrict hashsum);
 

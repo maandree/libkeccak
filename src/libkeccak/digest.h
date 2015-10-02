@@ -21,6 +21,7 @@
 
 
 #include "state.h"
+#include "internal.h"
 
 
 /**
@@ -32,7 +33,7 @@
  * @param   msglen  The length of the partial message
  * @return          Zero on success, -1 on error
  */
-__attribute__((nonnull))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull)))
 int libkeccak_fast_update(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen);
 
 
@@ -45,7 +46,7 @@ int libkeccak_fast_update(libkeccak_state_t* restrict state, const char* restric
  * @param   msglen  The length of the partial message
  * @return          Zero on success, -1 on error
  */
-__attribute__((nonnull))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull)))
 int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen);
 
 
@@ -61,7 +62,7 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
  * @param   hashsum  Output parameter for the hashsum, may be `NULL`
  * @return           Zero on success, -1 on error
  */
-__attribute__((nonnull(1)))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull(1))))
 int libkeccak_fast_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
 			  size_t bits, const char* restrict suffix, char* restrict hashsum);
 
@@ -78,7 +79,7 @@ int libkeccak_fast_digest(libkeccak_state_t* restrict state, const char* restric
  * @param   hashsum  Output parameter for the hashsum, may be `NULL`
  * @return           Zero on success, -1 on error
  */
-__attribute__((nonnull(1)))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull(1))))
 int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
 		     size_t bits, const char* restrict suffix, char* restrict hashsum);
 
@@ -89,7 +90,7 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
  * @param  state  The hashing state
  * @param  times  The number of rounds
  */
-__attribute__((nonnull, nothrow))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow)))
 void libkeccak_simple_squeeze(register libkeccak_state_t* restrict state, register long times);
 
 
@@ -99,7 +100,7 @@ void libkeccak_simple_squeeze(register libkeccak_state_t* restrict state, regist
  * @param  state  The hashing state
  * @param  times  The number of digests
  */
-__attribute__((nonnull, nothrow))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow)))
 void libkeccak_fast_squeeze(register libkeccak_state_t* restrict state, register long times);
 
 
@@ -109,7 +110,7 @@ void libkeccak_fast_squeeze(register libkeccak_state_t* restrict state, register
  * @param  state    The hashing state
  * @param  hashsum  Output parameter for the hashsum
  */
-__attribute__((nonnull, nothrow))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow)))
 void libkeccak_squeeze(register libkeccak_state_t* restrict state, register char* restrict hashsum);
 
 

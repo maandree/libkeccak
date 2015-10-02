@@ -20,6 +20,8 @@
 #define LIBKECCAK_SPEC_H  1
 
 
+#include "internal.h"
+
 #include <stdint.h>
 #include <limits.h>
 
@@ -123,7 +125,8 @@ typedef struct libkeccak_spec
  * @param  spec  The specifications datastructure to fill in
  * @param  x     The value of x in `SHA3-x`, the output size
  */
-static inline __attribute__((nonnull, nothrow))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow)))
+static inline
 void libkeccak_spec_sha3(libkeccak_spec_t* restrict spec, long x)
 {
   spec->bitrate = 1600 - 2 * x;
@@ -139,7 +142,8 @@ void libkeccak_spec_sha3(libkeccak_spec_t* restrict spec, long x)
  * @param  x     The value of x in `RawSHAKEx`, half the capacity
  * @param  d     The output size
  */
-static inline __attribute__((nonnull, nothrow))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow)))
+static inline
 void libkeccak_spec_rawshake(libkeccak_spec_t* restrict spec, long x, long d)
 {
   spec->bitrate = 1600 - 2 * x;
@@ -164,7 +168,8 @@ void libkeccak_spec_rawshake(libkeccak_spec_t* restrict spec, long x, long d)
  * @param   spec  The specifications datastructure to check
  * @return        Zero if error free, a `LIBKECCAK_SPEC_ERROR_*` if an error was found
  */
-static inline __attribute__((nonnull, nothrow, unused, warn_unused_result, pure))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, unused, warn_unused_result, pure)))
+static inline
 int libkeccak_spec_check(const libkeccak_spec_t* restrict spec)
 {
   long state_size = spec->capacity + spec->bitrate;

@@ -21,6 +21,7 @@
 
 
 #include "spec.h"
+#include "internal.h"
 
 #include <inttypes.h>
 
@@ -131,7 +132,8 @@ typedef struct libkeccak_generalised_spec
  * 
  * @param  spec  The specification datastructure to fill in
  */
-static inline __attribute__((nonnull, nothrow, unused))
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, unused)))
+static inline
 void libkeccak_generalised_spec_initialise(libkeccak_generalised_spec_t* restrict spec)
 {
   spec->bitrate    = LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
@@ -149,7 +151,7 @@ void libkeccak_generalised_spec_initialise(libkeccak_generalised_spec_t* restric
  * @param   output_spec  The specification datastructure to fill in
  * @return               Zero if `spec` is valid, a `LIBKECCAK_GENERALISED_SPEC_ERROR_*` if an error was found
  */
-__attribute__((leaf, nonnull, nothrow))
+LIBKECCAK_GCC_ONLY(__attribute__((leaf, nonnull, nothrow)))
 int libkeccak_degeneralise_spec(libkeccak_generalised_spec_t* restrict spec,
 				libkeccak_spec_t* restrict output_spec);
 
