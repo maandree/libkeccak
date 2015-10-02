@@ -19,8 +19,11 @@
 #include "generalised-spec.h"
 
 
+#ifdef __GNUC__
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
 #define have(v)      (spec->v != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC)
 #define copy(v)      (v = spec->v)
 #define deft(v, dv)  (have_##v ? v : (dv))
@@ -134,5 +137,7 @@ int libkeccak_degeneralise_spec(libkeccak_generalised_spec_t* restrict spec,
 #undef copy
 #undef have
 
+#ifdef __GNUC__
 # pragma GCC diagnostic pop
+#endif __GNUC__
 
