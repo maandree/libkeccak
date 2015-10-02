@@ -178,11 +178,14 @@ the output size.
 @noindent
 Selecting these is the first step when using the library.
 
+@tpindex libkeccak_spec_t
+@tpindex struct libkeccak_spec
 The structure @code{libkeccak_spec_t} (@code{struct libkeccak_spec}),
 is to specify these parameters. For the less tunable functions
 SHA-3, RawSHAKE and SHAKE, these values can be set with the functions
 @table @code
 @item libkeccak_spec_sha3
+@fnindex libkeccak_spec_sha3
 Sets the parameters for SHA-3. It has two parameters:
 @itemize @bullet{}
 @item
@@ -192,6 +195,7 @@ The output size, that is the value appended to the name.
 @end itemize
 
 @item libkeccak_spec_rawshake
+@fnindex libkeccak_spec_rawshake
 Sets the parameters for RawSHAKE (or SHAKE). It has three parameters:
 @itemize @bullet{}
 @item
@@ -203,10 +207,12 @@ The output size.
 @end itemize
 
 @item libkeccak_spec_shake
+@fnindex libkeccak_spec_shake
 Identical to @code{libkeccak_spec_rawshake}. Intended for SHAKE
 rather than RawSHAKE.
 @end table
 
+@fnindex libkeccak_spec_check
 For Keccak, these values shall be selected individually by hand.
 Once the values have been selected, they can be checked for errors
 with the function @code{libkeccak_spec_check}. It takes a pointer
@@ -236,6 +242,8 @@ be returned:
 @code{LIBKECCAK_SPEC_ERROR_WORD_MOD_8}
 @end itemize
 
+@tpindex libkeccak_spec_t
+@tpindex struct libkeccak_spec
 @code{libkeccak_spec_t}'s members are:
 @table @code
 @item bitrate
@@ -246,6 +254,8 @@ The capacity, in bits.
 The output size, in bits.
 @end table
 
+@tpindex libkeccak_generalised_spec_t
+@tpindex struct libkeccak_generalised_spec
 It is also possible to select some but not all of the parameters.
 For this, the structure @code{libkeccak_generalised_spec_t}
 (@code{struct libkeccak_generalised_spec}) is used. It extends
@@ -257,8 +267,9 @@ The state size, in bits.
 The word size, in bits.
 @end table
 
+@fnindex libkeccak_generalised_spec_initialise
 By feeding a pointer to a @code{libkeccak_generalised_spec_t},
-to the function @code{ibkeccak_generalised_spec_initialise},
+to the function @code{libkeccak_generalised_spec_initialise},
 all its members are set to @code{LIBKECCAK_GENERALISED_SPEC_AUTOMATIC},
 a sentinel value that specifies that the parameter shall be
 set automatically, to its default that depends on the other
@@ -269,6 +280,7 @@ been set, it can be converted to a @code{libkeccak_spec_t},
 which is neccessary for using the specifications. When doing
 so, automatic values will be given a proper value.
 
+@fnindex libkeccak_degeneralise_spec
 To do this, the function @code{libkeccak_degeneralise_spec}
 is used. It takes two parameters:
 @itemize @bullet{}
@@ -312,6 +324,8 @@ returned:
 @node State of the hashing
 @chapter State of the hashing
 
+@tpindex libkeccak_state_t
+@tpindex struct libkeccak_state
 Hashing of a message is done by feeding segments of the
 message to functions until all of the message has been
 processed, and than the users may repeat the last phase
@@ -321,6 +335,7 @@ a state structure. The structure used in libkeccak to
 keep track of the state is called @code{libkeccak_state_t}
 (@code{struct libkeccak_state}).
 
+@fnindex libkeccak_state_initialise
 Before you can use the functions for hashing a message,
 you must allocate a state and initialise it.
 To initialise a state, use the function
@@ -333,6 +348,11 @@ be a pointer to the specifications, that is, a
 upon successful completion, and otherwise set
 @code{errno} to describe the error and return @code{-1}.
 
+@fnindex libkeccak_state_destroy
+@fnindex libkeccak_state_fast_destroy
+@fnindex libkeccak_state_wipe
+@fnindex libkeccak_state_wipe_sponge
+@fnindex libkeccak_state_wipe_message
 Once done with a state structure, you should release
 allocated resources that are stored in the structure.
 This can be done either by calling the function
@@ -352,6 +372,7 @@ and @code{libkeccak_state_wipe_message} takes a
 pointer to the state as their only parameter, and
 none of them have a return value.
 
+@fnindex libkeccak_state_reset
 An alternative to destroying a state, you can reset
 it if you want to reuse it to hash another message
 using the same hashing function specifications.
@@ -366,6 +387,8 @@ for the state, instead of calling @code{malloc} and
 does this for you:
 @table @code
 @item libkeccak_state_create
+@fnindex libkeccak_state_create
+@fnindex libkeccak_state_initialise
 Identical to @code{libkeccak_state_initialise}, except
 it does have the first parameter, but it has the second
 parameter (the specifications). It returns a pointer
@@ -374,10 +397,14 @@ returns @code{NULL} on error, in which case, @code{errno}
 is set to describe the error.
 
 @item libkeccak_state_fast_free
+@fnindex libkeccak_state_fast_free
+@fnindex libkeccak_state_fast_destroy
 Identical to @code{libkeccak_state_fast_destroy}, except
 it also frees the allocation of the state.
 
 @item libkeccak_state_free
+@fnindex libkeccak_state_free
+@fnindex libkeccak_state_destroy
 Identical to @code{libkeccak_state_destroy}, except
 it also frees the allocation of the state.
 @end table
@@ -385,6 +412,7 @@ it also frees the allocation of the state.
 libkeccak also has two functions for copying a state:
 @table @code
 @item libkeccak_state_copy
+@fnindex libkeccak_state_copy
 Takes an output pointer to a state as its first parameter,
 and a pointer to the state to copy as its second parameter.
 The content of the second parameter will be duplicated into
@@ -395,6 +423,7 @@ on error, sets @code{errno} to describe the error and returns
 @code{-1}.
 
 @item libkeccak_state_duplicate
+@fnindex libkeccak_state_duplicate
 Identical to @code{libkeccak_state_copy}, except it only
 has one parameter, a pointer to the state to copy, and
 returns a pointer to a state it has allocated and copied
@@ -407,10 +436,12 @@ which can be useful when implementing programs that can
 reexecuted into updated version of itself.
 @table @code
 @item libkeccak_state_marshal_size
+@fnindex libkeccak_state_marshal_size
 Takes a pointer to a state to marshal as its only parameter,
 and returns the number of bytes required to marshal it.
 
 @item libkeccak_state_marshal
+@fnindex libkeccak_state_marshal
 Takes a pointer to a state to marshal as its first parameter,
 and the buffer, to where the state shall be marshalled, as
 its second parameter. The function will marshal the state
@@ -419,6 +450,7 @@ which will be the same as @code{libkeccak_state_marshal_size}
 returns for the state.
 
 @item libkeccak_state_unmarshal
+@fnindex libkeccak_state_unmarshal
 Takes an output pointer for the unmarshalled state as its
 first parameter, and the buffer where the state is marshalled
 as its second parameter. The function will unmarshal the
@@ -432,6 +464,7 @@ On error, @code{errno} is set to describe the error and zero
 is returned.
 
 @item libkeccak_state_unmarshal_skip
+@fnindex libkeccak_state_unmarshal_skip
 Figures out how many bytes the marshalled state uses,
 so that the buffers pointer can be incremented with
 this value to skip pass the marshalled state.
@@ -442,6 +475,10 @@ this value to skip pass the marshalled state.
 @node Hashing messages
 @chapter Hashing messages
 
+@fnindex libkeccak_update
+@fnindex libkeccak_digest
+@fnindex libkeccak_fast_update
+@fnindex libkeccak_fast_digest
 Once a state has been initialised, a message can be hashed.
 To hash a message the functions @code{libkeccak_update} and
 @code{libkeccak_digest} are used, or its variants that do
@@ -451,6 +488,8 @@ these are otherwise identical to @code{libkeccak_update}
 and @code{libkeccak_fast_update}, respectively.
 @table @code
 @item libkeccak_update
+@fnindex libkeccak_update
+@fnindex libkeccak_fast_update
 This function shall be called while you do not know that
 you have reached the end of the message. It has three
 parameters:
@@ -469,6 +508,8 @@ The funtion returns zero upon success completion. On error,
 returned. The input chunk should not be empty.
 
 @item libkeccak_digest
+@fnindex libkeccak_update
+@fnindex libkeccak_fast_update
 This function shall be called either with the last chunk
 of the message, or when all chunks as been input to
 @code{libkeccak_update} or @code{libkeccak_fast_update}.
@@ -514,13 +555,16 @@ phase. Neither of these function have a return value, and
 their first parameter is a pointer to the state.
 @table @code
 @item libkeccak_simple_squeeze
+@fnindex libkeccak_simple_squeeze
 Perform a number of additional rounds of @w{@sc{Keccak}--@i{f}}.
 The number of rounds is specified in the second parameter.
 @item libkeccak_fast_squeeze
+@fnindex libkeccak_fast_squeeze
 Perform a number of additional rounds of @w{@sc{Keccak}--@i{f}}.
 The number will be exactly enough to get a number of additional
 digests. The number of digests is specified in the second parameter.
 @item libkeccak_squeeze
+@fnindex libkeccak_squeeze
 Squeeze out another digest. The hash will be stored in the
 second parameter, which should be allocated to fit
 @code{(state.n + 7) / 8} @w{@code{char}:s}.
@@ -531,6 +575,9 @@ second parameter, which should be allocated to fit
 @node Hexadecimal hashes
 @chapter Hexadecimal hashes
 
+@fnindex libkeccak_digest
+@fnindex libkeccak_fast_digest
+@fnindex libkeccak_squeeze
 The functions that return hashes: @code{libkeccak_digest},
 @code{libkeccak_fast_digest} and @code{libkeccak_squeeze},
 store the hashes in binary format. However, it must often
@@ -542,6 +589,8 @@ these functions have a return value.
 @table @code
 @item libkeccak_behex_lower
 @itemx libkeccak_behex_upper
+@fnindex libkeccak_behex_lower
+@fnindex libkeccak_behex_upper
 Convert from binary to hexadecimal. @code{libkeccak_behex_lower}
 converts to lowercase hexadecimal, and @code{libkeccak_behex_upper}
 converts to uppercase hexadecimal. Their first parameter
@@ -553,6 +602,7 @@ the input hash, in binary. The third, and final, parameter
 is the length of the input bash.
 
 @item libkeccak_unhex
+@fnindex libkeccak_unhex
 Convert from hexadecimal to binary. Both uppercase and
 lowercase, as well as mixed case, is supported as input.
 The first parameter is the output buffer for the binary
@@ -573,6 +623,7 @@ and have an even length.
 libkeccak provides functions for calculating
 hashes of files directly, from a file descriptor.
 
+@fnindex libkeccak_generalised_sum_fd
 The generalised function is named
 @code{libkeccak_generalised_sum_fd}. It has
 five parameters:
@@ -601,11 +652,13 @@ and @code{-1} is returned.
 There are also algorithm specific functions.
 @table @code
 @item libkeccak_keccaksum_fd
+@fnindex libkeccak_keccaksum_fd
 This function is used for Keccak without message
 suffix. It is identical to @code{libkeccak_generalised_sum_fd}
 sans the fourth parameter (the message suffix.)
 
 @item libkeccak_sha3sum_fd
+@fnindex libkeccak_sha3sum_fd
 This function is used for SHA-3. It is similar
 to @code{libkeccak_generalised_sum_fd}, however
 it does not have the fourth parameter, and the
@@ -616,6 +669,7 @@ where @code{output} is the third parameter, or
 be @code{NULL}.
 
 @item libkeccak_rawshakesum_fd
+@fnindex libkeccak_rawshakesum_fd
 This function is used for RawSHAKE, it is
 otherwise identical to @code{libkeccak_sha3sum_fd},
 except it as a parameter for the semicapacity
@@ -623,6 +677,7 @@ before the output size, that is to say, as its
 third parameter.
 
 @item libkeccak_shakesum_fd
+@fnindex libkeccak_shakesum_fd
 This function is used for SHAKE, it is
 otherwise identical to @code{libkeccak_rawshakesum_fd}.
 @end table
@@ -639,22 +694,27 @@ message; although it will not be HMAC. This makes
 Keccak a good hash function alternative for people
 who knows next to nothing about cryptography.
 
+@tpindex libkeccak_hmac_state_t
+@tpindex struct libkeccak_hmac_state
 To keep track of the hashing state, the structure
 @code{libkeccak_hmac_state_t} (@code{struct libkeccak_hmac_state})
 is used. It has a number of methods analogous to
 those for @code{libkeccak_state_t}:
 @table @code
 @item libkeccak_hmac_initialise
+@fnindex libkeccak_hmac_initialise
 Has for parameters: pointer to a @code{libkeccak_hmac_state_t}
 to initialise, hashing specifications (@code{const libkeccak_spec_t*}),
 binary key, and the length of the key.
 
 @item libkeccak_hmac_create
+@fnindex libkeccak_hmac_create
 Similar to @code{libkeccak_hmac_initialise}. It does
 not have a @code{libkeccak_hmac_state_t*} as an output
 parameter, rather it returns one.
 
 @item libkeccak_hmac_reset
+@fnindex libkeccak_hmac_reset
 Resets the sponge and the sets the key, by
 calling @code{libkeccak_hmac_set_key}. IT
 has three paramters: pointer to the
@@ -664,51 +724,67 @@ The key will not be set if the second
 argument is @code{NULL}.
 
 @item libkeccak_hmac_wipe
+@fnindex libkeccak_hmac_wipe
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
 @item libkeccak_hmac_fast_destroy
+@fnindex libkeccak_hmac_fast_destroy
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
 @item libkeccak_hmac_destroy
+@fnindex libkeccak_hmac_destroy
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
 @item libkeccak_hmac_fast_free
+@fnindex libkeccak_hmac_fast_free
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
-@item void libkeccak_hmac_free
+@item libkeccak_hmac_free
+@fnindex libkeccak_hmac_free
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
 @item libkeccak_hmac_copy
+@fnindex libkeccak_hmac_copy
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
 @item libkeccak_hmac_duplicate
+@fnindex libkeccak_hmac_duplicate
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
 @item libkeccak_hmac_marshal_size
+@fnindex libkeccak_hmac_marshal_size
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
 @item libkeccak_hmac_marshal
+@fnindex libkeccak_hmac_marshal
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
 @item libkeccak_hmac_unmarshal
+@fnindex libkeccak_hmac_unmarshal
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
 @item libkeccak_hmac_unmarshal_skip
+@fnindex libkeccak_hmac_unmarshal_skip
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
 @item libkeccak_hmac_fast_update
+@fnindex libkeccak_hmac_fast_update
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
 @item libkeccak_hmac_update
+@fnindex libkeccak_hmac_update
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
 @item libkeccak_hmac_fast_digest
+@fnindex libkeccak_hmac_fast_digest
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 
 @item libkeccak_hmac_digest
+@fnindex libkeccak_hmac_digest
 Perfectly analogous to the @code{libkeccak_state_t} counterpart.
 @end table
 
+@fnindex libkeccak_hmac_set_key
 It also has the method @code{libkeccak_hmac_set_key} which
 can be used set the key. This function is identical to
 @code{libkeccak_hmac_reset}, except it will not reset the
@@ -739,6 +815,6 @@ sponge, and the second argument must not be @code{NULL}.
 
 @bye
 
-TODO add indices
+TODO add @cpindex:es
 TODO examples
 
