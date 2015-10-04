@@ -89,6 +89,7 @@ with support for bit-oriented data.
 @node Overview
 @chapter Overview
 
+@cpindex Orientation
 libkeccak is a free software bit-oriented implementation
 of the cryptographic hash function Keccak and its subsets
 SHA-3 (Secure Hash Algorithm@tie{}3), RawSHAKE and SHAKE.
@@ -96,6 +97,7 @@ SHA-3 (Secure Hash Algorithm@tie{}3), RawSHAKE and SHAKE.
 Being bit-oriented means that it supports messages of length
 consisting of a non-whole number of bytes.
 
+@cpindex Uses
 Keccak is a generic and tunable cryptographic hash function
 that can be used for all customary tasks that required a
 cryptographic hash function:
@@ -109,7 +111,7 @@ File and data identification
 @item
 Data integrity
 @item
-Pseudorandom generation@footnote{Although not too random, since entropi is not utilised.}
+Pseudorandom number generation@footnote{Although not too random, since entropi is not utilised.}
 @item
 Key derivation
 @end itemize
@@ -138,6 +140,7 @@ The freedom to redistribute copies so you can help your neighbor (freedom 2).
 The freedom to distribute copies of your modified versions to others (freedom 3).
 @end itemize
 
+@cpindex Limitations
 This implementation is limited to state sizes up to,
 and including, 1600 bits.
 
@@ -146,6 +149,7 @@ and including, 1600 bits.
 @node Linking
 @chapter Linking
 
+@cpindex Compiling
 libkeccak's API is C standard library independent. This means
 that libkeccak does not need to be compiled with the same
 C standard library as software using it. However, the header
@@ -153,6 +157,8 @@ files contain @code{__attributes__}:s for GCC, if these are
 incompatible with your compiler, your should temporarily define
 a macro named @code{__attributes__} to remove all attributes.
 
+@cpindex @command{pkg-config}
+@cpindex Linking
 Because of libkeccak's simplicity it does not have a pkg-config
 file. Instead, you only need to specify the flag @code{-lkeccak}
 when linking your binaries. No flags are required during compilation
@@ -166,6 +172,8 @@ To make libkeccak's API available, include the header file
 @node Selecting hash function
 @chapter Selecting hash function
 
+@cpindex Parameters
+@cpindex Tuning
 Keccak-based hash functions have three parameters:
 @itemize @bullet{}
 @item
@@ -186,6 +194,8 @@ SHA-3, RawSHAKE and SHAKE, these values can be set with the functions
 @table @code
 @item libkeccak_spec_sha3
 @fnindex libkeccak_spec_sha3
+@cpindex SHA-3
+@cpindex Secure Hash Algorithm 3
 Sets the parameters for SHA-3. It has two parameters:
 @itemize @bullet{}
 @item
@@ -196,6 +206,7 @@ The output size, that is the value appended to the name.
 
 @item libkeccak_spec_rawshake
 @fnindex libkeccak_spec_rawshake
+@cpindex RawSHAKE
 Sets the parameters for RawSHAKE (or SHAKE). It has three parameters:
 @itemize @bullet{}
 @item
@@ -208,11 +219,13 @@ The output size.
 
 @item libkeccak_spec_shake
 @fnindex libkeccak_spec_shake
+@cpindex SHAKE
 Identical to @code{libkeccak_spec_rawshake}. Intended for SHAKE
 rather than RawSHAKE.
 @end table
 
 @fnindex libkeccak_spec_check
+@cpindex Keccak
 For Keccak, these values shall be selected individually by hand.
 Once the values have been selected, they can be checked for errors
 with the function @code{libkeccak_spec_check}. It takes a pointer
@@ -326,6 +339,8 @@ returned:
 
 @tpindex libkeccak_state_t
 @tpindex struct libkeccak_state
+@cpindex Hashing
+@cpindex State
 Hashing of a message is done by feeding segments of the
 message to functions until all of the message has been
 processed, and than the users may repeat the last phase
@@ -336,6 +351,7 @@ keep track of the state is called @code{libkeccak_state_t}
 (@code{struct libkeccak_state}).
 
 @fnindex libkeccak_state_initialise
+@cpindex Initialise
 Before you can use the functions for hashing a message,
 you must allocate a state and initialise it.
 To initialise a state, use the function
@@ -353,6 +369,7 @@ upon successful completion, and otherwise set
 @fnindex libkeccak_state_wipe
 @fnindex libkeccak_state_wipe_sponge
 @fnindex libkeccak_state_wipe_message
+@cpindex Cleanup
 Once done with a state structure, you should release
 allocated resources that are stored in the structure.
 This can be done either by calling the function
@@ -373,6 +390,7 @@ pointer to the state as their only parameter, and
 none of them have a return value.
 
 @fnindex libkeccak_state_reset
+@cpindex Reuse
 An alternative to destroying a state, you can reset
 it if you want to reuse it to hash another message
 using the same hashing function specifications.
@@ -381,6 +399,9 @@ instead of @code{libkeccak_state_fast_destroy}.
 It takes a pointer to the state as its only parameter
 and does not return a value.
 
+@cpindex Initialise
+@cpindex Cleanup
+@cpindex Allocation
 If you want to use dynamic instead of static allocation
 for the state, instead of calling @code{malloc} and
 @code{free} yourself, libkeccak offers functions that
@@ -409,6 +430,8 @@ Identical to @code{libkeccak_state_destroy}, except
 it also frees the allocation of the state.
 @end table
 
+@cpindex Duplication
+@cpindex Allocation
 libkeccak also has two functions for copying a state:
 @table @code
 @item libkeccak_state_copy
@@ -431,6 +454,10 @@ the state to. On error, @code{errno} is set to describe the
 error and @code{NULL} is returned.
 @end table
 
+@cpindex Marshal
+@cpindex Serialisation
+@cpindex Unmarshal
+@cpindex Deserialisation
 The library also offers functions for marshalling a state,
 which can be useful when implementing programs that can
 reexecuted into updated version of itself.
@@ -479,6 +506,7 @@ this value to skip pass the marshalled state.
 @fnindex libkeccak_digest
 @fnindex libkeccak_fast_update
 @fnindex libkeccak_fast_digest
+@cpindex Hashing
 Once a state has been initialised, a message can be hashed.
 To hash a message the functions @code{libkeccak_update} and
 @code{libkeccak_digest} are used, or its variants that do
@@ -508,8 +536,8 @@ The funtion returns zero upon success completion. On error,
 returned. The input chunk should not be empty.
 
 @item libkeccak_digest
-@fnindex libkeccak_update
-@fnindex libkeccak_fast_update
+@fnindex libkeccak_digest
+@fnindex libkeccak_fast_digest
 This function shall be called either with the last chunk
 of the message, or when all chunks as been input to
 @code{libkeccak_update} or @code{libkeccak_fast_update}.
@@ -530,15 +558,23 @@ or @code{NULL} if none. This is used to select between
 Keccak, SHA-3, RawSHAKE and SHAKE. Use one of the constants:
 @table @asis
 @item @code{LIBKECCAK_SHA3_SUFFIX} or @code{"01"}
+@cpindex SHA-3
+@cpindex Secure Hash Algorithm 3
 For SHA-3.
 @item @code{LIBKECCAK_RAWSHAKE_SUFFIX} or @code{"11"}
+@cpindex RawSHAKE
 For RawSHAKE.
 @item @code{LIBKECCAK_SHAKE_SUFFIX} or @code{"1111"}
+@cpindex SHAKE
 For SHAKE.
 @item @code{NULL} or @code{""}
+@cpindex Keccak
 For Keccak.
 @end table
 @item
+@cpindex Output size
+@cpindex Hash size
+@cpindex Size, hash
 Output buffer for the hash, in binary. Should be
 allocated to fit @code{(state.n + 7) / 8} @w{@code{char}:s},
 where @code{state} is the state variable. Alternatively
@@ -550,6 +586,11 @@ The funtion returns zero upon success completion. On error,
 returned. The input chunk should not be empty.
 @end table
 
+@cpindex Key derivation
+@cpindex Pseudorandom number generation
+@cpindex Random number generation
+@cpindex Output, extended
+@cpindex Extended output
 libkeccak also has three functions for repeating the squeeze
 phase. Neither of these function have a return value, and
 their first parameter is a pointer to the state.
@@ -578,6 +619,11 @@ second parameter, which should be allocated to fit
 @fnindex libkeccak_digest
 @fnindex libkeccak_fast_digest
 @fnindex libkeccak_squeeze
+@cpindex Conversion
+@cpindex Binary hash
+@cpindex Hexadecimal hash
+@cpindex Presentation, hash
+@cpindex Hash, presentation
 The functions that return hashes: @code{libkeccak_digest},
 @code{libkeccak_fast_digest} and @code{libkeccak_squeeze},
 store the hashes in binary format. However, it must often
@@ -620,6 +666,8 @@ and have an even length.
 @node Hashing files
 @chapter Hashing files
 
+@cpindex Files
+@cpindex Hash files
 libkeccak provides functions for calculating
 hashes of files directly, from a file descriptor.
 
@@ -687,6 +735,10 @@ otherwise identical to @code{libkeccak_rawshakesum_fd}.
 @node Message authentication
 @chapter Message authentication
 
+@cpindex Message authentication code
+@cpindex MAC
+@cpindex HMAC
+@cpindex Keyed-hash message authentication code
 libkeccak supports HMAC. Note that secure message
 authentication codes can be trivially be created
 with Keccak by simple prepending the key to the
@@ -815,6 +867,5 @@ sponge, and the second argument must not be @code{NULL}.
 
 @bye
 
-TODO add @cpindex:es
 TODO examples
 
