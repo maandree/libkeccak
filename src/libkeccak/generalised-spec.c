@@ -139,5 +139,5 @@ int libkeccak_degeneralise_spec(libkeccak_generalised_spec_t* restrict spec,
 
 #ifdef __GNUC__
 # pragma GCC diagnostic pop
-#endif __GNUC__
+#endif
 
