@@ -1,0 +1,45 @@
+.TH LIBKECCAK_SPEC_SHAKE 3 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak_spec_shake - Configure SHAKE hashing parameters
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+void libkeccak_spec_shake(libkeccak_spec_t *\fIspec\fP, long \fIx\fP, long \fId\fP);
+.fi
+.P
+Link with \fI-lkeccak\fP.
+.SH DESCRIPTION
+The
+.BR libkeccak_spec_shake ()
+sets \fI*spec\fP to specify the Keccak parameters used for SHAKE
+hashing with the semicapacity specified, in bits, via the \fIx\fP
+parameter, and the output size specified, in bits, via the \fId\fP
+parameter.
+.SH RETURN VALUES
+The
+.BR libkeccak_spec_shake ()
+function does not return any value.
+.SH ERRORS
+The
+.BR libkeccak_spec_shake ()
+function cannot fail.
+.SH EXAMPLES
+This examples configure a \fBlibkeccak_spec_t\fP to specify
+the Keccak parameters used for SHAKE256(, 512):
+.LP
+.nf
+libkeccak_spec_t spec;
+libkeccak_spec_shake(&spec, 256, 512);
+.fi
+.SH SEE ALSO
+.BR libkeccak_spec_sha3 (3),
+.BR libkeccak_spec_rawshake (3),
+.BR libkeccak_spec_check (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the LICENSE file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/bus/issues or to
+maandree@member.fsf.org
