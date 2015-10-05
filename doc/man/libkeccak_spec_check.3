@@ -1,0 +1,92 @@
+.TH LIBKECCAK_SPEC_CHECK 3 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak_spec_check - Validate hashing parameters
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+int libkeccak_spec_check(const libkeccak_spec_t *\fIspec\fP);
+.fi
+.P
+Link with \fI-lkeccak\fP.
+.SH DESCRIPTION
+The
+.BR libkeccak_spec_check ()
+validates the parameters of \fI*spec\fP, so that
+unusable configurations can be detected. It is
+recommended to call this function after calling
+.BR libkeccak_spec_sha3 (3),
+.BR libkeccak_spec_rawshake (3),
+.BR libkeccak_spec_shake (3),
+or, especially, after settings the parameters
+manually for Keccak hashing.
+.PP
+.nf
+typedef struct libkeccak_spec {
+    long bitrate;     /* bitrate (in bits) */
+    long capacity;    /* capacity (in bits) */
+    long output;      /* output size (in bits) */
+} libkeccak_spec_t;
+.fi
+.SH RETURN VALUES
+The
+.BR libkeccak_spec_check ()
+function returns 0 if the settings are usable. Otherwise
+it will return one of the following constants.
+.PP
+.TP
+.B LIBKECCAK_SPEC_ERROR_BITRATE_NONPOSITIVE
+The specified bitrate was non-positive.
+.TP
+.B LIBKECCAK_SPEC_ERROR_BITRATE_MOD_8
+The specified bitrate was not equivalent to 0
+modulus 8, that is, it was not in whole bytes.
+.TP
+.B LIBKECCAK_SPEC_ERROR_CAPACITY_NONPOSITIVE
+The specified capacity was non-positive.
+.TP
+.B LIBKECCAK_SPEC_ERROR_CAPACITY_MOD_8
+The specified capacity was not equivalent to 0
+modulus 8, that is, it was not in whole bytes.
+.TP
+.B LIBKECCAK_SPEC_ERROR_OUTPUT_NONPOSITIVE
+The specified output size was non-positive.
+.TP
+.B LIBKECCAK_SPEC_ERROR_STATE_TOO_LARGE
+The state size, that is the sum of the bitrate
+and the capacity, exceeded the supported limit
+(currently at 1600 bits.)
+.TP
+.B LIBKECCAK_SPEC_ERROR_STATE_MOD_25
+The state size, that is the sum of the bitrate
+and the capacity, in bits, was not equivalent
+to 0 modulus 25. Meaning the state size cannot
+cover all lanes equivalently.
+.TP
+.B LIBKECCAK_SPEC_ERROR_WORD_NON_2_POTENT
+The word size, that is the state size divided
+by 25, is not a power of 2.
+.TP
+.B LIBKECCAK_SPEC_ERROR_WORD_MOD_8
+The word size, that is the state size divided
+by 25, is not quivalent to 0 modulus 8, that
+is, it is not in whole bytes.
+.PP
+Note that there may be more than one error. Only the first
+detected is returned.
+.SH ERRORS
+The
+.BR libkeccak_spec_check ()
+function cannot fail.
+.fi
+.SH SEE ALSO
+.BR libkeccak_spec_sha3 (3),
+.BR libkeccak_spec_rawshake (3),
+.BR libkeccak_spec_shake (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the LICENSE file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/bus/issues or to
+maandree@member.fsf.org
