@@ -1,0 +1,73 @@
+.TH LIBKECCAK 7 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak - Keccak-family hashing library
+.SH DESCRIPTION
+.BR libkeccak
+is a bit-oriented lanewise implementation of the Keccak-family with
+support for extend output size, state marshalling, algorithm tuning with
+implicit parameters, secure erasure of sensitive data, and HMAC.
+.SH FUTURE DIRECTION
+Keccak-3200 may be implemented in the future.
+.SH SEE ALSO
+.BR libkeccak_spec_sha3 (3),
+.BR libkeccak_spec_rawshake (3),
+.BR libkeccak_spec_shake (3),
+.BR libkeccak_spec_check (3),
+.BR libkeccak_generalised_spec_initialise (3),
+.BR libkeccak_degeneralise_spec (3),
+.BR libkeccak_state_initialise (3),
+.BR libkeccak_state_reset (3),
+.BR libkeccak_state_fast_destroy (3),
+.BR libkeccak_state_wipe_message (3),
+.BR libkeccak_state_wipe_sponge (3),
+.BR libkeccak_state_wipe (3),
+.BR libkeccak_state_destroy (3),
+.BR libkeccak_state_create (3),
+.BR libkeccak_state_fast_free (3),
+.BR libkeccak_state_free (3),
+.BR libkeccak_state_copy (3),
+.BR libkeccak_state_duplicate (3),
+.BR libkeccak_state_marshal_size (3),
+.BR libkeccak_state_marshal (3),
+.BR libkeccak_state_unmarshal (3),
+.BR libkeccak_state_unmarshal_skip (3),
+.BR libkeccak_fast_update (3),
+.BR libkeccak_update (3),
+.BR libkeccak_fast_digest (3),
+.BR libkeccak_digest (3),
+.BR libkeccak_simple_squeeze (3),
+.BR libkeccak_fast_squeeze (3),
+.BR libkeccak_squeeze (3),
+.BR libkeccak_generalised_sum_fd (3),
+.BR libkeccak_keccaksum_fd (3),
+.BR libkeccak_sha3sum_fd (3),
+.BR libkeccak_rawshakesum_fd (3),
+.BR libkeccak_shakesum_fd (3),
+.BR libkeccak_behex_lower (3),
+.BR libkeccak_behex_upper (3),
+.BR libkeccak_unhex (3),
+.BR libkeccak_hmac_set_key (3),
+.BR libkeccak_hmac_initialise (3),
+.BR libkeccak_hmac_create (3),
+.BR libkeccak_hmac_reset (3),
+.BR libkeccak_hmac_wipe (3),
+.BR libkeccak_hmac_fast_destroy (3),
+.BR libkeccak_hmac_destroy (3),
+.BR libkeccak_hmac_fast_free (3),
+.BR libkeccak_hmac_free (3),
+.BR libkeccak_hmac_copy (3),
+.BR libkeccak_hmac_duplicate (3),
+.BR libkeccak_hmac_marshal_size (3),
+.BR libkeccak_hmac_marshal (3),
+.BR libkeccak_hmac_unmarshal (3),
+.BR libkeccak_hmac_unmarshal_skip (3),
+.BR libkeccak_hmac_fast_update (3),
+.BR libkeccak_hmac_update (3),
+.BR libkeccak_hmac_fast_digest (3),
+.BR libkeccak_hmac_digest (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the COPYING file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@member.fsf.org
