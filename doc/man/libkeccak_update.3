@@ -1,0 +1,49 @@
+.TH LIBKECCAK_UPDATE 3 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak_update - Partially hash a message with erasure
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+int libkeccak_update(libkeccak_state_t *\fIstate\fP, const char *\fImsg\fP, size_t \fImsglen\fP);
+.fi
+.P
+Link with \fI-lkeccak\fP.
+.SH DESCRIPTION
+The
+.BR libkeccak_update ()
+function continues (or starts) hashing a message.
+The current state of the hashing is stored in \fI*state\fP,
+and will be updated. The message specified by the \fImsg\fP
+parameter with the byte-size specified by the \fImsglen\fP
+parameter, will be hashed.
+.PP
+The
+.BR libkeccak_update ()
+function may reallocate the state's message chunk buffer.
+When doing so, it attempts to do so as securely as possible,
+rather than as fast as possible.
+.SH RETURN VALUES
+The
+.BR libkeccak_update ()
+function returns 0 upon successful completion. On error,
+-1 is returned and \fIerrno\fP is set to describe the error.
+.SH ERRORS
+The
+.BR libkeccak_update ()
+function may fail for any reason specified by the function
+.BR malloc (3).
+.SH Notes
+Neither parameter by be \fINULL\fP or 0.
+.SH SEE ALSO
+.BR libkeccak_state_initialise (3),
+.BR libkeccak_fast_update (3),
+.BR libkeccak_fast_digest (3),
+.BR libkeccak_digest (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the LICENSE file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@member.fsf.org
