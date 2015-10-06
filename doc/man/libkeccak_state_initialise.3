@@ -1,0 +1,46 @@
+.TH LIBKECCAK_STATE_INITIALISE 3 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak_state_initialise - Initialise hash state
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+int libkeccak_state_initialise(libkeccak_state_t *\fIstate\fP,
+                               const libkeccak_spec_t *\fIspec\fP);
+.fi
+.P
+Link with \fI-lkeccak\fP.
+.SH DESCRIPTION
+The
+.BR libkeccak_state_initialise ()
+initialises \fI*state\fP and sets the algorithm tuning parameters
+to those specified by \fI*spec\fP.
+.SH RETURN VALUES
+The
+.BR libkeccak_state_initialise ()
+function return 0 upon successful completion.
+On error, -1 is returned and \fIerrno\fP is set to describe
+the error.
+.SH ERRORS
+The
+.BR libkeccak_state_initialise ()
+function may fail for any specified for the function
+.BR malloc (3).
+.SH SEE ALSO
+.BR libkeccak_generalised_sum_fd (3),
+.BR libkeccak_keccaksum_fd (3),
+.BR libkeccak_sha3sum_fd (3),
+.BR libkeccak_rawshakesum_fd (3),
+.BR libkeccak_shakesum_fd (3),
+.BR libkeccak_spec_sha3 (3),
+.BR libkeccak_spec_shake (3),
+.BR libkeccak_spec_rawshake (3),
+.BR libkeccak_spec_check (3),
+.BR libkeccak_generalised_spec_initialise (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the LICENSE file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@member.fsf.org
