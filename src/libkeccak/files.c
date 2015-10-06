@@ -35,7 +35,7 @@
  * @param   spec     Specifications for the hashing algorithm
  * @param   suffix   The data suffix, see `libkeccak_digest`
  * @param   hashsum  Output array for the hashsum, have an allocation size of
- *                   at least `(spec->output / 8) * sizeof(char)`, may be `NULL`
+ *                   at least `((spec->output + 7) / 8) * sizeof(char)`, may be `NULL`
  * @return           Zero on success, -1 on error
  */
 int libkeccak_generalised_sum_fd(int fd, libkeccak_state_t* restrict state,
