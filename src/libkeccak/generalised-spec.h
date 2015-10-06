@@ -128,7 +128,7 @@ typedef struct libkeccak_generalised_spec
 
 
 /**
- * Set all specification pameters to automatic
+ * Set all specification parameters to automatic
  * 
  * @param  spec  The specification datastructure to fill in
  */
