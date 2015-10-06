@@ -1,0 +1,36 @@
+.TH LIBKECCAK_STATE_UNMARSHAL 3 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak_state_unmarshal - Unharshals a hash state
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+size_t libkeccak_state_unmarshal(libkeccak_state_t *\fIstate\fP, const char *\fIdata\fP);
+.fi
+.P
+Link with \fI-lkeccak\fP.
+.SH DESCRIPTION
+The
+.BR libkeccak_state_unmarshal ()
+function unmarshals a hash state from the beginning
+of \fIdata\fP. and stores it in \fI*state\fP.
+.SH RETURN VALUES
+The
+.BR libkeccak_state_unmarshal ()
+returns the number of bytes reads from \fIdata\fP.
+.SH ERRORS
+The
+.BR libkeccak_state_unmarshal ()
+function may fail for any specified for the function
+.BR malloc (3).
+.SH SEE ALSO
+.BR libkeccak_state_marshal_size (3),
+.BR libkeccak_state_marshal (3),
+.BR libkeccak_state_unmarshal_skip (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the LICENSE file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@member.fsf.org
