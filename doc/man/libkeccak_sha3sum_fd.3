@@ -1,43 +1,41 @@
-.TH LIBKECCAK_GENERALISED_SUM_FD 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_SHA3SUM_FD 3 LIBKECCAK-%VERSION%
 .SH NAME
-libkeccak_generalised_sum_fd - Calculate the hash of a file
+libkeccak_sha3sum_fd - Calculate a SHA-3 hashsum of a file
 .SH SYNOPSIS
 .LP
 .nf
 #include <libkeccak.h>
 .P
-int libkeccak_generalised_sum_fd(int \fIfd\fP, libkeccak_state_t *\fIstate\fP,
-                                 const libkeccak_spec_t *\fIspec\fP,
-                                 const char *\fIsuffix\fP, char *\fIhashsum\fP);
+int libkeccak_sha3sum_fd(int \fIfd\fP, libkeccak_state_t *\fIstate\fP,
+                         long \fIoutput\fP, char *\fIhashsum\fP);
 .fi
 .P
 Link with \fI-lkeccak\fP.
 .SH DESCRIPTION
 The
-.BR libkeccak_generalised_sum_fd ()
-calculates the hash of a file, whose file desriptor is specified
+.BR libkeccak_sha3sum_fd ()
+calculates a SHA-3 hashsum of a file, whose file desriptor is specified
 by \fIfd\fP (and should be at the beginning of the file.) The
-hash algorithm is specified by \fI*spec\fP and \fIsuffix\fP,
-where \fI*spec\fP is the tuning of the algorithm and \fIsuffix\fP
-is the bits append to the message (or \fINULL\fP if none.)
+hash algorithm is tuned by the \fIoutput\fP parameter; it specifies
+the output size, in bits.
 .PP
 The hash is stored in binary form to \fIhashsum\fP. \fIhashsum\fP
 should have an allocation size of at least
-(((\fIspec->output\fP + 7) / 8) * sizeof(char)).
+(((\fIoutput\fP + 7) / 8) * sizeof(char)).
 .PP
 \fI*state\fP should not be initialised.
-.BR libkeccak_generalised_sum_fd ()
+.BR libkeccak_sha3sum_fd ()
 initialises \fI*state\fP itself. Therefore there would be a
 memory leak if \fI*state\fP is already initialised.
 .SH RETURN VALUES
 The
-.BR libkeccak_generalised_sum_fd ()
+.BR libkeccak_sha3sum_fd ()
 function return 0 upon successful completion.
 On error, -1 is returned and \fIerrno\fP is set to describe
 the error.
 .SH ERRORS
 The
-.BR libkeccak_generalised_sum_fd ()
+.BR libkeccak_sha3sum_fd ()
 function may fail for any reason, except those resulting
 in \fIerrno\fP being set to \fBEINTR\fP, specified for the
 functions
@@ -47,43 +45,34 @@ and
 .BR realloc (3).
 .SH NOTES
 Be aware,
-.BR libkeccak_generalised_sum_fd ()
+.BR libkeccak_sha3sum_fd ()
 hashes the file until the end has been reached. For pipes
 and sockets and this means until the file has been closed.
 But for character devices, this usually means never.
 Attempting to hash files in /dev is therefore usually a
 bad idea.
-.BR libkeccak_generalised_sum_fd ()
+.BR libkeccak_sha3sum_fd ()
 does not check for the file length or file type before
 hashing as this could limit what you can do, and make
 the library more complex.
 .PP
-.BR libkeccak_generalised_sum_fd ()
+.BR libkeccak_sha3sum_fd ()
 does not stop if interrupted (\fBread\fP(2) returns
 \fBEINTR\fP.)
 .PP
-.BR libkeccak_generalised_sum_fd ()
+.BR libkeccak_sha3sum_fd ()
 assumes all information is non-sensitive, and will
 therefore not perform any secure erasure of information.
 .PP
-.BR libkeccak_generalised_sum_fd ()
+.BR libkeccak_sha3sum_fd ()
 does not validate the tuning of the algorithm.
 .SH EXAMPLES
-This example calculates the Keccak[b = 1024, c = 576, n = 256]
-hash of the input from stdin, and prints the hash, in hexadecimal
-form, to stdout.
+This example calculates the SHA3-256 hash of the input
+from stdin, and prints the hash, in hexadecimal form, to stdout.
 .LP
 .nf
 libkeccak_state_t state;
-libkeccak_spec_t spec;
-char binhash[256 / 8];
-char hexhash[256 / 8 * 2 + 1];
-
-spec.bitrate = 1024;
-spec.capacity = 576;
-spec.output = 256;
-
-if (libkeccak_generalised_sum_fd(STDIN_FILNO, &state, &spec, NULL, binhash) < 0)
+if (libkeccak_sha3sum_fd(STDIN_FILNO, &state, 256, binhash) < 0)
     goto fail;
 libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
 printf("%s\\n", hexhash);
@@ -91,13 +80,11 @@ printf("%s\\n", hexhash);
 .SH SEE ALSO
 .BR libkeccak_behex_lower (3),
 .BR libkeccak_behex_upper (3),
+.BR libkeccak_generalised_sum_fd (3),
 .BR libkeccak_keccaksum_fd (3),
-.BR libkeccak_sha3sum_fd (3),
 .BR libkeccak_rawshakesum_fd (3),
 .BR libkeccak_shakesum_fd (3),
 .BR libkeccak_spec_sha3 (3),
-.BR libkeccak_spec_shake (3),
-.BR libkeccak_spec_rawshake (3),
 .BR libkeccak_spec_check (3),
 .BR libkeccak_generalised_spec_initialise (3)
 .SH AUTHORS
