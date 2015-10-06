@@ -19,8 +19,9 @@ and sets the algorithm tuning parameters to those specified by \fI*spec\fP.
 The
 .BR libkeccak_state_create ()
 function return a new allocated \fIlibkeccak_state_t*\fP
-(of one initialised element). On error, \fINULL\fP is returned
-and \fIerrno\fP is set to describe the error.
+(of one initialised element) upon successful completion.
+On error, \fINULL\fP is returned and \fIerrno\fP is set to
+describe the error.
 .SH ERRORS
 The
 .BR libkeccak_state_create ()
