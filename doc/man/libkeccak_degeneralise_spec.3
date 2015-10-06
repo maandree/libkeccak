@@ -1,0 +1,117 @@
+.TH LIBKECCAK_DEGENERALISE_SPEC 3 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak_degeneralise_spec - Set all specification parameters to automatic
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+int libkeccak_degeneralise_spec(libkeccak_generalised_spec_t *\fIspec\fP,
+                                libkeccak_spec_t *\fIoutput_spec\fP);
+.fi
+.P
+Link with \fI-lkeccak\fP.
+.SH DESCRIPTION
+The
+.BR libkeccak_degeneralise_spec ()
+will resolve automatic parameters in \fI*spec\fP
+and translates the parameters to \fI*output_spec\fP,
+so that it can be used for hashing.
+.PP
+The function will modify both \fI*spec\fP and \fI*output_spec\fP.
+.PP
+You should call the
+.BR libkeccak_spec_check (3)
+function after calling
+.BR libkeccak_degeneralise_spec ().
+.PP
+.nf
+typedef struct libkeccak_generalised_spec {
+    long bitrate;     /* bitrate (in bits) */
+    long capacity;    /* capacity (in bits) */
+    long output;      /* output size (in bits) */
+    long state_size;  /* state size (in bits) */
+    long word_size;   /* word size (in bits) */
+} libkeccak_generalised_spec_t;
+.fi
+.SH RETURN VALUES
+The
+.BR libkeccak_degeneralise_spec ()
+function returns 0 if the settings are usable. Otherwise
+it will return one of the following constants.
+.PP
+.TP
+.B LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_NONPOSITIVE
+The specified state size is non-positive.
+.TP
+.B LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_TOO_LARGE
+The specified state size exceeded the supported limit
+(currently at 1600 bits.)
+.TP
+.B LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_MOD_25
+The specified state size, in bits, was not equivalent
+to 0 modulus 25. Meaning the state size cannot
+cover all lanes equivalently.
+.TP
+.B LIBKECCAK_GENERALISED_SPEC_ERROR_WORD_NONPOSITIVE
+The specified word size is non-positive.
+.TP
+.B LIBKECCAK_GENERALISED_SPEC_ERROR_WORD_TOO_LARGE
+The specified word size exceeded the supported limit
+(currently at 64 bits.)
+.TP
+.B LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_WORD_INCOHERENCY
+The specified state size is not exactly 25 times larger
+than the word size.
+.TP
+.B LIBKECCAK_GENERALISED_SPEC_ERROR_CAPACITY_NONPOSITIVE
+The specified capacity was non-positive.
+.TP
+.B LIBKECCAK_GENERALISED_SPEC_ERROR_CAPACITY_MOD_8
+The specified capacity was not equivalent to 0
+modulus 8, that is, it was not in whole bytes.
+.TP
+.B LIBKECCAK_GENERALISED_SPEC_ERROR_BITRATE_NONPOSITIVE
+The specified bitrate was non-positive.
+.TP
+.B LIBKECCAK_GENERALISED_SPEC_ERROR_BITRATE_MOD_8
+The specified bitrate was not equivalent to 0
+modulus 8, that is, it was not in whole bytes.
+.TP
+.B LIBKECCAK_GENERALISED_SPEC_ERROR_OUTPUT_NONPOSITIVE
+The specified output size was non-positive.
+.PP
+Note that there may be more than one error. Only the first
+detected is returned.
+.SH ERRORS
+The
+.BR libkeccak_degeneralise_spec ()
+function cannot fail.
+.fi
+.SH EXAMPLES
+This examples configure a \fBlibkeccak_spec_t\fP to specify
+settings for Keccak[c = 512]:
+.LP
+.nf
+int r;
+libkeccak_spec_t spec;
+libkeccak_generalised_spec_t gspec;
+libkeccak_generalised_spec_initialise(&gspec);
+gspec.capacity = 512;
+if ((r = libkeccak_degeneralise_spec(&gspec, &spec)))
+    goto fail_degeneralise_spec;
+if ((r = libkeccak_spec_check(&spec)));
+    goto fail_spec_check;
+.fi
+.SH SEE ALSO
+.BR libkeccak_generalised_spec_initialise (3),
+.BR libkeccak_spec_check (3),
+.BR libkeccak_spec_sha3 (3),
+.BR libkeccak_spec_rawshake (3),
+.BR libkeccak_spec_shake (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the LICENSE file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/bus/issues or to
+maandree@member.fsf.org
