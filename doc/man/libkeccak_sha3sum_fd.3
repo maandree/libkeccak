@@ -14,10 +14,10 @@ Link with \fI-lkeccak\fP.
 .SH DESCRIPTION
 The
 .BR libkeccak_sha3sum_fd ()
-calculates a SHA-3 hashsum of a file, whose file desriptor is specified
-by \fIfd\fP (and should be at the beginning of the file.) The
-hash algorithm is tuned by the \fIoutput\fP parameter; it specifies
-the output size, in bits.
+function calculates a SHA-3 hashsum of a file, whose file
+desriptor is specified by \fIfd\fP (and should be at the
+beginning of the file.) The hash algorithm is tuned by the
+\fIoutput\fP parameter; it specifies the output size, in bits.
 .PP
 The hash is stored in binary form to \fIhashsum\fP. \fIhashsum\fP
 should have an allocation size of at least

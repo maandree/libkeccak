@@ -14,9 +14,10 @@ Link with \fI-lkeccak\fP.
 .SH DESCRIPTION
 The
 .BR libkeccak_keccaksum_fd ()
-calculates a Keccak hashsum of a file, whose file desriptor is specified
-by \fIfd\fP (and should be at the beginning of the file.) The
-hash algorithm tuning is specified by \fI*spec\fP.
+function calculates a Keccak hashsum of a file, whose file
+desriptor is specified by \fIfd\fP (and should be at the
+beginning of the file.) The hash algorithm tuning is
+specified by \fI*spec\fP.
 .PP
 The hash is stored in binary form to \fIhashsum\fP. \fIhashsum\fP
 should have an allocation size of at least
