@@ -33,7 +33,7 @@
  * @param   spec     Specifications for the hashing algorithm
  * @param   suffix   The data suffix, see `libkeccak_digest`
  * @param   hashsum  Output array for the hashsum, have an allocation size of
- *                   at least `(spec->output / 8) * sizeof(char)`, may be `NULL`
+ *                   at least `((spec->output + 7) / 8) * sizeof(char)`, may be `NULL`
  * @return           Zero on success, -1 on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull(2, 3))))
@@ -50,7 +50,7 @@ int libkeccak_generalised_sum_fd(int fd, libkeccak_state_t* restrict state,
  * @param   state    The hashing state, should not be initialised (memory leak otherwise)
  * @param   spec     Specifications for the hashing algorithm
  * @param   hashsum  Output array for the hashsum, have an allocation size of
- *                   at least `(spec->output / 8) * sizeof(char)`, may be `NULL`
+ *                   at least `((spec->output + 7) / 8) * sizeof(char)`, may be `NULL`
  * @return           Zero on success, -1 on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull(2, 3), artificial, gnu_inline)))
@@ -70,7 +70,7 @@ int libkeccak_keccaksum_fd(int fd, libkeccak_state_t* restrict state,
  * @param   state    The hashing state, should not be initialised (memory leak otherwise)
  * @param   output   The output size parameter for the hashing algorithm
  * @param   hashsum  Output array for the hashsum, have an allocation size of
- *                   at least `(output / 8) * sizeof(char)`, may be `NULL`
+ *                   at least `((output + 7) / 8) * sizeof(char)`, may be `NULL`
  * @return           Zero on success, -1 on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull(2), artificial, gnu_inline)))
@@ -93,7 +93,7 @@ int libkeccak_sha3sum_fd(int fd, libkeccak_state_t* restrict state,
  * @param   semicapacity  The semicapacity parameter for the hashing algorithm
  * @param   output        The output size parameter for the hashing algorithm
  * @param   hashsum       Output array for the hashsum, have an allocation size of
- *                        at least `(output / 8) * sizeof(char)`, may be `NULL`
+ *                        at least `((output + 7) / 8) * sizeof(char)`, may be `NULL`
  * @return                Zero on success, -1 on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull(2), artificial, gnu_inline)))
@@ -116,7 +116,7 @@ int libkeccak_rawshakesum_fd(int fd, libkeccak_state_t* restrict state,
  * @param   semicapacity  The semicapacity parameter for the hashing algorithm
  * @param   output        The output size parameter for the hashing algorithm
  * @param   hashsum       Output array for the hashsum, have an allocation size of
- *                        at least `(output / 8) * sizeof(char)`, may be `NULL`
+ *                        at least `((output + 7) / 8) * sizeof(char)`, may be `NULL`
  * @return                Zero on success, -1 on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull(2), artificial, gnu_inline)))
