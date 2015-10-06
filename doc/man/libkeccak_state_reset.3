@@ -1,0 +1,33 @@
+.TH LIBKECCAK_STATE_RESET 3 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak_state_reset - Reinitialise hash state
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+void libkeccak_state_reset(libkeccak_state_t *\fIstate\fP);
+.fi
+.P
+Link with \fI-lkeccak\fP.
+.SH DESCRIPTION
+The
+.BR libkeccak_state_reset ()
+reinitialises \fI*state\fP, but keeps the tuning, so it
+can be used to hash another message.
+.SH RETURN VALUES
+The
+.BR libkeccak_state_reset ()
+function does not return any value.
+.SH ERRORS
+The
+.BR libkeccak_state_reset ()
+function cannot fail.
+.SH SEE ALSO
+.BR libkeccak_state_initialise (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the LICENSE file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@member.fsf.org
