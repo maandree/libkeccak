@@ -1,0 +1,38 @@
+.TH LIBKECCAK_STATE_CREATE 3 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak_state_create - Allocate and initialise hash state
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+libkeccak_state_t *libkeccak_state_create(const libkeccak_spec_t *\fIspec\fP);
+.fi
+.P
+Link with \fI-lkeccak\fP.
+.SH DESCRIPTION
+The
+.BR libkeccak_state_create ()
+allocates a new \fIlibkeccak_state_t*\fP with one initialised element,
+and sets the algorithm tuning parameters to those specified by \fI*spec\fP.
+.SH RETURN VALUES
+The
+.BR libkeccak_state_create ()
+function return a new allocated \fIlibkeccak_state_t*\fP
+(of one initialised element). On error, \fINULL\fP is returned
+and \fIerrno\fP is set to describe the error.
+.SH ERRORS
+The
+.BR libkeccak_state_create ()
+function may fail for any specified for the function
+.BR malloc (3).
+.SH SEE ALSO
+.BR libkeccak_state_initialise (3),
+.BR libkeccak_state_free (3),
+.BR libkeccak_state_fast_free (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the LICENSE file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@member.fsf.org
