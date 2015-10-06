@@ -1,0 +1,48 @@
+.TH LIBKECCAK_UNHEX 3 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak_unhex - Converts a hexadecimal hashsum to binary
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+void libkeccak_unhex(char *restrict \fIoutput\fP,
+                     const char *restrict \fIhashsum\fP);
+.fi
+.P
+Link with \fI-lkeccak\fP.
+.SH DESCRIPTION
+The
+.BR libkeccak_unhex ()
+function
+converts a hexadecimal hashsum, stored in \fIhashsum\fP,
+to binary, and stores the binary representation in
+\fIoutput\fP.
+.PP
+\fIhashsum\fP must be terminated by a NUL-character.
+It may be in either lowercase or uppercase, or a mixture
+thereof. \fIoutput\fP will not be terminated.
+.PP
+(\fBstrlen\fP(\fIhashsum\fP) / 2) bytes will be written to
+the beginning of \fIoutput\fP. It should therefore have
+an allocation of at least that number of bytes.
+.SH RETURN VALUES
+The
+.BR libkeccak_unhex ()
+function does return any value.
+.SH ERRORS
+The
+.BR libkeccak_unhex ()
+function cannot fail.
+.SH NOTES
+\fIhashsum\fP must have an even number of digits
+(characters excluding the terminating NUL-character.)
+.SH SEE ALSO
+.BR libkeccak_behex_lower (3),
+.BR libkeccak_behex_upper (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the LICENSE file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@member.fsf.org
