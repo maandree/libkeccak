@@ -55,7 +55,7 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
  * without wiping sensitive data when possible
  * 
  * @param   state    The hashing state
- * @param   msg      The rest of the message, may be `NULL`, may be modified
+ * @param   msg      The rest of the message, may be `NULL`
  * @param   msglen   The length of the partial message
  * @param   bits     The number of bits at the end of the message not covered by `msglen`
  * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
@@ -72,7 +72,7 @@ int libkeccak_fast_digest(libkeccak_state_t* restrict state, const char* restric
  * and wipe sensitive data when possible
  * 
  * @param   state    The hashing state
- * @param   msg      The rest of the message, may be `NULL`, may be modified
+ * @param   msg      The rest of the message, may be `NULL`
  * @param   msglen   The length of the partial message
  * @param   bits     The number of bits at the end of the message not covered by `msglen`
  * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
