@@ -1,0 +1,36 @@
+.TH LIBKECCAK_STATE_WIPE_MESSAGE 3 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak_state_wipe_message - Securely erase the message chunk buffer
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+void libkeccak_state_wipe_message(libkeccak_state_t *\fIstate\fP);
+.fi
+.P
+Link with \fI-lkeccak\fP.
+.SH DESCRIPTION
+The
+.BR libkeccak_state_wipe_message ()
+function securely erases the message chunk buffer.
+.SH RETURN VALUES
+The
+.BR libkeccak_state_wipe_message ()
+function does not return any value.
+.SH ERRORS
+The
+.BR libkeccak_state_wipe_message ()
+function cannot fail.
+.SH SEE ALSO
+.BR libkeccak_state_wipe_sponge (3),
+.BR libkeccak_state_wipe (3),
+.BR libkeccak_state_fast_destroy (3),
+.BR libkeccak_state_destroy (3),
+.BR libkeccak_state_reset (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the LICENSE file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@member.fsf.org
