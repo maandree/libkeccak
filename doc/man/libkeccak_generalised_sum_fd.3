@@ -83,7 +83,7 @@ spec.bitrate = 1024;
 spec.capacity = 576;
 spec.output = 256;
 
-if (libkeccak_generalised_sum_fd(STDIN_FILNO, &state, &spec, NULL, binhash) < 0)
+if (libkeccak_generalised_sum_fd(STDIN_FILENO, &state, &spec, NULL, binhash) < 0)
     goto fail;
 libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
 printf("%s\\n", hexhash);

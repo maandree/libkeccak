@@ -74,7 +74,7 @@ from stdin, and prints the hash, in hexadecimal form, to stdout.
 .LP
 .nf
 libkeccak_state_t state;
-if (libkeccak_shakesum_fd(STDIN_FILNO, &state, 256, 512, binhash) < 0)
+if (libkeccak_shakesum_fd(STDIN_FILENO, &state, 256, 512, binhash) < 0)
     goto fail;
 libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
 printf("%s\\n", hexhash);
