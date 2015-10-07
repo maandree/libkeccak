@@ -1,0 +1,45 @@
+.TH LIBKECCAK_FAST_SQUEEZE 3 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak_squeeze - Runs the squeeze phase
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+void libkeccak_squeeze(libkeccak_state_t *\fIstate\fP, char *\fIhashsum\fP);
+.fi
+.P
+Link with \fI-lkeccak\fP.
+.SH DESCRIPTION
+The
+.BR libkeccak_squeeze ()
+function runs the Keccak squeeze phase, on the the hash
+process described by \fI*state\fP, on stores a new digest,
+in binary form, in \fIhashsum\fP.
+.PP
+\fIhashsum\fP has the same requirement as for the
+.BR libkeccak_digest (3)
+and
+.BR libkeccak_fast_digest (3)
+functions: it must have an allocation size of at least
+((\fIstate->n\fP + 7) / 8) bytes. However, it may not
+be \fINULL\fP.
+.SH RETURN VALUES
+The
+.BR libkeccak_squeeze ()
+function does not return any value.
+.SH ERRORS
+The
+.BR libkeccak_squeeze ()
+function cannot fail.
+.SH SEE ALSO
+.BR libkeccak_digest (3),
+.BR libkeccak_fast_digest (3),
+.BR libkeccak_simple_squeeze (3),
+.BR libkeccak_fast_squeeze (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the LICENSE file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@member.fsf.org
