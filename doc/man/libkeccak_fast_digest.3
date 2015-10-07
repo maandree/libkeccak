@@ -63,6 +63,45 @@ The
 .BR libkeccak_fast_digest ()
 function may fail for any reason specified by the function
 .BR realloc (3).
+.SH EXAMPLE
+This example calculates the Keccak[b = 1024, c = 576, n = 256]
+hash of the input from stdin, and prints the hash, in hexadecimal
+form, to stdout.
+.LP
+.nf
+libkeccak_state_t state;
+libkeccak_spec_t spec;
+char binhash[256 / 8];
+char hexhash[256 / 8 * 2 + 1];
+char chunk[4 << 10];
+ssize_t len;
+
+spec.bitrate = 1024;
+spec.capacity = 576;
+spec.output = 256;
+if (libkeccak_state_initialise(&state, &spec) < 0)
+    goto fail;
+
+for (;;) {
+    len = read(STDIN_FILENO, chunk, sizeof(chunk));
+
+    if ((len < 0) && (errno == EINTR))
+        continue;
+    if (len < 0)
+        goto fail;
+    if (len == 0)
+        break;
+
+    if (libkeccak_fast_update(&state, chunk, (size_t)len) < 0)
+        goto fail;
+}
+if (libkeccak_fast_digest(&state, NULL, 0, 0, "", binhash) < 0)
+    goto fail;
+
+libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
+printf("%s\\n", hexhash);
+libkeccak_state_fast_destroy(&state);
+.fi
 .SH SEE ALSO
 .BR libkeccak_state_initialise (3),
 .BR libkeccak_fast_update (3),
