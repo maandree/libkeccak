@@ -1,0 +1,78 @@
+.TH LIBKECCAK_DIGEST 3 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak_digest - Complete the hashing of a message with erasure
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+int libkeccak_digest(libkeccak_state_t *\fIstate\fP, const char *\fImsg\fP, size_t \fImsglen\fP,
+                          size_t \fIbits\fP, const char *\fIsuffix\fP, char *\fIhashsum\fP);
+.fi
+.P
+Link with \fI-lkeccak\fP.
+.SH DESCRIPTION
+The
+.BR libkeccak_digest ()
+function absorbs the last part of (or all of) a message,
+and returns the hash of the entire message. The last part
+of the message is specified by the \fImsg\fP parameter, and
+its byte-size is specified by the \fImsglen\fP parameter. If
+all of the message has already be processed by calls to the
+.BR libkeccak_update (3)
+function or the
+.BR libkeccak_fast_update (3)
+function (with the same pointer on \fIstate\fP,) \fImsg\fP
+and \fImsglen\fP should be set to \fINULL\fP and 0, respectively.
+.PP
+If the message is not comprised a whole number of bytes,
+the number of bits, modulus 8, in the message should be
+specified in the \fIbits\fP parameter. \fImsglen\fP must only
+count the number of whole bytes, that is, the floor of the
+number of bits in the message divided by 8.
+.PP
+\fIsuffix\fP should be a NUL-terminated string of ASCII '1':s
+and '0':s, representing the bits that should be appended to
+the message. If this string is empty, \fINULL\fP may be used
+instead. This is used to select hash algorithm. For pure Keccak,
+\fINULL\fP or "" is used. For the other algorithms the constants
+\fBLIBKECCAK_SHA3_SUFFIX\fP (for SHA-3),
+\fBLIBKECCAK_RAWSHAKE_SUFFIX\fP (for RawSHAKE), and
+\fBLIBKECCAK_SHAKE_SUFFIX\fP (for SHAKE) are used.
+.PP
+The hash of the message will be stored to \fIhashsum\fP,
+unless \fIhashsum\fP is \fINULL\fP (which increases the
+performance of the call.) A total of ((\fIstate->n\fP + 7) / 8)
+bytes will be written to the beginning of \fIhashsum\fP.
+Therefore, \fIhashsum\fP needs at least an allocation size
+of that number of bytes.
+.PP
+The
+.BR libkeccak_digest ()
+function may reallocate the state's message chunk buffer.
+When doing so, it attempts to do so as securely as possible,
+rather than as fast as possible.
+.SH RETURN VALUES
+The
+.BR libkeccak_digest ()
+function returns 0 upon successful completion. On error,
+-1 is returned and \fIerrno\fP is set to describe the error.
+.SH ERRORS
+The
+.BR libkeccak_digest ()
+function may fail for any reason specified by the function
+.BR malloc (3).
+.SH SEE ALSO
+.BR libkeccak_state_initialise (3),
+.BR libkeccak_fast_update (3),
+.BR libkeccak_update (3),
+.BR libkeccak_fast_digest (3),
+.BR libkeccak_simple_squeeze (3),
+.BR libkeccak_fast_squeeze (3),
+.BR libkeccak_squeeze (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the LICENSE file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@member.fsf.org
