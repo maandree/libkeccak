@@ -88,7 +88,7 @@ typedef struct libkeccak_hmac_state
 
 
 /**
- * Change to HMAC-hashing key on the state
+ * Change the HMAC-hashing key on the state
  * 
  * @param   state       The state that should be reset
  * @param   key         The new key

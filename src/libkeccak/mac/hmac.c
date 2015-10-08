@@ -43,7 +43,7 @@ void my_explicit_bzero(void* ptr, size_t size)
 
 
 /**
- * Change to HMAC-hashing key on the state
+ * Change the HMAC-hashing key on the state
  * 
  * @param   state       The state that should be reset
  * @param   key         The new key
