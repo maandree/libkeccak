@@ -21,7 +21,7 @@ and the key to \fIkey\fP of length \fIkey_length\fP.
 .SH RETURN VALUES
 The
 .BR libkeccak_hmac_initialise ()
-function return 0 upon successful completion.
+function returns 0 upon successful completion.
 On error, -1 is returned and \fIerrno\fP is set to describe
 the error.
 .SH ERRORS
@@ -32,6 +32,7 @@ function may fail for any specified for the functions
 and
 .BR realloc (3).
 .SH SEE ALSO
+.BR libkeccak_hmac_create (3),
 .BR libkeccak_spec_sha3 (3),
 .BR libkeccak_spec_shake (3),
 .BR libkeccak_spec_rawshake (3),
