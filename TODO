@@ -15,16 +15,6 @@ Add man pages:
   libkeccak_hmac_set_key
   libkeccak_hmac_reset
   libkeccak_hmac_wipe
-  libkeccak_hmac_fast_destroy
-  libkeccak_hmac_destroy
-  libkeccak_hmac_fast_free
-  libkeccak_hmac_free
-  libkeccak_hmac_copy
-  libkeccak_hmac_duplicate
-  libkeccak_hmac_marshal_size
-  libkeccak_hmac_marshal
-  libkeccak_hmac_unmarshal
-  libkeccak_hmac_unmarshal_skip
   libkeccak_hmac_fast_update
   libkeccak_hmac_update
   libkeccak_hmac_fast_digest
