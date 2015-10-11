@@ -1,0 +1,40 @@
+.TH LIBKECCAK_HMAC_MARSHAL 3 LIBKECCAK-%VERSION%
+.SH NAME
+libkeccak_hmac_marshal - Marshals an HMAC-hashing state
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+size_t libkeccak_hmac_marshal(const libkeccak_hmac_state_t *\fIstate\fP, char *\fIdata\fP);
+.fi
+.P
+Link with \fI-lkeccak\fP.
+.SH DESCRIPTION
+The
+.BR libkeccak_hmac_marshal ()
+function marshals \fI*state\fP into the beginning
+of \fIdata\fP.
+.PP
+Use the
+.BR libkeccak_hmac_marshal_size (3)
+function to get minimum usable allocation size
+for \fIdata\fP.
+.SH RETURN VALUES
+The
+.BR libkeccak_hmac_marshal ()
+returns the number of bytes written to \fIdata\fP.
+.SH ERRORS
+The
+.BR libkeccak_hmac_marshal ()
+function cannot fail.
+.SH SEE ALSO
+.BR libkeccak_hmac_marshal_size (3),
+.BR libkeccak_hmac_unmarshal (3),
+.BR libkeccak_hmac_unmarshal_skip (3)
+.SH AUTHORS
+Principal author, Mattias Andrée.  See the LICENSE file for the full
+list of authors.
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@member.fsf.org
