@@ -173,7 +173,7 @@ static inline
 int libkeccak_spec_check(const libkeccak_spec_t* restrict spec)
 {
   long state_size = spec->capacity + spec->bitrate;
-  int_fast32_t word_size = (int_fast32_t)(state_size / 25);
+  int32_t word_size = (int32_t)(state_size / 25);
   if (spec->bitrate <= 0)   return LIBKECCAK_SPEC_ERROR_BITRATE_NONPOSITIVE;
   if (spec->bitrate % 8)    return LIBKECCAK_SPEC_ERROR_BITRATE_MOD_8;
   if (spec->capacity <= 0)  return LIBKECCAK_SPEC_ERROR_CAPACITY_NONPOSITIVE;
@@ -184,7 +184,7 @@ int libkeccak_spec_check(const libkeccak_spec_t* restrict spec)
   if (word_size % 8)        return LIBKECCAK_SPEC_ERROR_WORD_MOD_8;
   
   /* `(x & -x) != x` assumes two's complement, which of course is always
-   * satisfied by GCC, however C99 guarantees that `int_fast32_t` exists,
+   * satisfied by GCC, however C99 guarantees that `int32_t` exists,
    * and it is basically the same thing as `long int`; with one important
    * difference: it is guaranteed to use two's complement. */
   if ((word_size & -word_size) != word_size)
