@@ -1,5 +1,5 @@
 NAME
-	libkeccak - Keccak-family hashing library.
+	libkeccak - Keccak-family hashing library
 
 DESCRIPTION
 	libkeccak is a bit-oriented lanewise implementation of
