@@ -1,5 +1,16 @@
-Keccak-family hashing library.
+NAME
+	libkeccak - Keccak-family hashing library.
 
-This library implements a lanewise
-implementation of the Keccak-family.
+DESCRIPTION
+	libkeccak is a bit-oriented lanewise implementation of
+	the Keccak-family with support for extend output size,
+	state marshalling, algorithm tuning with implicit parameters,
+	secure erasure of sensitive data, and HMAC.
+
+RATIONALE
+	Keccak won the SHA-3 competition. We need a library for it,
+	and let it be bit-oriented.
+
+SEE ALSO
+	sha3sum(1), libsha2(7)
 
