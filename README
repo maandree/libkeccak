@@ -12,5 +12,5 @@ RATIONALE
 	and let it be bit-oriented.
 
 SEE ALSO
-	sha3sum(1), libsha2(7)
+	sha3sum, libsha2(7)
 
