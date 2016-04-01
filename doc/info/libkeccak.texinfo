@@ -290,7 +290,7 @@ parameters.
 
 Once the members of a @code{libkeccak_generalised_spec_t} has
 been set, it can be converted to a @code{libkeccak_spec_t},
-which is neccessary for using the specifications. When doing
+which is neccssary for using the specifications. When doing
 so, automatic values will be given a proper value.
 
 @fnindex libkeccak_degeneralise_spec
@@ -531,7 +531,7 @@ The number of bytes in the message to process.
 @end itemize
 Note that a part of the message is input, not necessarily
 the entire message. The chunks must be input sequentially.
-The funtion returns zero upon success completion. On error,
+The function returns zero upon success completion. On error,
 @code{errno} is set to describe the error and @code{-1} is
 returned. The input chunk should not be empty.
 
@@ -581,7 +581,7 @@ where @code{state} is the state variable. Alternatively
 it may be @code{NULL}, in which case the hash is not
 retrieved.
 @end itemize
-The funtion returns zero upon success completion. On error,
+The function returns zero upon success completion. On error,
 @code{errno} is set to describe the error and @code{-1} is
 returned. The input chunk should not be empty.
 @end table
@@ -769,7 +769,7 @@ parameter, rather it returns one.
 @fnindex libkeccak_hmac_reset
 Resets the sponge and the sets the key, by
 calling @code{libkeccak_hmac_set_key}. IT
-has three paramters: pointer to the
+has three parameters: pointer to the
 @code{libkeccak_hmac_state_t}, the binary key,
 and the length of the key.
 The key will not be set if the second
