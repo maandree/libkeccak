@@ -290,7 +290,7 @@ parameters.
 
 Once the members of a @code{libkeccak_generalised_spec_t} has
 been set, it can be converted to a @code{libkeccak_spec_t},
-which is neccssary for using the specifications. When doing
+which is necessary for using the specifications. When doing
 so, automatic values will be given a proper value.
 
 @fnindex libkeccak_degeneralise_spec
