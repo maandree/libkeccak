@@ -61,7 +61,7 @@
 /**
  * Benchmark, will print the number of nanoseconds
  * spent with hashing algorithms and representation
- * convertion from binary to hexadecimal. The latter
+ * conversion from binary to hexadecimal. The latter
  * can be compiled out by compiling with -DIGNORE_BEHEXING.
  * 
  * @return  Zero on success, 1 on error
