@@ -22,6 +22,12 @@ DATADIR = $(PREFIX)$(DATA)
 DOCDIR = $(DATADIR)/doc
 # The info manual documentation path including prefix.
 INFODIR = $(DATADIR)/info
+# The man pages path including prefix.
+MANDIR = $(DATADIR)/man
+# The section 3 man pages path including prefix.
+MAN3DIR = $(MANDIR)/man3
+# The section 7 man pages path including prefix.
+MAN7DIR = $(MANDIR)/man7
 # The license base path including prefix.
 LICENSEDIR = $(DATADIR)/licenses
 
@@ -58,6 +64,64 @@ FLAGS = -std=gnu99 $(WARN)
 
 
 LIB_OBJ = digest files generalised-spec hex state mac/hmac
+
+MAN3 =\
+	libkeccak_behex_lower\
+	libkeccak_behex_upper\
+	libkeccak_degeneralise_spec\
+	libkeccak_digest\
+	libkeccak_fast_digest\
+	libkeccak_fast_squeeze\
+	libkeccak_fast_update\
+	libkeccak_generalised_spec_initialise\
+	libkeccak_generalised_sum_fd\
+	libkeccak_hmac_copy\
+	libkeccak_hmac_create\
+	libkeccak_hmac_destroy\
+	libkeccak_hmac_digest\
+	libkeccak_hmac_duplicate\
+	libkeccak_hmac_fast_destroy\
+	libkeccak_hmac_fast_digest\
+	libkeccak_hmac_fast_free\
+	libkeccak_hmac_fast_update\
+	libkeccak_hmac_free\
+	libkeccak_hmac_initialise\
+	libkeccak_hmac_marshal\
+	libkeccak_hmac_marshal_size\
+	libkeccak_hmac_reset\
+	libkeccak_hmac_set_key\
+	libkeccak_hmac_unmarshal\
+	libkeccak_hmac_unmarshal_skip\
+	libkeccak_hmac_update\
+	libkeccak_hmac_wipe\
+	libkeccak_keccaksum_fd\
+	libkeccak_rawshakesum_fd\
+	libkeccak_sha3sum_fd\
+	libkeccak_shakesum_fd\
+	libkeccak_simple_squeeze\
+	libkeccak_spec_check\
+	libkeccak_spec_rawshake\
+	libkeccak_spec_sha3\
+	libkeccak_spec_shake\
+	libkeccak_squeeze\
+	libkeccak_state_copy\
+	libkeccak_state_create\
+	libkeccak_state_destroy\
+	libkeccak_state_duplicate\
+	libkeccak_state_fast_destroy\
+	libkeccak_state_fast_free\
+	libkeccak_state_free\
+	libkeccak_state_initialise\
+	libkeccak_state_marshal\
+	libkeccak_state_marshal_size\
+	libkeccak_state_reset\
+	libkeccak_state_unmarshal\
+	libkeccak_state_unmarshal_skip\
+	libkeccak_state_wipe\
+	libkeccak_state_wipe_message\
+	libkeccak_state_wipe_sponge\
+	libkeccak_unhex\
+	libkeccak_update
 
 
 .PHONY: default
@@ -180,7 +244,7 @@ run-benchmark: bin/benchmark bin/libkeccak.so bin/libkeccak.so.$(LIB_MAJOR) bin/
 
 
 .PHONY: install
-install: install-base install-info
+install: install-base install-info install-man
 
 .PHONY: install-all
 install-all: install-base install-doc
@@ -209,14 +273,14 @@ install-headers:
 .PHONY: install-dynamic-lib
 install-dynamic-lib: bin/libkeccak.so.$(LIB_VERSION)
 	install -dm755 -- "$(DESTDIR)$(LIBDIR)"
-	install -m755 bin/libkeccak.so.$(LIB_VERSION) -- "$(DESTDIR)$(LIBDIR)/libkeccak.so.$(LIB_VERSION)"
-	ln -sf libkeccak.so.$(LIB_VERSION) -- "$(DESTDIR)$(LIBDIR)/libkeccak.so.$(LIB_MAJOR)"
-	ln -sf libkeccak.so.$(LIB_VERSION) -- "$(DESTDIR)$(LIBDIR)/libkeccak.so"
+	install -m755 -- bin/libkeccak.so.$(LIB_VERSION) "$(DESTDIR)$(LIBDIR)/libkeccak.so.$(LIB_VERSION)"
+	ln -sf -- libkeccak.so.$(LIB_VERSION) "$(DESTDIR)$(LIBDIR)/libkeccak.so.$(LIB_MAJOR)"
+	ln -sf -- libkeccak.so.$(LIB_VERSION) "$(DESTDIR)$(LIBDIR)/libkeccak.so"
 
 .PHONY: install-static-lib
 install-static-lib: bin/libkeccak.a
 	install -dm755 -- "$(DESTDIR)$(LIBDIR)"
-	install -m644 bin/libkeccak.a -- "$(DESTDIR)$(LIBDIR)/libkeccak.a"
+	install -m644 -- bin/libkeccak.a "$(DESTDIR)$(LIBDIR)/libkeccak.a"
 
 .PHONY: install-copyright
 install-copyright: install-copying install-license
@@ -224,36 +288,42 @@ install-copyright: install-copying install-license
 .PHONY: install-copying
 install-copying:
 	install -dm755 -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
-	install -m644 COPYING -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/COPYING"
+	install -m644 -- COPYING "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/COPYING"
 
 .PHONY: install-license
 install-license:
 	install -dm755 -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
-	install -m644 LICENSE -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
+	install -m644 -- LICENSE "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
 
 .PHONY: install-doc
-install-doc: install-info install-pdf install-ps install-dvi
+install-doc: install-info install-pdf install-ps install-dvi install-man
 
 .PHONY: install-info
 install-info: bin/libkeccak.info
 	install -dm755 -- "$(DESTDIR)$(INFODIR)"
-	install -m644 $< -- "$(DESTDIR)$(INFODIR)/libkeccak.info"
+	install -m644 -- $< "$(DESTDIR)$(INFODIR)/libkeccak.info"
 
 .PHONY: install-pdf
 install-pdf: bin/libkeccak.pdf
 	install -dm755 -- "$(DESTDIR)$(DOCDIR)"
-	install -m644 $< -- "$(DESTDIR)$(DOCDIR)/libkeccak.pdf"
+	install -m644 -- $< "$(DESTDIR)$(DOCDIR)/libkeccak.pdf"
 
 .PHONY: install-ps
 install-ps: bin/libkeccak.ps
 	install -dm755 -- "$(DESTDIR)$(DOCDIR)"
-	install -m644 $< -- "$(DESTDIR)$(DOCDIR)/libkeccak.ps"
+	install -m644 -- $< "$(DESTDIR)$(DOCDIR)/libkeccak.ps"
 
 .PHONY: install-dvi
 install-dvi: bin/libkeccak.dvi
 	install -dm755 -- "$(DESTDIR)$(DOCDIR)"
-	install -m644 $< -- "$(DESTDIR)$(DOCDIR)/libkeccak.dvi"
+	install -m644 -- $< "$(DESTDIR)$(DOCDIR)/libkeccak.dvi"
 
+.PHONY: install-man
+install-man:
+	install -dm755 -- "$(DESTDIR)$(MAN7DIR)"
+	install -m644 -- doc/man/libkeccak.7 "$(DESTDIR)$(MAN7DIR)/libkeccak.7"
+	install -dm755 -- "$(DESTDIR)$(MAN3DIR)"
+	install -m644 -- $(foreach P,$(MAN3),doc/man/$(P).3) "$(DESTDIR)$(MAN3DIR)"
 
 .PHONY: uninstall
 uninstall:
@@ -276,6 +346,8 @@ uninstall:
 	-rm -- "$(DESTDIR)$(DOCDIR)/libkeccak.pdf"
 	-rm -- "$(DESTDIR)$(DOCDIR)/libkeccak.ps"
 	-rm -- "$(DESTDIR)$(DOCDIR)/libkeccak.dvi"
+	-rm -- "$(DESTDIR)$(MAN7DIR)/libkeccak.7"
+	-rm -- $(foreach P,$(MAN3),"$(DESTDIR)$(MAN3DIR)/$(P).3")
 	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/COPYING"
 	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
 	-rmdir -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
