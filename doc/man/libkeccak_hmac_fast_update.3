@@ -1,0 +1,59 @@
+.TH LIBKECCAK_HMAC_FAST_UPDATE 3 LIBKECCAK
+.SH NAME
+libkeccak_hmac_fast_update - Partially HMAC-hash a message without erasure
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+int
+libkeccak_hmac_fast_update(libkeccak_state_t *\fIstate\fP, const char *\fImsg\fP,
+                           size_t \fImsglen\fP);
+.fi
+.P
+Link with
+.IR -lkeccak .
+.SH DESCRIPTION
+The
+.BR libkeccak_hmac_fast_update ()
+function continues (or starts) HMAC-hashing a message.
+The current state of the hashing is stored in
+.IR *state ,
+and will be updated. The message specified by the
+.I msg
+parameter with the byte-size specified by the
+.I msglen
+parameter, will be hashed.
+.PP
+The
+.BR libkeccak_hmac_fast_update ()
+function may reallocate the state's message chunk buffer.
+When doing so, it attempts to do so as securely as possible,
+rather than as fast as possible.
+.SH RETURN VALUES
+The
+.BR libkeccak_hmac_fast_update ()
+function returns 0 upon successful completion. On error,
+-1 is returned and
+.I errno
+is set to describe the error.
+.SH ERRORS
+The
+.BR libkeccak_hmac_fast_update ()
+function may reallocate the state's message chunk buffer.
+When doing so, it attempts to do so as quickly as possible,
+rather than ensuring that the information in the old
+allocation is securely removed if a new allocation is required.
+.BR realloc (3).
+.SH NOTES
+Neither parameter by be
+.I NULL
+or 0.
+.SH SEE ALSO
+.BR libkeccak_hmac_create (3),
+.BR libkeccak_hmac_initialise (3),
+.BR libkeccak_hmac_fast_digest (3),
+.BR libkeccak_hmac_update (3)
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@kth.se
