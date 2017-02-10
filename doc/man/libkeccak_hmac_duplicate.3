@@ -1,4 +1,4 @@
-.TH LIBKECCAK_HMAC_DUPLICATE 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_HMAC_DUPLICATE 3 LIBKECCAK
 .SH NAME
 libkeccak_hmac_duplicate - Allocate a duplicate an HMAC-hashing state
 .SH SYNOPSIS
@@ -6,24 +6,33 @@ libkeccak_hmac_duplicate - Allocate a duplicate an HMAC-hashing state
 .nf
 #include <libkeccak.h>
 .P
-libkeccak_hmac_state_t *libkeccak_hmac_duplicate(const libkeccak_hmac_state_t *\fIsrc\fP);
+libkeccak_hmac_state_t *
+libkeccak_hmac_duplicate(const libkeccak_hmac_state_t *\fIsrc\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_hmac_duplicate ()
-function allocates a new hash state and initialises it to be identical
-to \fI*src\fP. This includes all members of the \fBlibkeccak_hmac_state_t\fP
-structure, including the state of the sponge and the message
-chunk buffer.
+function allocates a new hash state and initialises
+it to be identical to
+.IR *src .
+This includes all members of the
+.B libkeccak_hmac_state_t
+structure, including the state of the sponge and the
+message chunk buffer.
 .SH RETURN VALUES
 The
 .BR libkeccak_hmac_duplicate ()
-function returns a newly allocated \fIlibkeccak_hmac_t*\fP
+function returns a newly allocated
+.I libkeccak_hmac_t*
 (of one initialised element) upon successful completion.
-On error, \fINULL\fP is returned and \fIerrno\fP is set to
-describe the error.
+On error,
+.I NULL
+is returned and
+.I errno
+is set to describe the error.
 .SH ERRORS
 The
 .BR libkeccak_hmac_duplicate ()
@@ -32,9 +41,6 @@ function may fail for any specified for the function
 .SH SEE ALSO
 .BR libkeccak_hmac_copy (3),
 .BR libkeccak_hmac_create (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

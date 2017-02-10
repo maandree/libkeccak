@@ -1,4 +1,4 @@
-.TH LIBKECCAK_UPDATE 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_UPDATE 3 LIBKECCAK
 .SH NAME
 libkeccak_update - Partially hash a message with erasure
 .SH SYNOPSIS
@@ -6,17 +6,23 @@ libkeccak_update - Partially hash a message with erasure
 .nf
 #include <libkeccak.h>
 .P
-int libkeccak_update(libkeccak_state_t *\fIstate\fP, const char *\fImsg\fP, size_t \fImsglen\fP);
+int
+libkeccak_update(libkeccak_state_t *\fIstate\fP, const char *\fImsg\fP,
+                 size_t \fImsglen\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_update ()
 function continues (or starts) hashing a message.
-The current state of the hashing is stored in \fI*state\fP,
-and will be updated. The message specified by the \fImsg\fP
-parameter with the byte-size specified by the \fImsglen\fP
+The current state of the hashing is stored in
+.IR *state ,
+and will be updated. The message specified by the
+.I msg
+parameter with the byte-size specified by the
+.I msglen
 parameter, will be hashed.
 .PP
 The
@@ -28,14 +34,18 @@ rather than as fast as possible.
 The
 .BR libkeccak_update ()
 function returns 0 upon successful completion. On error,
--1 is returned and \fIerrno\fP is set to describe the error.
+-1 is returned and
+.I errno
+is set to describe the error.
 .SH ERRORS
 The
 .BR libkeccak_update ()
 function may fail for any reason specified by the function
 .BR malloc (3).
 .SH NOTES
-Neither parameter by be \fINULL\fP or 0.
+Neither parameter by be
+.O NULL
+or 0.
 .SH EXAMPLE
 This example calculates the Keccak[b = 1024, c = 576, n = 256]
 hash of the input from stdin, and prints the hash, in hexadecimal
@@ -80,9 +90,6 @@ libkeccak_state_destroy(&state);
 .BR libkeccak_fast_update (3),
 .BR libkeccak_fast_digest (3),
 .BR libkeccak_digest (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

@@ -1,4 +1,4 @@
-.TH LIBKECCAK_SPEC_SHA3 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_SPEC_SHA3 3 LIBKECCAK
 .SH NAME
 libkeccak_spec_sha3 - Configure SHA-3 hashing parameters
 .SH SYNOPSIS
@@ -6,16 +6,22 @@ libkeccak_spec_sha3 - Configure SHA-3 hashing parameters
 .nf
 #include <libkeccak.h>
 .P
-void libkeccak_spec_sha3(libkeccak_spec_t *\fIspec\fP, long \fIx\fP);
+void
+libkeccak_spec_sha3(libkeccak_spec_t *\fIspec\fP, long int \fIx\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_spec_sha3 ()
-function sets \fI*spec\fP to specify the Keccak parameters
+function sets
+.I *spec
+to specify the Keccak parameters
 used for SHA-3 hashing with the output size specified,
-in bits, via the \fIx\fP parameter.
+in bits, via the
+.I x
+parameter.
 .SH RETURN VALUES
 The
 .BR libkeccak_spec_sha3 ()
@@ -25,8 +31,9 @@ The
 .BR libkeccak_spec_sha3 ()
 function cannot fail.
 .SH EXAMPLE
-This examples configure a \fBlibkeccak_spec_t\fP to specify
-the Keccak parameters used for SHA3-256:
+This examples configure a
+.B Blibkeccak_spec_t
+to specify the Keccak parameters used for SHA3-256:
 .LP
 .nf
 libkeccak_spec_t spec;
@@ -39,9 +46,6 @@ libkeccak_spec_sha3(&spec, 256);
 .BR libkeccak_generalised_spec_initialise (3),
 .BR libkeccak_state_initialise (3),
 .BR libkeccak_hmac_initialise (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

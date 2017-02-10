@@ -1,4 +1,4 @@
-.TH LIBKECCAK_SPEC_RAWSHAKE 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_SPEC_RAWSHAKE 3 LIBKECCAK
 .SH NAME
 libkeccak_spec_rawshake - Configure RawSHAKE hashing parameters
 .SH SYNOPSIS
@@ -6,17 +6,24 @@ libkeccak_spec_rawshake - Configure RawSHAKE hashing parameters
 .nf
 #include <libkeccak.h>
 .P
-void libkeccak_spec_rawshake(libkeccak_spec_t *\fIspec\fP, long \fIx\fP, long \fId\fP);
+void
+libkeccak_spec_rawshake(libkeccak_spec_t *\fIspec\fP, long int \fIx\fP,
+                        long int \fId\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_spec_rawshake ()
-function sets \fI*spec\fP to specify the Keccak parameters
-used for RawSHAKE hashing with the semicapacity specified,
-in bits, via the \fIx\fP parameter, and the output size
-specified, in bits, via the \fId\fP parameter.
+function sets
+.I *spec
+to specify the Keccak parameters used for RawSHAKE hashing
+with the semicapacity specified, in bits, via the
+.I x
+parameter, and the output size specified, in bits, via the
+.I d
+parameter.
 .SH RETURN VALUES
 The
 .BR libkeccak_spec_rawshake ()
@@ -26,8 +33,9 @@ The
 .BR libkeccak_spec_rawshake ()
 function cannot fail.
 .SH EXAMPLE
-This examples configure a \fBlibkeccak_spec_t\fP to specify
-the Keccak parameters used for RawSHAKE256(, 512):
+This examples configure a
+.B libkeccak_spec_t
+to specify the Keccak parameters used for RawSHAKE256(, 512):
 .LP
 .nf
 libkeccak_spec_t spec;
@@ -40,9 +48,6 @@ libkeccak_spec_rawshake(&spec, 256, 512);
 .BR libkeccak_generalised_spec_initialise (3),
 .BR libkeccak_state_initialise (3),
 .BR libkeccak_hmac_initialise (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

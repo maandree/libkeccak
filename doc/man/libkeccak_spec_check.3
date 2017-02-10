@@ -1,4 +1,4 @@
-.TH LIBKECCAK_SPEC_CHECK 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_SPEC_CHECK 3 LIBKECCAK
 .SH NAME
 libkeccak_spec_check - Validate hashing parameters
 .SH SYNOPSIS
@@ -6,14 +6,17 @@ libkeccak_spec_check - Validate hashing parameters
 .nf
 #include <libkeccak.h>
 .P
-int libkeccak_spec_check(const libkeccak_spec_t *\fIspec\fP);
+int
+libkeccak_spec_check(const libkeccak_spec_t *\fIspec\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_spec_check ()
-function validates the parameters of \fI*spec\fP,
+function validates the parameters of
+.IR *spec ,
 so that unusable configurations can be detected.
 It is recommended to call this function after calling
 .BR libkeccak_spec_sha3 (3),
@@ -24,9 +27,9 @@ manually for Keccak hashing.
 .PP
 .nf
 typedef struct libkeccak_spec {
-    long bitrate;     /* bitrate (in bits) */
-    long capacity;    /* capacity (in bits) */
-    long output;      /* output size (in bits) */
+    long int bitrate;     /* bitrate (in bits) */
+    long int capacity;    /* capacity (in bits) */
+    long int output;      /* output size (in bits) */
 } libkeccak_spec_t;
 .fi
 .SH RETURN VALUES
@@ -87,9 +90,6 @@ function cannot fail.
 .BR libkeccak_generalised_spec_initialise (3),
 .BR libkeccak_state_initialise (3),
 .BR libkeccak_hmac_initialise (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

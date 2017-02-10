@@ -1,4 +1,4 @@
-.TH LIBKECCAK_STATE_MARSHAL_SIZE 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_STATE_MARSHAL_SIZE 3 LIBKECCAK
 .SH NAME
 libkeccak_state_marshal_size - Calculates the marshal-size of a hash state
 .SH SYNOPSIS
@@ -6,15 +6,18 @@ libkeccak_state_marshal_size - Calculates the marshal-size of a hash state
 .nf
 #include <libkeccak.h>
 .P
-size_t libkeccak_state_marshal_size(const libkeccak_state_t *\fIstate\fP);
+size_t
+libkeccak_state_marshal_size(const libkeccak_state_t *\fIstate\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_state_marshal_size ()
 function calculates the number of bytes required
-to marshal \fI*state\fP.
+to marshal
+.IR *state .
 .SH RETURN VALUES
 The
 .BR libkeccak_state_marshal_size ()
@@ -28,9 +31,6 @@ function cannot fail.
 .BR libkeccak_state_marshal (3),
 .BR libkeccak_state_unmarshal (3),
 .BR libkeccak_state_unmarshal_skip (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

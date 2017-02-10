@@ -1,4 +1,4 @@
-.TH LIBKECCAK_DEGENERALISE_SPEC 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_DEGENERALISE_SPEC 3 LIBKECCAK
 .SH NAME
 libkeccak_degeneralise_spec - Set all specification parameters to automatic
 .SH SYNOPSIS
@@ -6,19 +6,26 @@ libkeccak_degeneralise_spec - Set all specification parameters to automatic
 .nf
 #include <libkeccak.h>
 .P
-int libkeccak_degeneralise_spec(libkeccak_generalised_spec_t *\fIspec\fP,
-                                libkeccak_spec_t *\fIoutput_spec\fP);
+int
+libkeccak_degeneralise_spec(libkeccak_generalised_spec_t *\fIspec\fP,
+                            libkeccak_spec_t *\fIoutput_spec\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_degeneralise_spec ()
-function will resolve automatic parameters in \fI*spec\fP
-and translates the parameters to \fI*output_spec\fP,
+function will resolve automatic parameters in
+.I *spec
+and translates the parameters to
+.IR *output_spec ,
 so that it can be used for hashing.
 .PP
-The function will modify both \fI*spec\fP and \fI*output_spec\fP.
+The function will modify both
+.I *spec
+and
+.IR *output_spec .
 .PP
 You should call the
 .BR libkeccak_spec_check (3)
@@ -27,11 +34,11 @@ function after calling
 .PP
 .nf
 typedef struct libkeccak_generalised_spec {
-    long bitrate;     /* bitrate (in bits) */
-    long capacity;    /* capacity (in bits) */
-    long output;      /* output size (in bits) */
-    long state_size;  /* state size (in bits) */
-    long word_size;   /* word size (in bits) */
+    long int bitrate;     /* bitrate (in bits) */
+    long int capacity;    /* capacity (in bits) */
+    long int output;      /* output size (in bits) */
+    long int state_size;  /* state size (in bits) */
+    long int word_size;   /* word size (in bits) */
 } libkeccak_generalised_spec_t;
 .fi
 .SH RETURN VALUES
@@ -89,8 +96,9 @@ The
 function cannot fail.
 .fi
 .SH EXAMPLE
-This examples configure a \fBlibkeccak_spec_t\fP to specify
-settings for Keccak[c = 512]:
+This examples configure a
+.B libkeccak_spec_t
+to specify settings for Keccak[c = 512]:
 .LP
 .nf
 int r;
@@ -111,9 +119,6 @@ if ((r = libkeccak_spec_check(&spec)));
 .BR libkeccak_spec_shake (3),
 .BR libkeccak_state_initialise (3),
 .BR libkeccak_hmac_initialise (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

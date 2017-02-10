@@ -1,7 +1,7 @@
 # Maintainer: Mattias Andrée <`base64 -d`(bWFhbmRyZWUK)@member.fsf.org>
 
 pkgname=libkeccak
-pkgver=1.2
+pkgver=1.1.1
 pkgrel=1
 pkgdesc="Keccak-family hashing library"
 arch=(i686 x86_64)

@@ -1,4 +1,4 @@
-.TH LIBKECCAK_BEHEX_LOWER 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_BEHEX_LOWER 3 LIBKECCAK
 .SH NAME
 libkeccak_behex_lower - Converts a binary hashsum to lowercase hexadecimal
 .SH SYNOPSIS
@@ -6,25 +6,34 @@ libkeccak_behex_lower - Converts a binary hashsum to lowercase hexadecimal
 .nf
 #include <libkeccak.h>
 .P
-void libkeccak_behex_lower(char *restrict \fIoutput\fP,
-                           const char *restrict \fIhashsum\fP,
-                           size_t \fIn\fP);
+void
+libkeccak_behex_lower(char *restrict \fIoutput\fP,
+                      const char *restrict \fIhashsum\fP, size_t \fIn\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_behex_lower ()
 function
-converts a binary hashsum, stored in \fIhashsum\fP,
+converts a binary hashsum, stored in
+.IR hashsum ,
 to lowercase hexadecimal, and stores the
-hexadecimal representation in \fIoutput\fP.
+hexadecimal representation in
+.IR output .
 .PP
-\fIoutput\fP will be terminated by a NUL-character.
+.I output
+will be terminated by a NUL-character.
 .PP
-The \fIn\fP parameter specifies the number of bytes
-the binary hashsum is comprised. \fIoutput\fP needs
-an allocation size of (2 * \fIn\fP + 1).
+The
+.I In
+parameter specifies the number of bytes
+the binary hashsum is comprised.
+.I output
+needs an allocation size of (2 *
+.I n
++ 1).
 .SH RETURN VALUES
 The
 .BR libkeccak_behex_lower ()
@@ -36,9 +45,6 @@ function cannot fail.
 .SH SEE ALSO
 .BR libkeccak_behex_upper (3),
 .BR libkeccak_unhex (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

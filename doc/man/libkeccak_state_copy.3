@@ -1,4 +1,4 @@
-.TH LIBKECCAK_STATE_COPY 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_STATE_COPY 3 LIBKECCAK
 .SH NAME
 libkeccak_state_copy - Copies hash state
 .SH SYNOPSIS
@@ -6,23 +6,31 @@ libkeccak_state_copy - Copies hash state
 .nf
 #include <libkeccak.h>
 .P
-int libkeccak_state_copy(libkeccak_state_t *\fIdest\fP, const libkeccak_state_t *\fIsrc\fP);
+int
+libkeccak_state_copy(libkeccak_state_t *\fIdest\fP,
+                     const libkeccak_state_t *\fIsrc\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_state_copy ()
-function initialises \fI*dest\fP to be identical to \fI*src\fP.
-This includes all members of the \fBlibkeccak_state_t\fP
+function initialises
+.I *dest
+to be identical to
+.IR *src .
+This includes all members of the
+.B libkeccak_state_t
 structure, including the state of the sponge and the
 message chunk buffer.
 .SH RETURN VALUES
 The
 .BR libkeccak_state_copy ()
 function returns 0 upon successful completion.
-On error, -1 is returned and \fIerrno\fP is set to describe
-the error.
+On error, -1 is returned and
+.I errno
+is set to describe the error.
 .SH ERRORS
 The
 .BR libkeccak_state_copy ()
@@ -31,9 +39,6 @@ function may fail for any specified for the function
 .SH SEE ALSO
 .BR libkeccak_state_duplicate (3),
 .BR libkeccak_state_initialise (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

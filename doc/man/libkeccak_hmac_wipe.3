@@ -1,0 +1,36 @@
+.TH LIBKECCAK_HMAC_WIPE 3 LIBKECCAK
+.SH NAME
+libkeccak_hmac_wipe - Securely erase sensitive data from a HMAC-hashing state
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+int
+libkeccak_hmac_wipe(libkeccak_hmac_state_t *\fIstate\fP);
+.fi
+.P
+Link with
+.IR -lkeccak .
+.SH DESCRIPTION
+The
+.BR libkeccak_hmac_wipe ()
+function securely erases data that may be
+sensitive: the buffer and the state of the
+underlaying hash-algorithm.
+.SH RETURN VALUES
+The
+.BR libkeccak_hmac_wipe ()
+function does not return any value.
+.SH ERRORS
+The
+.BR libkeccak_hmac_wipe ()
+function cannot fail.
+.SH SEE ALSO
+.BR libkeccak_hmac_fast_free (3),
+.BR libkeccak_hmac_free (3),
+.BR libkeccak_hmac_fast_destroy (3),
+.BR libkeccak_hmac_destroy (3)
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@kth.se

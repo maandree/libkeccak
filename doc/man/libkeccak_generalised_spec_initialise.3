@@ -1,4 +1,4 @@
-.TH LIBKECCAK_GENERALISED_SPEC_INITIALISE 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_GENERALISED_SPEC_INITIALISE 3 LIBKECCAK
 .SH NAME
 libkeccak_generalised_spec_initialise - Set all specification parameters to automatic
 .SH SYNOPSIS
@@ -6,21 +6,27 @@ libkeccak_generalised_spec_initialise - Set all specification parameters to auto
 .nf
 #include <libkeccak.h>
 .P
-void libkeccak_generalised_spec_initialise(libkeccak_generalised_spec_t *\fIspec\fP);
+void
+libkeccak_generalised_spec_initialise(libkeccak_generalised_spec_t *\fIspec\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_generalised_spec_initialise ()
-function initialises \fI*spec\fP, so that all
-parameters are configured to be automatically selected.
+function initialises
+.IR *spec ,
+so that all parameters are configured to be
+automatically selected.
 .PP
 Automatic selection means that value will be set
 to the default, which depends on the other settings.
 .PP
-Specifically, all members of \fI*spec\fP, will be
-set to \fBLIBKECCAK_GENERALISED_SPEC_AUTOMATIC\fP.
+Specifically, all members of
+.IR *spec ,
+will be set to
+.BR LIBKECCAK_GENERALISED_SPEC_AUTOMATIC .
 .SH RETURN VALUES
 The
 .BR libkeccak_generalised_spec_initialise ()
@@ -35,9 +41,6 @@ function cannot fail.
 .BR libkeccak_spec_sha3 (3),
 .BR libkeccak_spec_rawshake (3),
 .BR libkeccak_spec_shake (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

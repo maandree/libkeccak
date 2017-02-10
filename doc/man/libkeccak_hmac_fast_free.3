@@ -1,4 +1,4 @@
-.TH LIBKECCAK_STATE_FAST_FREE 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_STATE_FAST_FREE 3 LIBKECCAK
 .SH NAME
 libkeccak_hmac_fast_free - Destroys and deallocates an HMAC-hashing state without erasure
 .SH SYNOPSIS
@@ -6,15 +6,19 @@ libkeccak_hmac_fast_free - Destroys and deallocates an HMAC-hashing state withou
 .nf
 #include <libkeccak.h>
 .P
-void libkeccak_hmac_fast_free(libkeccak_hmac_state_t *\fIstate\fP);
+void
+libkeccak_hmac_fast_free(libkeccak_hmac_state_t *\fIstate\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_hmac_fast_free ()
-function releases the allocations stored in \fI*state\fP,
-and also released the allocation of \fIstate\fP.
+function releases the allocations stored in
+.IR *state ,
+and also released the allocation of
+.IR state .
 .PP
 The
 .BR libkeccak_hmac_fast_free ()
@@ -42,9 +46,6 @@ to be freed, resulting in undefined behaviour.
 .BR libkeccak_hmac_initialise (3),
 .BR libkeccak_hmac_reset (3),
 .BR libkeccak_hmac_wipe (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

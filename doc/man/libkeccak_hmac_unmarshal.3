@@ -1,4 +1,4 @@
-.TH LIBKECCAK_HMAC_UNMARSHAL 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_HMAC_UNMARSHAL 3 LIBKECCAK
 .SH NAME
 libkeccak_hmac_unmarshal - Unharshals an HMAC-hashing state
 .SH SYNOPSIS
@@ -6,19 +6,25 @@ libkeccak_hmac_unmarshal - Unharshals an HMAC-hashing state
 .nf
 #include <libkeccak.h>
 .P
-size_t libkeccak_hmac_unmarshal(libkeccak_hmac_state_t *\fIstate\fP, const char *\fIdata\fP);
+size_t
+libkeccak_hmac_unmarshal(libkeccak_hmac_state_t *\fIstate\fP,
+                         const char *\fIdata\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_hmac_unmarshal ()
-function unmarshals an HMAC-hashing state from the beginning
-of \fIdata\fP. and stores it in \fI*state\fP.
+function unmarshals an HMAC-hashing state from the beginning of
+.IR data .
+and stores it in
+.IR *state .
 .SH RETURN VALUES
 The
 .BR libkeccak_hmac_unmarshal ()
-returns the number of bytes reads from \fIdata\fP.
+returns the number of bytes reads from
+.IR data x.
 .SH ERRORS
 The
 .BR libkeccak_hmac_unmarshal ()
@@ -28,9 +34,6 @@ function may fail for any specified for the function
 .BR libkeccak_hmac_marshal_size (3),
 .BR libkeccak_hmac_marshal (3),
 .BR libkeccak_hmac_unmarshal_skip (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

@@ -1,4 +1,4 @@
-.TH LIBKECCAK_STATE_MARSHAL 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_STATE_MARSHAL 3 LIBKECCAK
 .SH NAME
 libkeccak_state_marshal - Marshals a hash state
 .SH SYNOPSIS
@@ -6,24 +6,28 @@ libkeccak_state_marshal - Marshals a hash state
 .nf
 #include <libkeccak.h>
 .P
-size_t libkeccak_state_marshal(const libkeccak_state_t *\fIstate\fP, char *\fIdata\fP);
+size_t
+libkeccak_state_marshal(const libkeccak_state_t *\fIstate\fP, char *\fIdata\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_state_marshal ()
-function marshals \fI*state\fP into the beginning
-of \fIdata\fP.
+function marshals \fI*state\fP into the beginning of
+.IR data .
 .PP
 Use the
 .BR libkeccak_state_marshal_size (3)
 function to get minimum usable allocation size
-for \fIdata\fP.
+for
+.IR data .
 .SH RETURN VALUES
 The
 .BR libkeccak_state_marshal ()
-returns the number of bytes written to \fIdata\fP.
+returns the number of bytes written to
+.IR data .
 .SH ERRORS
 The
 .BR libkeccak_state_marshal ()
@@ -32,9 +36,6 @@ function cannot fail.
 .BR libkeccak_state_marshal_size (3),
 .BR libkeccak_state_unmarshal (3),
 .BR libkeccak_state_unmarshal_skip (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

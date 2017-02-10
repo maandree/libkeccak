@@ -1,4 +1,4 @@
-.TH LIBKECCAK_DIGEST 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_DIGEST 3 LIBKECCAK
 .SH NAME
 libkeccak_digest - Complete the hashing of a message with erasure
 .SH SYNOPSIS
@@ -6,46 +6,75 @@ libkeccak_digest - Complete the hashing of a message with erasure
 .nf
 #include <libkeccak.h>
 .P
-int libkeccak_digest(libkeccak_state_t *\fIstate\fP, const char *\fImsg\fP, size_t \fImsglen\fP,
-                     size_t \fIbits\fP, const char *\fIsuffix\fP, char *\fIhashsum\fP);
+int
+libkeccak_digest(libkeccak_state_t *\fIstate\fP, const char *\fImsg\fP,
+                 size_t \fImsglen\fP, size_t \fIbits\fP, const char *\fIsuffix\fP,
+                 char *\fIhashsum\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_digest ()
 function absorbs the last part of (or all of) a message,
 and returns the hash of the entire message. The last part
-of the message is specified by the \fImsg\fP parameter, and
-its byte-size is specified by the \fImsglen\fP parameter. If
-all of the message has already be processed by calls to the
+of the message is specified by the
+.I msg
+parameter, and its byte-size is specified by the
+.I msglen
+parameter. If all of the message has already be processed
+by calls to the
 .BR libkeccak_update (3)
 function or the
 .BR libkeccak_fast_update (3)
-function (with the same pointer on \fIstate\fP,) \fImsg\fP
-and \fImsglen\fP should be set to \fINULL\fP and 0, respectively.
+function (with the same pointer on
+.IR state ,)
+.I msg
+and
+.I msglen
+should be set to
+.I NULL
+and 0, respectively.
 .PP
 If the message is not comprised a whole number of bytes,
 the number of bits, modulus 8, in the message should be
-specified in the \fIbits\fP parameter. \fImsglen\fP must only
-count the number of whole bytes, that is, the floor of the
-number of bits in the message divided by 8.
+specified in the
+.I bits
+parameter.
+.I msglen
+must only count the number of whole bytes, that is, the
+floor of the number of bits in the message divided by 8.
 .PP
-\fIsuffix\fP should be a NUL-terminated string of ASCII '1':s
+.I suffix
+should be a NUL-terminated string of ASCII '1':s
 and '0':s, representing the bits that should be appended to
-the message. If this string is empty, \fINULL\fP may be used
-instead. This is used to select hash algorithm. For pure Keccak,
-\fINULL\fP or "" is used. For the other algorithms the constants
-\fBLIBKECCAK_SHA3_SUFFIX\fP (for SHA-3),
-\fBLIBKECCAK_RAWSHAKE_SUFFIX\fP (for RawSHAKE), and
-\fBLIBKECCAK_SHAKE_SUFFIX\fP (for SHAKE) are used.
+the message. If this string is empty,
+.I NULL
+may be used instead. This is used to select hash algorithm.
+For pure Keccak,
+.I NULL
+or "" is used. For the other algorithms the constants
+.B LIBKECCAK_SHA3_SUFFIX
+(for SHA-3),
+.B LIBKECCAK_RAWSHAKE_SUFFIX
+(for RawSHAKE), and
+.B LIBKECCAK_SHAKE_SUFFIX
+(for SHAKE) are used.
 .PP
-The hash of the message will be stored to \fIhashsum\fP,
-unless \fIhashsum\fP is \fINULL\fP (which increases the
-performance of the call.) A total of ((\fIstate->n\fP + 7) / 8)
-bytes will be written to the beginning of \fIhashsum\fP.
-Therefore, \fIhashsum\fP needs at least an allocation size
-of that number of bytes.
+The hash of the message will be stored to
+.IR hashsum ,
+unless
+.I hashsum
+is
+.I NULL
+(which increases the performance of the call.) A total of
+.RI (( state->n
++ 7) / 8) bytes will be written to the beginning of
+.IR hashsum .
+Therefore,
+.I hashsum
+needs at least an allocation size of that number of bytes.
 .PP
 The
 .BR libkeccak_digest ()
@@ -56,7 +85,9 @@ rather than as fast as possible.
 The
 .BR libkeccak_digest ()
 function returns 0 upon successful completion. On error,
--1 is returned and \fIerrno\fP is set to describe the error.
+-1 is returned and
+.I errno
+is set to describe the error.
 .SH ERRORS
 The
 .BR libkeccak_digest ()
@@ -109,9 +140,6 @@ libkeccak_state_destroy(&state);
 .BR libkeccak_simple_squeeze (3),
 .BR libkeccak_fast_squeeze (3),
 .BR libkeccak_squeeze (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se

@@ -1,0 +1,51 @@
+.TH LIBKECCAK_HMAC_RESET 3 LIBKECCAK
+.SH NAME
+libkeccak_hmac_reset - Reinitialise a HMAC-hashing state
+.SH SYNOPSIS
+.LP
+.nf
+#include <libkeccak.h>
+.P
+int
+libkeccak_hmac_reset(libkeccak_hmac_state_t *\fIstate\fP, const char *\fIkey\fP,
+                     size_t \fIkey_length\fP);
+.fi
+.P
+Link with
+.IR -lkeccak .
+.SH DESCRIPTION
+The
+.BR libkeccak_hmac_reset ()
+function reinitialises an HMAC-hashing state with a new key.
+.I key_length
+is the length of the key in bits. If
+.I key
+is
+.IR NULL ,
+the key remains unchanged.
+.SH RETURN VALUES
+The
+.BR libkeccak_hmac_reset ()
+function returns 0 successful completion.
+On error -1 is returned and
+.I errno
+is set to describe the error.
+.SH ERRORS
+The
+.BR libkeccak_hmac_reset ()
+function may fail for any specified for the functions
+.BR malloc (3)
+and
+.BR realloc (3).
+.SH SEE ALSO
+.BR libkeccak_hmac_create (3),
+.BR libkeccak_hmac_initialise (3),
+.BR libkeccak_hmac_set_key (3),
+.BR libkeccak_hmac_wipe (3),
+.BR libkeccak_hmac_fast_free (3),
+.BR libkeccak_hmac_free (3),
+.BR libkeccak_hmac_fast_destroy (3),
+.BR libkeccak_hmac_destroy (3)
+.SH BUGS
+Please report bugs to https://github.com/maandree/libkeccak/issues or to
+maandree@kth.se

@@ -1,4 +1,4 @@
-.TH LIBKECCAK_GENERALISED_SUM_FD 3 LIBKECCAK-%VERSION%
+.TH LIBKECCAK_GENERALISED_SUM_FD 3 LIBKECCAK
 .SH NAME
 libkeccak_generalised_sum_fd - Calculate the hash of a file
 .SH SYNOPSIS
@@ -6,41 +6,64 @@ libkeccak_generalised_sum_fd - Calculate the hash of a file
 .nf
 #include <libkeccak.h>
 .P
-int libkeccak_generalised_sum_fd(int \fIfd\fP, libkeccak_state_t *\fIstate\fP,
-                                 const libkeccak_spec_t *\fIspec\fP,
-                                 const char *\fIsuffix\fP, char *\fIhashsum\fP);
+int
+libkeccak_generalised_sum_fd(int \fIfd\fP, libkeccak_state_t *\fIstate\fP,
+                             const libkeccak_spec_t *\fIspec\fP,
+                             const char *\fIsuffix\fP, char *\fIhashsum\fP);
 .fi
 .P
-Link with \fI-lkeccak\fP.
+Link with
+.IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_generalised_sum_fd ()
 function calculates the hash of a file, whose file desriptor is
-specified by \fIfd\fP (and should be at the beginning of the file.)
-The hash algorithm is specified by \fI*spec\fP and \fIsuffix\fP,
-where \fI*spec\fP is the tuning of the algorithm and \fIsuffix\fP
-is the bits append to the message (or \fINULL\fP if none.)
+specified by
+.I fd
+(and should be at the beginning of the file.) The hash algorithm
+is specified by
+.I *spec
+and
+.IR suffix ,
+where
+.I *spec
+is the tuning of the algorithm and
+.I suffix
+is the bits append to the message (or
+.I NULL
+if none.)
 .PP
-The hash is stored in binary form to \fIhashsum\fP. \fIhashsum\fP
+The hash is stored in binary form to
+.IR hashsum .
+.I hashsum
 should have an allocation size of at least
-(((\fIspec->output\fP + 7) / 8) * sizeof(char)).
+.RI ((( spec->output
++ 7) / 8) * sizeof(char)).
 .PP
-\fI*state\fP should not be initialised.
+.I *state
+should not be initialised.
 .BR libkeccak_generalised_sum_fd ()
-initialises \fI*state\fP itself. Therefore there would be a
-memory leak if \fI*state\fP is already initialised.
+initialises
+.I *state
+itself. Therefore there would be a memory leak if
+.I *state
+is already initialised.
 .SH RETURN VALUES
 The
 .BR libkeccak_generalised_sum_fd ()
 function returns 0 upon successful completion.
-On error, -1 is returned and \fIerrno\fP is set to describe
-the error.
+On error, -1 is returned and
+.I errno
+is set to describe the error.
 .SH ERRORS
 The
 .BR libkeccak_generalised_sum_fd ()
 function may fail for any reason, except those resulting
-in \fIerrno\fP being set to \fBEINTR\fP, specified for the
-functions
+in
+.I errno
+being set to
+.BR EINTR ,
+specified for the functions
 .BR read (2),
 .BR malloc (3),
 and
@@ -59,8 +82,10 @@ hashing as this could limit what you can do, and make
 the library more complex.
 .PP
 .BR libkeccak_generalised_sum_fd ()
-does not stop if interrupted (\fBread\fP(2) returns
-\fBEINTR\fP.)
+does not stop if interrupted
+.RB ( read (2)
+returns
+.BR EINTR .)
 .PP
 .BR libkeccak_generalised_sum_fd ()
 assumes all information is non-sensitive, and will
@@ -102,9 +127,6 @@ libkeccak_state_destroy(&state);
 .BR libkeccak_spec_check (3),
 .BR libkeccak_generalised_spec_initialise (3),
 .BR libkeccak_state_initialise (3)
-.SH AUTHORS
-Principal author, Mattias Andrée.  See the LICENSE file for the full
-list of authors.
 .SH BUGS
 Please report bugs to https://github.com/maandree/libkeccak/issues or to
 maandree@kth.se
