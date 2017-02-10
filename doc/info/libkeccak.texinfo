@@ -4,7 +4,7 @@
 @include macros.texinfo
 @copying
 @c --------------------------------------------------------------------------------
-Copyright @copyright{} 2015  @w{Mattias Andrée @e{maandree@@kth.se}}
+Copyright @copyright{} 2015, 2017  @w{Mattias Andrée @e{maandree@@kth.se}}
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -75,6 +75,7 @@ with support for bit-oriented data.
 * Hexadecimal hashes::                        Converting between binary and hexadecimal.
 * Hashing files::                             Functions used to hash entire files.
 * Message authentication::                    Functions used for message authentication codes.
+* Examples::                                  Examples of how to use libkeccak.
 
 * GNU Affero General Public License::         Copying and sharing libkeccak.
 * GNU Free Documentation License::            Copying and sharing this manual.
@@ -844,6 +845,236 @@ sponge, and the second argument must not be @code{NULL}.
 
 
 
+@node Examples
+@chapter Examples
+@cpindex Example
+
+@cartouche
+@cpindex Configure state
+@tpindex libkeccak_spec_t
+@tpindex libkeccak_generalised_spec_t
+@fnindex libkeccak_generalised_spec_initialise
+@fnindex libkeccak_degeneralise_spec
+@fnindex libkeccak_spec_check
+This examples configure a @code{libkeccak_spec_t} to specify settings for Keccak[c = 512].
+@example
+int r;
+libkeccak_spec_t spec;
+libkeccak_generalised_spec_t gspec;
+libkeccak_generalised_spec_initialise(&gspec);
+gspec.capacity = 512;
+if ((r = libkeccak_degeneralise_spec(&gspec, &spec)))
+    goto fail_degeneralise_spec;
+if ((r = libkeccak_spec_check(&spec)));
+    goto fail_spec_check;
+@end example
+@end cartouche
+
+@cartouche
+@cpindex Calculate hash
+@cpindex Hash, calculate
+@cpindex Configure state
+@cpindex Hexadecimal hash
+@tpindex libkeccak_state_t
+@tpindex libkeccak_spec_t
+@fnindex libkeccak_state_initialise
+@fnindex libkeccak_update
+@fnindex libkeccak_digest
+@fnindex libkeccak_behex_lower
+@fnindex libkeccak_state_destroy
+This example calculates the Keccak[b = 1024, c = 576, n = 256]
+hash of the input from stdin, and prints the hash, in
+hexadecimal form, to stdout.
+@example
+libkeccak_state_t state;
+libkeccak_spec_t spec;
+char binhash[256 / 8];
+char hexhash[256 / 8 * 2 + 1];
+char chunk[4 << 10];
+ssize_t len;
+
+spec.bitrate = 1024;
+spec.capacity = 576;
+spec.output = 256;
+if (libkeccak_state_initialise(&state, &spec) < 0)
+    goto fail;
+
+for (;;) @{
+    len = read(STDIN_FILENO, chunk, sizeof(chunk));
+
+    if ((len < 0) && (errno == EINTR))
+        continue;
+    if (len < 0)
+        goto fail;
+    if (len == 0)
+        break;
+
+    if (libkeccak_update(&state, chunk, (size_t)len) < 0)
+        goto fail;
+@}
+if (libkeccak_digest(&state, NULL, 0, 0, "", binhash) < 0)
+    goto fail;
+
+libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
+printf("%s\n", hexhash);
+libkeccak_state_destroy(&state);
+@end example
+@end cartouche
+
+@cartouche
+@cpindex Configure state, RawSHAKE
+@cpindex RawSHAKE, configure state
+@tpindex libkeccak_spec_t
+@fnindex libkeccak_spec_rawshake
+This example configure a @code{libkeccak_spec_t} to specify
+the Keccak parameters used for RawSHAKE256(, 512).
+@example
+libkeccak_spec_t spec;
+libkeccak_spec_rawshake(&spec, 256, 512);
+@end example
+@end cartouche
+
+@cartouche
+@cpindex Configure state, SHA-3
+@cpindex SHA-3, configure state
+@tpindex libkeccak_spec_t
+@fnindex libkeccak_spec_sha3
+This example configure a @code{libkeccak_spec_t} to specify
+the Keccak parameters used for SHA3-256.
+@example
+libkeccak_spec_t spec;
+libkeccak_spec_sha3(&spec, 256);
+@end example
+@end cartouche
+
+@cartouche
+@cpindex Configure state, SHAKE
+@cpindex SHAKE, configure state
+@tpindex libkeccak_spec_t
+@fnindex libkeccak_spec_shake
+This example configure a @code{libkeccak_spec_t} to specify
+the Keccak parameters used for SHAKE256(, 512).
+@example
+libkeccak_spec_t spec;
+libkeccak_spec_shake(&spec, 256, 512);
+@end example
+@end cartouche
+
+@cartouche
+@cpindex Calculate hash, SHA-3, from file
+@cpindex Hash, calculate, SHA-3, from file
+@cpindex SHA-3, calculate hash, from file
+@cpindex File, calculate hash, SHA-3
+@fnindex libkeccak_sha3sum_fd
+This example calculates the SHA3-256 hash of the input from
+stdin, and prints the hash, in hexadecimal form, to stdout.
+@example
+libkeccak_state_t state;
+if (libkeccak_sha3sum_fd(STDIN_FILENO, &state, 256, binhash) < 0)
+    goto fail;
+libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
+printf("%s\n", hexhash);
+libkeccak_state_destroy(&state);
+@end example
+@end cartouche
+
+@cartouche
+@cpindex Calculate hash, RawSHAKE, from file
+@cpindex Hash, calculate, RawSHAKE, from file
+@cpindex RawSHAKE, calculate hash, from file
+@cpindex File, calculate hash, RawSHAKE
+@fnindex libkeccak_rawshakesum_fd
+This example calculates the RawSHAKE256(, 512) hash of the input
+from stdin, and prints the hash, in hexadecimal form, to stdout.
+@example
+libkeccak_state_t state;
+if (libkeccak_rawshakesum_fd(STDIN_FILENO, &state, 256, 512, binhash) < 0)
+    goto fail;
+libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
+printf("%s\n", hexhash);
+libkeccak_state_destroy(&state);
+@end example
+@end cartouche
+
+@cartouche
+@cpindex Calculate hash, SHAKE, from file
+@cpindex Hash, calculate, SHAKE, from file
+@cpindex SHAKE, calculate hash, from file
+@cpindex File, calculate hash, SHAKE
+@fnindex libkeccak_shakesum_fd
+This example calculates the SHAKE256(, 512) hash of the input
+from stdin, and prints the hash, in hexadecimal form, to stdout.
+@example
+libkeccak_state_t state;
+if (libkeccak_shakesum_fd(STDIN_FILENO, &state, 256, 512, binhash) < 0)
+    goto fail;
+libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
+printf("%s\n", hexhash);
+libkeccak_state_destroy(&state);
+@end example
+@end cartouche
+
+@cartouche
+@cpindex Calculate hash, Keccak, from file
+@cpindex Hash, calculate, Keccak, from file
+@cpindex Keccak, calculate hash, from file
+@cpindex File, calculate hash, Keccak
+@tpindex libkeccak_spec_t
+@fnindex libkeccak_keccaksum_fd
+@fnindex libkeccak_behex_lower
+This example calculates the Keccak[b = 1024, c = 576, n = 256]
+hash of the input from stdin, and prints the hash, in hexadecimal
+form, to stdout.
+@example
+libkeccak_state_t state;
+libkeccak_spec_t spec;
+char binhash[256 / 8];
+char hexhash[256 / 8 * 2 + 1];
+
+spec.bitrate = 1024;
+spec.capacity = 576;
+spec.output = 256;
+
+if (libkeccak_keccaksum_fd(STDIN_FILENO, &state, &spec, binhash) < 0)
+    goto fail;
+libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
+printf("%s\n", hexhash);
+libkeccak_state_destroy(&state);
+@end example
+@end cartouche
+
+@cartouche
+@cpindex Calculate hash, from file
+@cpindex Hash, calculate, from file
+@cpindex Calculate hash, from file
+@cpindex File, calculate hash
+@tpindex libkeccak_spec_t
+@fnindex libkeccak_generalised_sum_fd
+@fnindex libkeccak_behex_lower
+This example calculates the Keccak[b = 1024, c = 576, n = 256]
+hash of the input from stdin, and prints the hash, in hexadecimal
+form, to stdout.
+@example
+libkeccak_state_t state;
+libkeccak_spec_t spec;
+char binhash[256 / 8];
+char hexhash[256 / 8 * 2 + 1];
+
+spec.bitrate = 1024;
+spec.capacity = 576;
+spec.output = 256;
+
+if (libkeccak_generalised_sum_fd(STDIN_FILENO, &state,
+                                 &spec, NULL, binhash) < 0)
+    goto fail;
+libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
+printf("%s\n", hexhash);
+libkeccak_state_destroy(&state);
+@end example
+@end cartouche
+
+
+
 @node GNU Affero General Public License
 @appendix GNU Affero General Public License
 @include agpl-3.0.texinfo
@@ -866,6 +1097,3 @@ sponge, and the second argument must not be @code{NULL}.
 
 
 @bye
-
-TODO examples
-
