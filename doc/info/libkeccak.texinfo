@@ -4,7 +4,7 @@
 @include macros.texinfo
 @copying
 @c --------------------------------------------------------------------------------
-Copyright @copyright{} 2015  @w{Mattias Andrée @e{maandree@@member.fsf.org}}
+Copyright @copyright{} 2015  @w{Mattias Andrée @e{maandree@@kth.se}}
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
