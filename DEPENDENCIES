@@ -6,7 +6,7 @@ RUNTIME DEPENDENCIES:
 BUILD DEPENDENCIES:
 
 	libc
-	gcc
+	c99
 	make
 	coreutils
 	binutils
@@ -26,12 +26,11 @@ BENCHMARK DEPENDENCIES:
 	make
 	coreutils
 	median
-	grep (only needed for src/benchmark-flags)
-	sed (only needed for src/benchmark-flags)
+	grep (only needed for ./benchmark-flags)
+	sed (only needed for ./benchmark-flags)
 
 
 INSTALL DEPENDENCIES:
 
 	make
 	coreutils
-

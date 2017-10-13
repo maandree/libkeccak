@@ -79,7 +79,8 @@ static const uint_fast64_t RC[] = {
  * @param  state  The hashing state
  * @param  rc     The round contant for this round
  */
-static __attribute__((nonnull, nothrow, hot)) void
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, hot)))
+static void
 libkeccak_f_round(register libkeccak_state_t *restrict state, register int_fast64_t rc)
 {
 	int_fast64_t *restrict A = state->S;
@@ -126,7 +127,8 @@ libkeccak_f_round(register libkeccak_state_t *restrict state, register int_fast6
  * @param  state  The hashing state
  * @param  rc     The round contant for this round
  */
-static __attribute__((nonnull, nothrow, hot)) void
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, hot)))
+static void
 libkeccak_f_round64(register libkeccak_state_t *restrict state, register int_fast64_t rc)
 {
 	int_fast64_t *restrict A = state->S;
@@ -170,7 +172,8 @@ libkeccak_f_round64(register libkeccak_state_t *restrict state, register int_fas
  * 
  * @param  state  The hashing state
  */
-static inline __attribute__((nonnull, nothrow, gnu_inline)) void
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, gnu_inline)))
+static inline void
 libkeccak_f(register libkeccak_state_t *restrict state)
 {
 	register long i = 0;
@@ -196,7 +199,8 @@ libkeccak_f(register libkeccak_state_t *restrict state)
  * @param   off      The offset in the message
  * @return           The lane
  */
-static inline __attribute__((nonnull, nothrow, pure, warn_unused_result, gnu_inline)) int_fast64_t
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, pure, warn_unused_result, gnu_inline)))
+static inline int_fast64_t
 libkeccak_to_lane(register const char *restrict message, register size_t msglen,
                   register long rr, register long ww, size_t off)
 {
@@ -220,7 +224,8 @@ libkeccak_to_lane(register const char *restrict message, register size_t msglen,
  * @param   off      The offset in the message
  * @return           The lane
  */
-static inline __attribute__((nonnull, nothrow, pure, hot, warn_unused_result, gnu_inline)) int_fast64_t
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, pure, hot, warn_unused_result, gnu_inline)))
+static inline int_fast64_t
 libkeccak_to_lane64(register const char* restrict message, register size_t msglen,
                     register long rr, size_t off)
 {
@@ -242,7 +247,8 @@ libkeccak_to_lane64(register const char* restrict message, register size_t msgle
  *                `state->M` should have `state->r / 8` bytes left over at the end
  * @param  bits   The number of bits in the end of the message that does not make a whole byte
  */
-static inline __attribute__((nonnull, nothrow, gnu_inline)) void
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, gnu_inline)))
+static inline void
 libkeccak_pad10star1(register libkeccak_state_t *restrict state, register size_t bits)
 {
 	register size_t r = (size_t)(state->r);
@@ -272,7 +278,8 @@ libkeccak_pad10star1(register libkeccak_state_t *restrict state, register size_t
  * @param  state  The hashing state
  * @param  len    The number of bytes from `state->M` to absorb
  */
-static __attribute__((nonnull, nothrow)) void
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow)))
+static void
 libkeccak_absorption_phase(register libkeccak_state_t *restrict state, register size_t len)
 {
 	register long rr = state->r >> 3;
@@ -310,7 +317,8 @@ libkeccak_absorption_phase(register libkeccak_state_t *restrict state, register 
  * @param  ww       The word size in bytes
  * @param  hashsum  Output parameter for the hashsum
  */
-static __attribute__((nonnull, nothrow, hot)) void
+LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, hot)))
+static void
 libkeccak_squeezing_phase(register libkeccak_state_t *restrict state, long rr,
                           long nn, long ww, register char *restrict hashsum)
 {

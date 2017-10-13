@@ -9,10 +9,10 @@
 
 
 #ifndef MESSAGE_FILE
-# define MESSAGE_FILE     "LICENSE"
+# define MESSAGE_FILE      "benchfile"
 #endif
 #ifndef MESSAGE_LEN
-# define MESSAGE_LEN      34520
+# define MESSAGE_LEN       50000
 #endif
 
 
@@ -20,23 +20,23 @@
 # define BITRATE           1024
 #endif
 #ifndef CAPACITY
-# define CAPACITY           576
+# define CAPACITY          576
 #endif
 #ifndef OUTPUT
-# define OUTPUT             512
+# define OUTPUT            512
 #endif
 
 #ifndef UPDATE_RUNS
-# define UPDATE_RUNS        100
+# define UPDATE_RUNS       100
 #endif
 #ifndef FAST_SQUEEZE_RUNS
-# define FAST_SQUEEZE_RUNS  100
+# define FAST_SQUEEZE_RUNS 100
 #endif
 #ifndef SLOW_SQUEEZE_RUNS
-# define SLOW_SQUEEZE_RUNS  100
+# define SLOW_SQUEEZE_RUNS 100
 #endif
 #ifndef RERUNS
-# define RERUNS              50
+# define RERUNS            50
 #endif
 
 
