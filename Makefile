@@ -1,5 +1,6 @@
 .NONPOSIX:
 
+# If possible, use CONFIGFILE=optimised.mk
 CONFIGFILE = config.mk
 
 
