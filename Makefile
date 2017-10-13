@@ -228,9 +228,9 @@ bin/%.ps: doc/info/%.texinfo doc/info/*.texinfo
 
 .PHONY: check
 check: bin/test bin/libkeccak.so bin/libkeccak.so.$(LIB_MAJOR) bin/libkeccak.so.$(LIB_VERSION)
-	@test $$(sha256sum LICENSE | cut -d ' ' -f 1) = \
-	      57c8ff33c9c0cfc3ef00e650a1cc910d7ee479a8bc509f6c9209a7c2a11399d6 || \
-	      ( echo 'The file LICENSE is incorrect, test will fail!' ; false )
+	@test $$(sha256sum .testfile | cut -d ' ' -f 1) = \
+	      e21d814d21ca269246849cc105faec1a71ac7d1cdb1a86023254f49d51b47231 || \
+	      ( echo 'The file .testfile is incorrect, test will fail!' ; false )
 	env LD_LIBRARY_PATH=bin valgrind --leak-check=full bin/test
 	test $$(env LD_LIBRARY_PATH=bin valgrind bin/test 2>&1 >/dev/null | wc -l) = 14
 # Using valgrind 3.10.0, its output to standard error should consist of 14 lines,
@@ -283,12 +283,7 @@ install-static-lib: bin/libkeccak.a
 	install -m644 -- bin/libkeccak.a "$(DESTDIR)$(LIBDIR)/libkeccak.a"
 
 .PHONY: install-copyright
-install-copyright: install-copying install-license
-
-.PHONY: install-copying
-install-copying:
-	install -dm755 -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
-	install -m644 -- COPYING "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/COPYING"
+install-copyright: install-license
 
 .PHONY: install-license
 install-license:

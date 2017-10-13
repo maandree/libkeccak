@@ -7,13 +7,9 @@
 Copyright @copyright{} 2015, 2017  @w{Mattias Andrée @e{maandree@@kth.se}}
 
 @quotation
-Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version@tie{}1.3
-or any later version published by the Free Software Foundation; with the
-Invariant Sections being the ``GNU Affero General Public License'', the
-``GNU Free Documentation License'', with no Front-Cover Texts, and with
-no Back-Cover Texts. A copy of the license is included in the section
-entitled ``GNU Free Documentation License''.
+Permission to use, copy, modify, and/or distribute this document for any purpose
+with or without fee is hereby granted, provided that the above copyright notice
+and this permission notice appear in all copies.
 @end quotation
 @c --------------------------------------------------------------------------------
 @end copying
@@ -77,9 +73,6 @@ with support for bit-oriented data.
 * Message authentication::                    Functions used for message authentication codes.
 * Examples::                                  Examples of how to use libkeccak.
 
-* GNU Affero General Public License::         Copying and sharing libkeccak.
-* GNU Free Documentation License::            Copying and sharing this manual.
-
 * Concept index::                             Index of concepts.
 * Data type index::                           Index of data types.
 * Function index::                            Index of functions.
@@ -125,21 +118,6 @@ doing so is unnecessary because the key can securely be
 prepended to the message when using Keccak to produce
 a message authentication code.}. This library implements
 the Keccak algorithm using a lanewise implementation.
-libkeccak must compelling feature however is that it is
-licensed under the strongest free software license:
-GNU Affero General Public License version@tie{}3
-(see @ref{GNU Affero General Public License},) which
-gives the user the four essential freedoms:
-@itemize @bullet{}
-@item
-The freedom to run the program as you wish, for any purpose (freedom 0).
-@item
-The freedom to study how the program works, and change it so it does your computing as you wish (freedom 1).
-@item
-The freedom to redistribute copies so you can help your neighbor (freedom 2).
-@item
-The freedom to distribute copies of your modified versions to others (freedom 3).
-@end itemize
 
 @cpindex Limitations
 This implementation is limited to state sizes up to,
@@ -1074,14 +1052,6 @@ libkeccak_state_destroy(&state);
 @end cartouche
 
 
-
-@node GNU Affero General Public License
-@appendix GNU Affero General Public License
-@include agpl-3.0.texinfo
-
-@node GNU Free Documentation License
-@appendix GNU Free Documentation License
-@include fdl-1.3.texinfo
 
 @node Concept index
 @unnumbered Concept index

@@ -1,24 +1,6 @@
-/**
- * libkeccak – Keccak-family hashing library
- * 
- * Copyright © 2014, 2015, 2017  Mattias Andrée (maandree@kth.se)
- * 
- * This library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this library.  If not, see <http://www.gnu.org/licenses/>.
- */
+/* See LICENSE file for copyright and license details. */
 #ifndef LIBKECCAK_DIGEST_H
-#define LIBKECCAK_DIGEST_H  1
-
+#define LIBKECCAK_DIGEST_H 1
 
 #include "state.h"
 #include "internal.h"
@@ -34,7 +16,7 @@
  * @return          Zero on success, -1 on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull)))
-int libkeccak_fast_update(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen);
+int libkeccak_fast_update(libkeccak_state_t *restrict state, const char* restrict msg, size_t msglen);
 
 
 /**
@@ -47,7 +29,7 @@ int libkeccak_fast_update(libkeccak_state_t* restrict state, const char* restric
  * @return          Zero on success, -1 on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull)))
-int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen);
+int libkeccak_update(libkeccak_state_t *restrict state, const char *restrict msg, size_t msglen);
 
 
 /**
@@ -63,8 +45,8 @@ int libkeccak_update(libkeccak_state_t* restrict state, const char* restrict msg
  * @return           Zero on success, -1 on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull(1))))
-int libkeccak_fast_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
-			  size_t bits, const char* restrict suffix, char* restrict hashsum);
+int libkeccak_fast_digest(libkeccak_state_t *restrict state, const char *restrict msg, size_t msglen,
+                          size_t bits, const char *restrict suffix, char *restrict hashsum);
 
 
 /**
@@ -80,8 +62,8 @@ int libkeccak_fast_digest(libkeccak_state_t* restrict state, const char* restric
  * @return           Zero on success, -1 on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull(1))))
-int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg, size_t msglen,
-		     size_t bits, const char* restrict suffix, char* restrict hashsum);
+int libkeccak_digest(libkeccak_state_t *restrict state, const char *restrict msg, size_t msglen,
+                     size_t bits, const char *restrict suffix, char *restrict hashsum);
 
 
 /**
@@ -91,7 +73,7 @@ int libkeccak_digest(libkeccak_state_t* restrict state, const char* restrict msg
  * @param  times  The number of rounds
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow)))
-void libkeccak_simple_squeeze(register libkeccak_state_t* restrict state, register long times);
+void libkeccak_simple_squeeze(register libkeccak_state_t *restrict state, register long times);
 
 
 /**
@@ -101,7 +83,7 @@ void libkeccak_simple_squeeze(register libkeccak_state_t* restrict state, regist
  * @param  times  The number of digests
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow)))
-void libkeccak_fast_squeeze(register libkeccak_state_t* restrict state, register long times);
+void libkeccak_fast_squeeze(register libkeccak_state_t *restrict state, register long times);
 
 
 /**
@@ -111,7 +93,7 @@ void libkeccak_fast_squeeze(register libkeccak_state_t* restrict state, register
  * @param  hashsum  Output parameter for the hashsum
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow)))
-void libkeccak_squeeze(register libkeccak_state_t* restrict state, register char* restrict hashsum);
+void libkeccak_squeeze(register libkeccak_state_t *restrict state, register char* restrict hashsum);
 
 
 #endif

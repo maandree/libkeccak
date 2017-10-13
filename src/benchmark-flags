@@ -1,32 +1,16 @@
 #!/bin/sh
-# libkeccak – Keccak-family hashing library
-# 
-# Copyright © 2014, 2015, 2017  Mattias Andrée (maandree@kth.se)
-# 
-# This library is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# 
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-# 
-# You should have received a copy of the GNU Affero General Public License
-# along with this library.  If not, see <http://www.gnu.org/licenses/>.
+# See LICENSE file for copyright and license details.
 
 set -e
 
 export LD_LIBRARY_PATH=bin
-if [ "${TRIES}" = "" ]; then
-    TRIES=10
+if test "${TRIES}" = ""; then
+	TRIES=10
 fi
 
 # List all flags that affect the object files
-list_test_flags ()
-{
-    cat <<EOF
+list_test_flags() {
+	cat <<EOF
 -fdata-sections -fcrossjumping -fexpensive-optimizations -ffunction-sections
 -fkeep-inline-functions -fomit-frame-pointer -freorder-blocks-and-partition
 -ftree-ter -falign-functions=0 -fmerge-all-constants -fmerge-constants
@@ -41,47 +25,47 @@ pass=1
 exec 4>.benchmark.so.far
 
 while true; do
-    exec 3>.benchmarks
-    
-    for _try in $(seq ${TRIES}); do
-	for test_flag in "" ${test_flags}; do
-	    flags="${test_flag} ${base_flags}"
-	    make -B all COPTIMISE="${flags}" CPPFLAGS="${cppflags} $*"
-	    make check
-	    if [ "${test_flag}" = "" ]; then
-		test_flag=zzz
-	    fi
-	    echo "$(bin/benchmark || echo error) ${test_flag}" >&3
+	exec 3>.benchmarks
+
+	for _try in $(seq ${TRIES}); do
+		for test_flag in "" ${test_flags}; do
+			flags="${test_flag} ${base_flags}"
+			make -B all COPTIMISE="${flags}" CPPFLAGS="${cppflags} $*"
+			make check
+			if test "${test_flag}" = ""; then
+				test_flag=zzz
+			fi
+			echo "$(bin/benchmark || echo error) ${test_flag}" >&3
+		done
 	done
-    done
-    
-    exec 3<&-
-    
-    ! grep ^error .benchmarks >/dev/null 2>/dev/null
-    
-    good_flag="$(median < .benchmarks | sort -n | cut -d ' ' -f 2 | sed 1q)"
-    if [ "${good_flag}" = zzz ] || [ $pass = 2 ]; then
-	if [ $pass = 1 ]; then
-	    pass=2
-	    base_flags="$(echo "${base_flags}" | sed -e 's/ -O0//')"
-	    test_flags="-O0 -O1 -O2 -O3 -Ofast -Os"
+
+	exec 3<&-
+
+	! grep ^error .benchmarks >/dev/null 2>/dev/null
+
+	good_flag="$(median < .benchmarks | sort -n | cut -d ' ' -f 2 | sed 1q)"
+	if test "${good_flag}" = zzz || test $pass = 2; then
+		if test $pass = 1; then
+			pass=2
+			base_flags="$(echo "${base_flags}" | sed -e 's/ -O0//')"
+			test_flags="-O0 -O1 -O2 -O3 -Ofast -Os"
+		else
+			if ! test "${good_flag}" = zzz; then
+				base_flags="${base_flags} ${good_flag}"
+				echo "${good_flag}" >&4
+			fi
+			echo
+			echo
+			echo "Good flags:"
+			echo "${base_flags}"
+			exec 4<&-
+			exit 0
+		fi
 	else
-	    if [ ! "${good_flag}" = zzz ]; then
-		base_flags="${base_flags} ${good_flag}"
 		echo "${good_flag}" >&4
-	    fi
-	    echo
-	    echo
-	    echo "Good flags:"
-	    echo "${base_flags}"
-	    exec 4<&-
-	    exit 0
+		base_flags="${base_flags} ${good_flag}"
+		test_flags="$(echo "${test_flags}" | sed -e "s/ ${good_flag} / /")"
 	fi
-    else
-	echo "${good_flag}" >&4
-	base_flags="${base_flags} ${good_flag}"
-	test_flags="$(echo "${test_flags}" | sed -e "s/ ${good_flag} / /")"
-    fi
 done
 
 #    None of these GCC flags affect the object files.

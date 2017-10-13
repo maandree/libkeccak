@@ -1,23 +1,6 @@
-/**
- * libkeccak – Keccak-family hashing library
- * 
- * Copyright © 2014, 2015, 2017  Mattias Andrée (maandree@kth.se)
- * 
- * This library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this library.  If not, see <http://www.gnu.org/licenses/>.
- */
+/* See LICENSE file for copyright and license details. */
 #ifndef LIBKECCAK_INTERNAL_H
-#define LIBKECCAK_INTERNAL_H  1
+#define LIBKECCAK_INTERNAL_H 1
 
 
 /**
@@ -25,11 +8,19 @@
  * if compiling with GCC.
  */
 #ifdef __GNUC__
-# define LIBKECCAK_GCC_ONLY(x)  x
+# define LIBKECCAK_GCC_ONLY(x) x
 #else
 # define LIBKECCAK_GCC_ONLY(x)
 #endif
 
 
+/* Use built in functions and branching optimisation if available */
+#ifndef __GNUC__
+# define __builtin_expect(expression, expect) expression
+# define __builtin_memset(dest, c, n) memset(dest, c, n)
+# define __builtin_memcpy(dest, src, n) memcpy(dest, src, n)
+# define __builtin_memmove(dest, src, n) memmove(dest, src, n)
 #endif
 
+
+#endif

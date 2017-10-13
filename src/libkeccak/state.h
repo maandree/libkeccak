@@ -1,32 +1,14 @@
-/**
- * libkeccak – Keccak-family hashing library
- * 
- * Copyright © 2014, 2015, 2017  Mattias Andrée (maandree@kth.se)
- * 
- * This library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this library.  If not, see <http://www.gnu.org/licenses/>.
- */
+/* See LICENSE file for copyright and license details. */
 #ifndef LIBKECCAK_STATE_H
-#define LIBKECCAK_STATE_H  1
-
+#define LIBKECCAK_STATE_H 1
 
 #include "spec.h"
 #include "internal.h"
 
+#include <errno.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <string.h>
 
 
@@ -36,68 +18,67 @@
  * 
  * The `char`-size of the output hashsum is calculated by `(.n + 7) / 8`
  */
-typedef struct libkeccak_state
-{
-  /**
-   * The lanes (state/sponge)
-   */
-  int64_t S[25];
-  
-  /**
-   * The bitrate
-   */
-  long r;
-  
-  /**
-   * The capacity
-   */
-  long c;
-  
-  /**
-   * The output size
-   */
-  long n;
-  
-  /**
-   * The state size
-   */
-  long b;
-  
-  /**
-   * The word size
-   */
-  long w;
-  
-  /**
-   * The word mask
-   */
-  int64_t wmod;
-  
-  /**
-   * ℓ, the binary logarithm of the word size
-   */
-  long l;
-  
-  /**
-   * 12 + 2ℓ, the number of rounds
-   */
-  long nr;
-  
-  /**
-   * Pointer for `M`
-   */
-  size_t mptr;
-  
-  /**
-   * Size of `M`
-   */
-  size_t mlen;
-  
-  /**
-   * Left over water to fill the sponge with at next update
-   */
-  char* M;
-  
+typedef struct libkeccak_state {
+	/**
+	 * The lanes (state/sponge)
+	 */
+	int64_t S[25];
+
+	/**
+	 * The bitrate
+	 */
+	long r;
+
+	/**
+	 * The capacity
+	 */
+	long c;
+
+	/**
+	 * The output size
+	 */
+	long n;
+
+	/**
+	 * The state size
+	 */
+	long b;
+
+	/**
+	 * The word size
+	 */
+	long w;
+
+	/**
+	 * The word mask
+	 */
+	int64_t wmod;
+
+	/**
+	 * ℓ, the binary logarithm of the word size
+	 */
+	long l;
+
+	/**
+	 * 12 + 2ℓ, the number of rounds
+	 */
+	long nr;
+
+	/**
+	 * Pointer for `M`
+	 */
+	size_t mptr;
+
+	/**
+	 * Size of `M`
+	 */
+	size_t mlen;
+
+	/**
+	 * Left over water to fill the sponge with at next update
+	 */
+	char *M;
+
 } libkeccak_state_t;
 
 
@@ -110,7 +91,7 @@ typedef struct libkeccak_state
  * @return         Zero on success, -1 on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((leaf, nonnull)))
-int libkeccak_state_initialise(libkeccak_state_t* restrict state, const libkeccak_spec_t* restrict spec);
+int libkeccak_state_initialise(libkeccak_state_t *restrict state, const libkeccak_spec_t *restrict spec);
 
 
 /**
@@ -119,11 +100,11 @@ int libkeccak_state_initialise(libkeccak_state_t* restrict state, const libkecca
  * @param  state  The state that should be reset
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, unused)))
-static inline
-void libkeccak_state_reset(libkeccak_state_t* restrict state)
+static inline void
+libkeccak_state_reset(libkeccak_state_t *restrict state)
 {
-  state->mptr = 0;
-  memset(state->S, 0, sizeof(state->S));
+	state->mptr = 0;
+	memset(state->S, 0, sizeof(state->S));
 }
 
 
@@ -132,13 +113,13 @@ void libkeccak_state_reset(libkeccak_state_t* restrict state)
  * 
  * @param  state  The state that should be destroyed
  */
-static inline
-void libkeccak_state_fast_destroy(libkeccak_state_t* restrict state)
+static inline void
+libkeccak_state_fast_destroy(libkeccak_state_t *restrict state)
 {
-  if (state == NULL)
-    return;
-  free(state->M);
-  state->M = NULL;
+	if (state == NULL)
+		return;
+	free(state->M);
+	state->M = NULL;
 }
 
 
@@ -148,7 +129,7 @@ void libkeccak_state_fast_destroy(libkeccak_state_t* restrict state)
  * @param  state  The state that should be wipe
  */
 LIBKECCAK_GCC_ONLY(__attribute__((leaf, nonnull, nothrow, optimize("-O0"))))
-void libkeccak_state_wipe_message(volatile libkeccak_state_t* restrict state);
+void libkeccak_state_wipe_message(volatile libkeccak_state_t *restrict state);
 
 /**
  * Wipe data in the state's sponge wihout freeing any data
@@ -156,7 +137,7 @@ void libkeccak_state_wipe_message(volatile libkeccak_state_t* restrict state);
  * @param  state  The state that should be wipe
  */
 LIBKECCAK_GCC_ONLY(__attribute__((leaf, nonnull, nothrow, optimize("-O0"))))
-void libkeccak_state_wipe_sponge(volatile libkeccak_state_t* restrict state);
+void libkeccak_state_wipe_sponge(volatile libkeccak_state_t *restrict state);
 
 /**
  * Wipe sensitive data wihout freeing any data
@@ -164,7 +145,7 @@ void libkeccak_state_wipe_sponge(volatile libkeccak_state_t* restrict state);
  * @param  state  The state that should be wipe
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, optimize("-O0"))))
-void libkeccak_state_wipe(volatile libkeccak_state_t* restrict state);
+void libkeccak_state_wipe(volatile libkeccak_state_t *restrict state);
 
 
 /**
@@ -173,14 +154,14 @@ void libkeccak_state_wipe(volatile libkeccak_state_t* restrict state);
  * @param  state  The state that should be destroyed
  */
 LIBKECCAK_GCC_ONLY(__attribute__((unused, optimize("-O0"))))
-static inline
-void libkeccak_state_destroy(volatile libkeccak_state_t* restrict state)
+static inline void
+libkeccak_state_destroy(volatile libkeccak_state_t *restrict state)
 {
-  if (state == NULL)
-    return;
-  libkeccak_state_wipe(state);
-  free(state->M);
-  state->M = NULL;
+	if (!state)
+		return;
+	libkeccak_state_wipe(state);
+	free(state->M);
+	state->M = NULL;
 }
 
 
@@ -191,14 +172,13 @@ void libkeccak_state_destroy(volatile libkeccak_state_t* restrict state)
  * @return        The state, `NULL` on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull, unused, warn_unused_result, malloc)))
-static inline
-libkeccak_state_t* libkeccak_state_create(const libkeccak_spec_t* restrict spec)
+static inline libkeccak_state_t *
+libkeccak_state_create(const libkeccak_spec_t *restrict spec)
 {
-  libkeccak_state_t* restrict state = malloc(sizeof(libkeccak_state_t));
-  int saved_errno;
-  if ((state == NULL) || libkeccak_state_initialise(state, spec))
-    return saved_errno = errno, free(state), errno = saved_errno, NULL;
-  return state;
+	libkeccak_state_t *restrict state = malloc(sizeof(libkeccak_state_t));
+	if (!state || libkeccak_state_initialise(state, spec))
+		return free(state), NULL;
+	return state;
 }
 
 
@@ -208,11 +188,11 @@ libkeccak_state_t* libkeccak_state_create(const libkeccak_spec_t* restrict spec)
  * @param  state  The state that should be freed
  */
 LIBKECCAK_GCC_ONLY(__attribute__((unused)))
-static inline
-void libkeccak_state_fast_free(libkeccak_state_t* restrict state)
+static inline void
+libkeccak_state_fast_free(libkeccak_state_t *restrict state)
 {
-  libkeccak_state_fast_destroy(state);
-  free(state);
+	libkeccak_state_fast_destroy(state);
+	free(state);
 }
 
 
@@ -222,15 +202,15 @@ void libkeccak_state_fast_free(libkeccak_state_t* restrict state)
  * @param  state  The state that should be freed
  */
 LIBKECCAK_GCC_ONLY(__attribute__((unused, optimize("-O0"))))
-static inline
-void libkeccak_state_free(volatile libkeccak_state_t* restrict state)
+static inline void
+libkeccak_state_free(volatile libkeccak_state_t *restrict state)
 {
 #ifdef __GNUC__
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wcast-qual"
 #endif
-  libkeccak_state_destroy(state);
-  free((libkeccak_state_t*)state);
+	libkeccak_state_destroy(state);
+	free((libkeccak_state_t *)state);
 #ifdef __GNUC__
 # pragma GCC diagnostic pop
 #endif
@@ -245,7 +225,7 @@ void libkeccak_state_free(volatile libkeccak_state_t* restrict state)
  * @return        Zero on success, -1 on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((leaf, nonnull)))
-int libkeccak_state_copy(libkeccak_state_t* restrict dest, const libkeccak_state_t* restrict src);
+int libkeccak_state_copy(libkeccak_state_t *restrict dest, const libkeccak_state_t *restrict src);
 
 
 /**
@@ -255,14 +235,13 @@ int libkeccak_state_copy(libkeccak_state_t* restrict dest, const libkeccak_state
  * @return       The duplicate, `NULL` on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull, unused, warn_unused_result, malloc)))
-static inline
-libkeccak_state_t* libkeccak_state_duplicate(const libkeccak_state_t* restrict src)
+static inline libkeccak_state_t *
+libkeccak_state_duplicate(const libkeccak_state_t *restrict src)
 {
-  libkeccak_state_t* restrict dest = malloc(sizeof(libkeccak_state_t));
-  int saved_errno;
-  if ((dest == NULL) || libkeccak_state_copy(dest, src))
-    return saved_errno = errno, libkeccak_state_free(dest), errno = saved_errno, NULL;
-  return dest;
+	libkeccak_state_t *restrict dest = malloc(sizeof(libkeccak_state_t));
+	if (!dest || libkeccak_state_copy(dest, src))
+		return libkeccak_state_free(dest), NULL;
+	return dest;
 }
 
 
@@ -274,10 +253,10 @@ libkeccak_state_t* libkeccak_state_duplicate(const libkeccak_state_t* restrict s
  * @return         The allocation size needed for the buffer to which the state will be marshalled
  */
 LIBKECCAK_GCC_ONLY(__attribute__((nonnull, nothrow, unused, warn_unused_result, pure)))
-static inline
-size_t libkeccak_state_marshal_size(const libkeccak_state_t* restrict state)
+static inline size_t
+libkeccak_state_marshal_size(const libkeccak_state_t *restrict state)
 {
-  return sizeof(libkeccak_state_t) - sizeof(char*) + state->mptr * sizeof(char);
+	return sizeof(libkeccak_state_t) - sizeof(char*) + state->mptr * sizeof(char);
 }
 
 
@@ -289,7 +268,7 @@ size_t libkeccak_state_marshal_size(const libkeccak_state_t* restrict state)
  * @return         The number of bytes stored to `data`
  */
 LIBKECCAK_GCC_ONLY(__attribute__((leaf, nonnull, nothrow)))
-size_t libkeccak_state_marshal(const libkeccak_state_t* restrict state, char* restrict data);
+size_t libkeccak_state_marshal(const libkeccak_state_t *restrict state, char *restrict data);
 
 
 /**
@@ -300,7 +279,7 @@ size_t libkeccak_state_marshal(const libkeccak_state_t* restrict state, char* re
  * @return         The number of bytes read from `data`, 0 on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((leaf, nonnull)))
-size_t libkeccak_state_unmarshal(libkeccak_state_t* restrict state, const char* restrict data);
+size_t libkeccak_state_unmarshal(libkeccak_state_t *restrict state, const char *restrict data);
 
 
 /**
@@ -311,8 +290,6 @@ size_t libkeccak_state_unmarshal(libkeccak_state_t* restrict state, const char* 
  * @return        The byte size of the stored state
  */
 LIBKECCAK_GCC_ONLY(__attribute__((leaf, nonnull, nothrow, warn_unused_result, pure)))
-size_t libkeccak_state_unmarshal_skip(const char* restrict data);
-
+size_t libkeccak_state_unmarshal_skip(const char *restrict data);
 
 #endif
-

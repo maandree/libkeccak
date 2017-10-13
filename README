@@ -13,6 +13,3 @@ RATIONALE
 
 SEE ALSO
 	sha3sum, libsha2(7)
-
-	Full documentation available locally via: info '(libkeccak)'
-
