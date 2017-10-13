@@ -98,7 +98,7 @@ MAN3 =\
 	libkeccak_update.3
 
 MAN7 =\
-	libkeccak_update.7
+	libkeccak.7
 
 
 all: libkeccak.a libkeccak.$(LIBEXT) test benchmark

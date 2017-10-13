@@ -1,5 +1,5 @@
-PREFIX = /usr
-MANPREFIX = $(DATADIR)/man
+PREFIX = /usr/local
+MANPREFIX = $(PREFIX)/share/man
 
 # These have not been extensively tested but appear to:
 #     * Produce produce false warnings
