@@ -1,5 +1,5 @@
 /* See LICENSE file for copyright and license details. */
-#include <libkeccak.h>
+#include "libkeccak.h"
 
 #include <fcntl.h>
 #include <stdio.h>
