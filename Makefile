@@ -196,8 +196,8 @@ uninstall:
 	-rm -rf -- "$(DESTDIR)$(PREFIX)/share/licenses/libkeccak"
 
 clean:
-	-rm -rf -- *.o libkeccak/*.o libkeccak/mac/*.o
-	-rm -rf -- *.su libkeccak/*.su libkeccak/mac/*.su
+	-rm -f -- *.o libkeccak/*.o libkeccak/mac/*.o
+	-rm -f -- *.su libkeccak/*.su libkeccak/mac/*.su
 	-rm -f -- *.info *.pdf *.ps *.dvi *.a libkeccak.$(LIBEXT)* test benchmark benchfile
 
 .SUFFIXES: .c.o
