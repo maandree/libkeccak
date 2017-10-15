@@ -186,22 +186,19 @@ install: libkeccak.$(LIBEXT) libkeccak.a
 	cp -- LICENSE "$(DESTDIR)$(PREFIX)/share/licenses/libkeccak/"
 
 uninstall:
-	-rm -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBEXT).$(LIB_VERSION)"
-	-rm -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBEXT).$(LIB_MAJOR)"
-	-rm -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBEXT)"
-	-rm -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.a"
-	-cd "$(DESTDIR)$(PREFIX)/include" && rm -- $(HDR)
-	-rmdir -- "$(DESTDIR)$(PREFIX)/include/libkeccak/mac"
-	-rmdir -- "$(DESTDIR)$(PREFIX)/include/libkeccak"
-	-cd -- "$(DESTDIR)$(MANPREFIX)/man3" && rm -- $(MAN3)
-	-cd -- "$(DESTDIR)$(MANPREFIX)/man7" && rm -- $(MAN7)
-	-rm -- "$(DESTDIR)$(PREFIX)/share/licenses/libkeccak/LICENSE"
-	-rmdir -- "$(DESTDIR)$(PREFIX)/share/licenses/libkeccak"
+	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBEXT).$(LIB_VERSION)"
+	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBEXT).$(LIB_MAJOR)"
+	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBEXT)"
+	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.a"
+	-rm -rf -- "$(DESTDIR)$(PREFIX)/include/libkeccak"
+	-cd -- "$(DESTDIR)$(MANPREFIX)/man3" && rm -f -- $(MAN3)
+	-cd -- "$(DESTDIR)$(MANPREFIX)/man7" && rm -f -- $(MAN7)
+	-rm -rf -- "$(DESTDIR)$(PREFIX)/share/licenses/libkeccak"
 
 clean:
-	-rm -r -- *.o libkeccak/*.o libkeccak/mac/*.o
-	-rm -r -- *.su libkeccak/*.su libkeccak/mac/*.su
-	-rm -- *.info *.pdf *.ps *.dvi *.a libkeccak.$(LIBEXT)* test benchmark benchfile
+	-rm -rf -- *.o libkeccak/*.o libkeccak/mac/*.o
+	-rm -rf -- *.su libkeccak/*.su libkeccak/mac/*.su
+	-rm -f -- *.info *.pdf *.ps *.dvi *.a libkeccak.$(LIBEXT)* test benchmark benchfile
 
 .SUFFIXES: .c.o
 
