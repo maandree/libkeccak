@@ -109,7 +109,7 @@ $(OBJ): $(HDR)
 	$(CC) -fPIC -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
 
 libkeccak.$(LIBEXT): $(OBJ)
-	$(CC) $(LIBFLAGS) $@ $^ $(LDFLAGS)
+	$(CC) $(LIBFLAGS) -o $@ $^ $(LDFLAGS)
 
 libkeccak.a: $(OBJ)
 	$(AR) rc $@ $?
