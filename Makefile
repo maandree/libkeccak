@@ -129,32 +129,6 @@ benchmark.o: benchmark.c $(HDR)
 	$(CC) $(FLAGS) -O3 -c -o $@ benchmark.c $(CFLAGS) $(CPPFLAGS)
 
 
-info: libkeccak.info
-libkeccak.info: libkeccak.texinfo
-	$(MAKEINFO) $(TEXIFLAGS) libkeccak.texinfo
-
-pdf: libkeccak.pdf
-libkeccak.pdf: libkeccak.texinfo
-	@! test -d obj/pdf || rm -rf obj/pdf
-	@mkdir -p obj/pdf
-	cd obj/pdf && texi2pdf $(TEXIFLAGS) ../../libkeccak.texinfo < /dev/null
-	mv obj/pdf/$@ $@
-
-dvi: libkeccak.dvi
-libkeccak.dvi: libkeccak.texinfo
-	@! test -d obj/dvi || rm -rf obj/dvi
-	@mkdir -p obj/dvi
-	cd obj/dvi && $(TEXI2DVI) $(TEXIFLAGS) ../../libkeccak.texinfo < /dev/null
-	mv obj/dvi/$@ $@
-
-ps: libkeccak.ps
-libkeccak.ps: libkeccak.texinfo
-	@! test -d obj/ps || rm -rf obj/ps
-	@mkdir -p obj/ps
-	cd obj/ps && texi2pdf $(TEXIFLAGS) --ps ../../libkeccak.texinfo < /dev/null
-	mv obj/ps/$@ $@
-
-
 check: test
 	@test $$(sha256sum .testfile | cut -d ' ' -f 1) = \
 	      e21d814d21ca269246849cc105faec1a71ac7d1cdb1a86023254f49d51b47231 || \
@@ -202,4 +176,4 @@ clean:
 
 .SUFFIXES: .c.o
 
-.PHONY: all info pdf ps dvi check run-benchmark install uninstall clean
+.PHONY: all check run-benchmark install uninstall clean
