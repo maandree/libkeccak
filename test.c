@@ -262,6 +262,9 @@ static int test_digest(void)
 	if (sha3(224, "faktum desist thundered klen"))  return -1;
 
 
+	answer = "c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470";
+	if (keccak_bits(256, "\x00", 0))  return -1;
+
 	answer = "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a";
 	if (keccak_bits(256, "\x02", 2))  return -1;
 
