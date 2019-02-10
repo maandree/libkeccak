@@ -12,4 +12,4 @@ RATIONALE
 	and let it be bit-oriented.
 
 SEE ALSO
-	sha3sum, libsha2(7)
+	sha3sum, libsha2(7), libsha1(7)
