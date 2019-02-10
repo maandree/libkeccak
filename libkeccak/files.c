@@ -1,12 +1,5 @@
 /* See LICENSE file for copyright and license details. */
-#include "files.h"
-
-#include <sys/stat.h>
-#include <alloca.h>
-#include <errno.h>
-#include <stddef.h>
-#include <unistd.h>
-
+#include "../common.h"
 
 
 /**
@@ -22,9 +15,8 @@
  * @return           Zero on success, -1 on error
  */
 int
-libkeccak_generalised_sum_fd(int fd, libkeccak_state_t *restrict state,
-                             const libkeccak_spec_t *restrict spec,
-                             const char *restrict suffix, char *restrict hashsum)
+libkeccak_generalised_sum_fd(int fd, libkeccak_state_t *restrict state, const libkeccak_spec_t *restrict spec,
+                             const char *restrict suffix, void *restrict hashsum)
 {
 	ssize_t got;
 	struct stat attr;

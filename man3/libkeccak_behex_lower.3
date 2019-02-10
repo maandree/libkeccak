@@ -1,16 +1,14 @@
 .TH LIBKECCAK_BEHEX_LOWER 3 LIBKECCAK
 .SH NAME
-libkeccak_behex_lower - Converts a binary hashsum to lowercase hexadecimal
+libkeccak_behex_lower - Converts a binary hashsum to lower case hexadecimal
 .SH SYNOPSIS
 .LP
 .nf
 #include <libkeccak.h>
-.P
-void
-libkeccak_behex_lower(char *restrict \fIoutput\fP,
-                      const char *restrict \fIhashsum\fP, size_t \fIn\fP);
+
+void libkeccak_behex_lower(char *restrict \fIoutput\fP, const void *restrict \fIhashsum\fP, size_t \fIn\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -45,6 +43,3 @@ function cannot fail.
 .SH SEE ALSO
 .BR libkeccak_behex_upper (3),
 .BR libkeccak_unhex (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

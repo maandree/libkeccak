@@ -2,14 +2,12 @@
 .SH NAME
 libkeccak_state_duplicate - Allocate a duplicate hash state
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-libkeccak_state_t *
-libkeccak_state_duplicate(const libkeccak_state_t *\fIsrc\fP);
+
+libkeccak_state_t *libkeccak_state_duplicate(const libkeccak_state_t *\fIsrc\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak P.
 .SH DESCRIPTION
@@ -41,6 +39,3 @@ function may fail for any specified for the function
 .SH SEE ALSO
 .BR libkeccak_state_copy (3),
 .BR libkeccak_state_create (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

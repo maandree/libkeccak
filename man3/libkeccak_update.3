@@ -2,15 +2,12 @@
 .SH NAME
 libkeccak_update - Partially hash a message with erasure
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-int
-libkeccak_update(libkeccak_state_t *\fIstate\fP, const char *\fImsg\fP,
-                 size_t \fImsglen\fP);
+
+int libkeccak_update(libkeccak_state_t *\fIstate\fP, const void *\fImsg\fP, size_t \fImsglen\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -50,7 +47,7 @@ or 0.
 This example calculates the Keccak[b = 1024, c = 576, n = 256]
 hash of the input from stdin, and prints the hash, in hexadecimal
 form, to stdout.
-.LP
+.PP
 .nf
 libkeccak_state_t state;
 libkeccak_spec_t spec;
@@ -63,26 +60,26 @@ spec.bitrate = 1024;
 spec.capacity = 576;
 spec.output = 256;
 if (libkeccak_state_initialise(&state, &spec) < 0)
-    goto fail;
+	goto fail;
 
 for (;;) {
-    len = read(STDIN_FILENO, chunk, sizeof(chunk));
+	len = read(STDIN_FILENO, chunk, sizeof(chunk));
 
-    if ((len < 0) && (errno == EINTR))
-        continue;
-    if (len < 0)
-        goto fail;
-    if (len == 0)
-        break;
+	if ((len < 0) && (errno == EINTR))
+		continue;
+	if (len < 0)
+		goto fail;
+	if (len == 0)
+		break;
 
-    if (libkeccak_update(&state, chunk, (size_t)len) < 0)
-        goto fail;
+	if (libkeccak_update(&state, chunk, (size_t)len) < 0)
+		goto fail;
 }
-if (libkeccak_digest(&state, NULL, 0, 0, "", binhash) < 0)
-    goto fail;
+if (libkeccak_digest(&state, NULL, 0, 0, \(dq\(dq, binhash) < 0)
+	goto fail;
 
 libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
-printf("%s\\n", hexhash);
+printf(\(dq%s\en\(dq, hexhash);
 libkeccak_state_destroy(&state);
 .fi
 .SH SEE ALSO
@@ -90,6 +87,3 @@ libkeccak_state_destroy(&state);
 .BR libkeccak_fast_update (3),
 .BR libkeccak_fast_digest (3),
 .BR libkeccak_digest (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

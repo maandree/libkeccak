@@ -1,7 +1,5 @@
 /* See LICENSE file for copyright and license details. */
-#include "hmac.h"
-
-#include "../digest.h"
+#include "../common.h"
 
 
 
@@ -18,7 +16,7 @@
 
 
 static void *(*volatile my_explicit_memset)(void *, int, size_t) = memset;
-static __attribute__((optimize("-O0"))) void
+static __attribute__((__optimize__("-O0"))) void
 my_explicit_bzero(void *ptr, size_t size)
 {
 	(*my_explicit_memset)(ptr, 0, size);
@@ -34,7 +32,7 @@ my_explicit_bzero(void *ptr, size_t size)
  * @return              Zero on success, -1 on error
  */
 int
-libkeccak_hmac_set_key(libkeccak_hmac_state_t *restrict state, const char *restrict key, size_t key_length)
+libkeccak_hmac_set_key(libkeccak_hmac_state_t *restrict state, const void *restrict key, size_t key_length)
 {
 	size_t i, size, new_key_length, key_bytes;
 	char *old;
@@ -131,8 +129,9 @@ libkeccak_hmac_copy(libkeccak_hmac_state_t *restrict dest, const libkeccak_hmac_
  * @return         The number of bytes read from `data`, 0 on error
  */
 size_t
-libkeccak_hmac_unmarshal(libkeccak_hmac_state_t *restrict state, const char *restrict data)
+libkeccak_hmac_unmarshal(libkeccak_hmac_state_t *restrict state, const void *restrict data_)
 {
+	const char *restrict data = data_;
 	size_t parsed, size, i;
 
 	state->key_opad = NULL;
@@ -178,8 +177,9 @@ libkeccak_hmac_unmarshal(libkeccak_hmac_state_t *restrict state, const char *res
  * @return          Zero on success, -1 on error
  */
 int
-libkeccak_hmac_fast_update(libkeccak_hmac_state_t *restrict state, const char *restrict msg, size_t msglen)
+libkeccak_hmac_fast_update(libkeccak_hmac_state_t *restrict state, const void *restrict msg_, size_t msglen)
 {
+	const char *restrict msg = msg_;
 	char *old;
 	size_t i;
 	int n, cn;
@@ -226,8 +226,9 @@ libkeccak_hmac_fast_update(libkeccak_hmac_state_t *restrict state, const char *r
  * @return          Zero on success, -1 on error
  */
 int
-libkeccak_hmac_update(libkeccak_hmac_state_t *restrict state, const char *restrict msg, size_t msglen)
+libkeccak_hmac_update(libkeccak_hmac_state_t *restrict state, const void *restrict msg_, size_t msglen)
 {
+	const char *restrict msg = msg_;
 	size_t i;
 	int n, cn, r;
 
@@ -280,9 +281,10 @@ libkeccak_hmac_update(libkeccak_hmac_state_t *restrict state, const char *restri
  * @return           Zero on success, -1 on error
  */
 int
-libkeccak_hmac_fast_digest(libkeccak_hmac_state_t *restrict state, const char *restrict msg, size_t msglen,
-                           size_t bits, const char *restrict suffix, char *restrict hashsum)
+libkeccak_hmac_fast_digest(libkeccak_hmac_state_t *restrict state, const void *restrict msg_, size_t msglen,
+                           size_t bits, const char *restrict suffix, void *restrict hashsum)
 {
+	const char *restrict msg = msg_;
 	size_t hashsize = state->sponge.n >> 3;
 	char *tmp = malloc(((state->sponge.n + 7) >> 3) * sizeof(char));
 	char leftover[2];
@@ -355,9 +357,10 @@ fail:
  * @return           Zero on success, -1 on error
  */
 int
-libkeccak_hmac_digest(libkeccak_hmac_state_t *restrict state, const char *restrict msg, size_t msglen,
-                      size_t bits, const char *restrict suffix, char *restrict hashsum)
+libkeccak_hmac_digest(libkeccak_hmac_state_t *restrict state, const void *restrict msg_, size_t msglen,
+                      size_t bits, const char *restrict suffix, void *restrict hashsum)
 {
+	const char *restrict msg = msg_;
 	size_t hashsize = state->sponge.n >> 3;
 	char *tmp = malloc(((state->sponge.n + 7) >> 3) * sizeof(char));
 	char leftover[2];
@@ -410,7 +413,7 @@ stage_3:
 	my_explicit_bzero(tmp, ((state->sponge.n + 7) >> 3) * sizeof(char));
 	free(tmp);
 	return 0;
- fail:
+fail:
 	my_explicit_bzero(tmp, ((state->sponge.n + 7) >> 3) * sizeof(char));
 	free(tmp);
 	return -1;

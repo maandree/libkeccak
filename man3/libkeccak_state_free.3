@@ -2,14 +2,12 @@
 .SH NAME
 libkeccak_state_free - Destroys and deallocates a hash state with erasure
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-void
-libkeccak_state_free(libkeccak_state_t *\fIstate\fP);
+
+void libkeccak_state_free(libkeccak_state_t *\fIstate\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -46,6 +44,3 @@ to be freed, resulting in undefined behaviour.
 .BR libkeccak_state_initialise (3),
 .BR libkeccak_state_reset (3),
 .BR libkeccak_state_wipe (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

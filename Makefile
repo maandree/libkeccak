@@ -23,18 +23,11 @@ OBJ =\
 	libkeccak/generalised-spec.o\
 	libkeccak/hex.o\
 	libkeccak/state.o\
-	libkeccak/mac/hmac.o
+	libkeccak/hmac.o
 
 HDR =\
 	libkeccak.h\
-	libkeccak/digest.h\
-	libkeccak/files.h\
-	libkeccak/generalised-spec.h\
-	libkeccak/hex.h\
-	libkeccak/spec.h\
-	libkeccak/state.h\
-	libkeccak/internal.h\
-	libkeccak/mac/hmac.h
+	common.h
 
 MAN3 =\
 	man3/libkeccak_behex_lower.3\
@@ -146,8 +139,7 @@ install: libkeccak.$(LIBEXT) libkeccak.a
 	ln -sf -- libkeccak.$(LIBMINOREXT) "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBMAJOREXT)"
 	ln -sf -- libkeccak.$(LIBMINOREXT) "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBEXT)"
 	cp -- libkeccak.a "$(DESTDIR)$(PREFIX)/lib/libkeccak.a"
-	mkdir -p -- "$(DESTDIR)$(PREFIX)/include/libkeccak/mac"
-	for f in $(HDR); do cp -- "$$f" "$(DESTDIR)$(PREFIX)/include/$$f" || exit 1; done
+	cp -- libkeccak.h "$(DESTDIR)$(PREFIX)/include/"
 	mkdir -p -- "$(DESTDIR)$(MANPREFIX)/man3"
 	mkdir -p -- "$(DESTDIR)$(MANPREFIX)/man7"
 	cp -- $(MAN3) "$(DESTDIR)$(MANPREFIX)/man3"
@@ -166,9 +158,8 @@ uninstall:
 	-rm -rf -- "$(DESTDIR)$(PREFIX)/share/licenses/libkeccak"
 
 clean:
-	-rm -f -- *.o libkeccak/*.o libkeccak/mac/*.o
-	-rm -f -- *.su libkeccak/*.su libkeccak/mac/*.su
-	-rm -f -- *.info *.pdf *.ps *.dvi *.a libkeccak.$(LIBEXT)* test benchmark benchfile
+	-rm -f -- *.o *.su libkeccak/*.o libkeccak/*.su test benchmark benchfile
+	-rm -f -- *.a libkeccak.$(LIBEXT) libkeccak.$(LIBEXT).* libkeccak.*.$(LIBEXT)
 
 .SUFFIXES:
 .SUFFIXES: .c .o

@@ -2,14 +2,12 @@
 .SH NAME
 libkeccak_fast_squeeze - Runs the squeeze phase a number of times
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-void
-libkeccak_fast_squeeze(libkeccak_state_t *\fIstate\fP, long int \fItimes\fP);
+
+void libkeccak_fast_squeeze(libkeccak_state_t *\fIstate\fP, long int \fItimes\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -34,6 +32,3 @@ function cannot fail.
 .BR libkeccak_fast_digest (3),
 .BR libkeccak_simple_squeeze (3),
 .BR libkeccak_squeeze (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

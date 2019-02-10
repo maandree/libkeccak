@@ -2,15 +2,12 @@
 .SH NAME
 libkeccak_degeneralise_spec - Set all specification parameters to automatic
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-int
-libkeccak_degeneralise_spec(libkeccak_generalised_spec_t *\fIspec\fP,
-                            libkeccak_spec_t *\fIoutput_spec\fP);
+
+int libkeccak_degeneralise_spec(libkeccak_generalised_spec_t *\fIspec\fP, libkeccak_spec_t *\fIoutput_spec\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -34,11 +31,11 @@ function after calling
 .PP
 .nf
 typedef struct libkeccak_generalised_spec {
-    long int bitrate;     /* bitrate (in bits) */
-    long int capacity;    /* capacity (in bits) */
-    long int output;      /* output size (in bits) */
-    long int state_size;  /* state size (in bits) */
-    long int word_size;   /* word size (in bits) */
+	long int bitrate;     /* bitrate (in bits) */
+	long int capacity;    /* capacity (in bits) */
+	long int output;      /* output size (in bits) */
+	long int state_size;  /* state size (in bits) */
+	long int word_size;   /* word size (in bits) */
 } libkeccak_generalised_spec_t;
 .fi
 .SH RETURN VALUES
@@ -99,7 +96,7 @@ function cannot fail.
 This examples configure a
 .B libkeccak_spec_t
 to specify settings for Keccak[c = 512]:
-.LP
+.PP
 .nf
 int r;
 libkeccak_spec_t spec;
@@ -119,6 +116,3 @@ if ((r = libkeccak_spec_check(&spec)));
 .BR libkeccak_spec_shake (3),
 .BR libkeccak_state_initialise (3),
 .BR libkeccak_hmac_initialise (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

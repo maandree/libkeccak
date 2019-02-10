@@ -2,14 +2,12 @@
 .SH NAME
 libkeccak_unhex - Converts a hexadecimal hashsum to binary
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-void
-libkeccak_unhex(char *restrict \fIoutput\fP, const char *restrict \fIhashsum\fP);
+
+void libkeccak_unhex(void *restrict \fIoutput\fP, const char *restrict \fIhashsum\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -48,6 +46,3 @@ must have an even number of digits
 .SH SEE ALSO
 .BR libkeccak_behex_lower (3),
 .BR libkeccak_behex_upper (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

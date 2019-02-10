@@ -2,14 +2,12 @@
 .SH NAME
 libkeccak_hmac_duplicate - Allocate a duplicate an HMAC-hashing state
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-libkeccak_hmac_state_t *
-libkeccak_hmac_duplicate(const libkeccak_hmac_state_t *\fIsrc\fP);
+
+libkeccak_hmac_state_t *libkeccak_hmac_duplicate(const libkeccak_hmac_state_t *\fIsrc\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -41,6 +39,3 @@ function may fail for any specified for the function
 .SH SEE ALSO
 .BR libkeccak_hmac_copy (3),
 .BR libkeccak_hmac_create (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

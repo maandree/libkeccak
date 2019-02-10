@@ -1,5 +1,6 @@
 /* See LICENSE file for copyright and license details. */
-#include "generalised-spec.h"
+#include "../common.h"
+
 
 #ifdef __GNUC__
 # pragma GCC diagnostic push
@@ -26,7 +27,7 @@ int
 libkeccak_degeneralise_spec(libkeccak_generalised_spec_t *restrict spec,
                             libkeccak_spec_t *restrict output_spec)
 {
-	long state_size, word_size, capacity, bitrate, output;
+	long int state_size, word_size, capacity, bitrate, output;
 	const int have_state_size = have(state_size);
 	const int have_word_size  = have(word_size);
 	const int have_capacity   = have(capacity);

@@ -2,16 +2,13 @@
 .SH NAME
 libkeccak_hmac_fast_digest - Complete the HMAC-hashing of a message without erasure
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-int
-libkeccak_hmac_fast_digest(libkeccak_hmac_state_t *\fIstate\fP,
-                           const char *\fImsg\fP, size_t \fImsglen\fP, size_t \fIbits\fP,
-                           const char *\fIsuffix\fP, char *\fIhashsum\fP);
+
+int libkeccak_hmac_fast_digest(libkeccak_hmac_state_t *\fIstate\fP, const void *\fImsg\fP, size_t \fImsglen\fP,
+                               size_t \fIbits\fP, const char *\fIsuffix\fP, void *\fIhashsum\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -54,7 +51,7 @@ to the message. If this string is empty,
 may be used instead. This is used to select hash algorithm.
 For pure Keccak,
 .I NULL
-or "" is used. For the other algorithms the constants
+or \(dq\(dq is used. For the other algorithms the constants
 .B LIBKECCAK_SHA3_SUFFIX
 (for SHA-3),
 .B LIBKECCAK_RAWSHAKE_SUFFIX
@@ -99,6 +96,3 @@ function may fail for any reason specified by the function
 .BR libkeccak_hmac_initialise (3),
 .BR libkeccak_hmac_fast_update (3),
 .BR libkeccak_hmac_fast_digest (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

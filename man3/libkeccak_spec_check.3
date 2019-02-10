@@ -2,14 +2,12 @@
 .SH NAME
 libkeccak_spec_check - Validate hashing parameters
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-int
-libkeccak_spec_check(const libkeccak_spec_t *\fIspec\fP);
+
+int libkeccak_spec_check(const libkeccak_spec_t *\fIspec\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -27,9 +25,9 @@ manually for Keccak hashing.
 .PP
 .nf
 typedef struct libkeccak_spec {
-    long int bitrate;     /* bitrate (in bits) */
-    long int capacity;    /* capacity (in bits) */
-    long int output;      /* output size (in bits) */
+	long int bitrate;  /* bitrate (in bits) */
+	long int capacity; /* capacity (in bits) */
+	long int output;   /* output size (in bits) */
 } libkeccak_spec_t;
 .fi
 .SH RETURN VALUES
@@ -90,6 +88,3 @@ function cannot fail.
 .BR libkeccak_generalised_spec_initialise (3),
 .BR libkeccak_state_initialise (3),
 .BR libkeccak_hmac_initialise (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

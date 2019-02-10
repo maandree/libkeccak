@@ -1,8 +1,5 @@
 /* See LICENSE file for copyright and license details. */
-#include "state.h"
-
-#include <string.h>
-
+#include "../common.h"
 
 
 /**
@@ -15,7 +12,7 @@
 int
 libkeccak_state_initialise(libkeccak_state_t *restrict state, const libkeccak_spec_t *restrict spec)
 {
-	long x;
+	long int x;
 	state->r = spec->bitrate;
 	state->n = spec->output;
 	state->c = spec->capacity;
@@ -104,17 +101,18 @@ libkeccak_state_copy(libkeccak_state_t *restrict dest, const libkeccak_state_t *
  * @return         The number of bytes stored to `data`
  */
 size_t
-libkeccak_state_marshal(const libkeccak_state_t *restrict state, char *restrict data)
+libkeccak_state_marshal(const libkeccak_state_t *restrict state, void *restrict data_)
 {
 #define set(type, var) *((type *)data) = state->var, data += sizeof(type) / sizeof(char)
-	set(long, r);
-	set(long, c);
-	set(long, n);
-	set(long, b);
-	set(long, w);
+	char *restrict data = data_;
+	set(long int, r);
+	set(long int, c);
+	set(long int, n);
+	set(long int, b);
+	set(long int, w);
 	set(int64_t, wmod);
-	set(long, l);
-	set(long, nr);
+	set(long int, l);
+	set(long int, nr);
 	memcpy(data, state->S, sizeof(state->S));
 	data += sizeof(state->S) / sizeof(char);
 	set(size_t, mptr);
@@ -134,17 +132,18 @@ libkeccak_state_marshal(const libkeccak_state_t *restrict state, char *restrict 
  * @return         The number of bytes read from `data`, 0 on error
  */
 size_t
-libkeccak_state_unmarshal(libkeccak_state_t *restrict state, const char *restrict data)
+libkeccak_state_unmarshal(libkeccak_state_t *restrict state, const void *restrict data_)
 {
 #define get(type, var) state->var = *((const type *)data), data += sizeof(type) / sizeof(char)
-	get(long, r);
-	get(long, c);
-	get(long, n);
-	get(long, b);
-	get(long, w);
+	const char *restrict data = data_;
+	get(long int, r);
+	get(long int, c);
+	get(long int, n);
+	get(long int, b);
+	get(long int, w);
 	get(int64_t, wmod);
-	get(long, l);
-	get(long, nr);
+	get(long int, l);
+	get(long int, nr);
 	memcpy(state->S, data, sizeof(state->S));
 	data += sizeof(state->S) / sizeof(char);
 	get(size_t, mptr);
@@ -167,9 +166,9 @@ libkeccak_state_unmarshal(libkeccak_state_t *restrict state, const char *restric
  * @return        The byte size of the stored state
  */
 size_t
-libkeccak_state_unmarshal_skip(const char *restrict data)
+libkeccak_state_unmarshal_skip(const void *restrict data_)
 {
-	data += (7 * sizeof(long) + 26 * sizeof(int64_t)) / sizeof(char);
+	const char *restrict data = data_;
+	data += (7 * sizeof(long int) + 26 * sizeof(int64_t)) / sizeof(char);
 	return sizeof(libkeccak_state_t) - sizeof(char *) + *(const size_t *)data * sizeof(char);
 }
-

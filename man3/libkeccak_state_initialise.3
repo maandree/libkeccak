@@ -2,15 +2,12 @@
 .SH NAME
 libkeccak_state_initialise - Initialise hash state
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-int
-libkeccak_state_initialise(libkeccak_state_t *\fIstate\fP,
-                           const libkeccak_spec_t *\fIspec\fP);
+
+int libkeccak_state_initialise(libkeccak_state_t *\fIstate\fP, const libkeccak_spec_t *\fIspec\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -55,6 +52,3 @@ function may fail for any specified for the function
 .BR libkeccak_generalised_spec_initialise (3),
 .BR libkeccak_state_marshal_size (3),
 .BR libkeccak_hmac_initialise (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

@@ -2,15 +2,12 @@
 .SH NAME
 libkeccak_spec_rawshake - Configure RawSHAKE hashing parameters
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-void
-libkeccak_spec_rawshake(libkeccak_spec_t *\fIspec\fP, long int \fIx\fP,
-                        long int \fId\fP);
+
+void libkeccak_spec_rawshake(libkeccak_spec_t *\fIspec\fP, long int \fIx\fP, long int \fId\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -36,7 +33,7 @@ function cannot fail.
 This example configure a
 .B libkeccak_spec_t
 to specify the Keccak parameters used for RawSHAKE256(, 512):
-.LP
+.PP
 .nf
 libkeccak_spec_t spec;
 libkeccak_spec_rawshake(&spec, 256, 512);
@@ -48,6 +45,3 @@ libkeccak_spec_rawshake(&spec, 256, 512);
 .BR libkeccak_generalised_spec_initialise (3),
 .BR libkeccak_state_initialise (3),
 .BR libkeccak_hmac_initialise (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

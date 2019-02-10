@@ -1,8 +1,5 @@
 /* See LICENSE file for copyright and license details. */
-#include "hex.h"
-
-#include <string.h>
-
+#include "../libkeccak.h"
 
 
 /**
@@ -13,8 +10,9 @@
  * @param  n        The size of `hashsum`
  */
 void
-libkeccak_behex_lower(char *restrict output, const char *restrict hashsum, size_t n)
+libkeccak_behex_lower(char *restrict output, const void *restrict hashsum_, size_t n)
 {
+	const char *restrict hashsum = hashsum_;
 	output[2 * n] = '\0';
 	while (n--) {
 		output[2 * n + 0] = "0123456789abcdef"[(hashsum[n] >> 4) & 15];
@@ -31,8 +29,9 @@ libkeccak_behex_lower(char *restrict output, const char *restrict hashsum, size_
  * @param  n        The size of `hashsum`
  */
 void
-libkeccak_behex_upper(char *restrict output, const char *restrict hashsum, size_t n)
+libkeccak_behex_upper(char *restrict output, const void *restrict hashsum_, size_t n)
 {
+	const char *restrict hashsum = hashsum_;
 	output[2 * n] = '\0';
 	while (n--) {
 		output[2 * n + 0] = "0123456789ABCDEF"[(hashsum[n] >> 4) & 15];
@@ -49,8 +48,9 @@ libkeccak_behex_upper(char *restrict output, const char *restrict hashsum, size_
  * @param  hashsum  The hashsum to convert
  */
 void
-libkeccak_unhex(char *restrict output, const char *restrict hashsum)
+libkeccak_unhex(void *restrict output_, const char *restrict hashsum)
 {
+	char *restrict output = output_;
 	size_t n = strlen(hashsum) / 2;
 	char a, b;
 	while (n--) {

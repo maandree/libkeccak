@@ -2,20 +2,20 @@
 .SH NAME
 libkeccak_state_marshal - Marshals a hash state
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-size_t
-libkeccak_state_marshal(const libkeccak_state_t *\fIstate\fP, char *\fIdata\fP);
+
+size_t libkeccak_state_marshal(const libkeccak_state_t *\fIstate\fP, void *\fIdata\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
 The
 .BR libkeccak_state_marshal ()
-function marshals \fI*state\fP into the beginning of
+function marshals
+.I *state
+into the beginning of
 .IR data .
 .PP
 Use the
@@ -36,6 +36,3 @@ function cannot fail.
 .BR libkeccak_state_marshal_size (3),
 .BR libkeccak_state_unmarshal (3),
 .BR libkeccak_state_unmarshal_skip (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

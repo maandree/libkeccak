@@ -2,16 +2,12 @@
 .SH NAME
 libkeccak_rawshakesum_fd - Calculate a RawSHAKE hashsum of a file
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-int
-libkeccak_rawshakesum_fd(int \fIfd\fP, libkeccak_state_t *\fIstate\fP,
-                         long int \fIsemicapacity\fP, long int \fIoutput\fP,
-                         char *\fIhashsum\fP);
+
+int libkeccak_rawshakesum_fd(int \fIfd\fP, libkeccak_state_t *\fIstate\fP, long int \fIsemicapacity\fP, long int \fIoutput\fP, void *\fIhashsum\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -94,9 +90,9 @@ from stdin, and prints the hash, in hexadecimal form, to stdout.
 .nf
 libkeccak_state_t state;
 if (libkeccak_rawshakesum_fd(STDIN_FILENO, &state, 256, 512, binhash) < 0)
-    goto fail;
+	goto fail;
 libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
-printf("%s\\n", hexhash);
+printf(\(dq%s\en\(dq, hexhash);
 libkeccak_state_destroy(&state);
 .fi
 .SH SEE ALSO
@@ -110,6 +106,3 @@ libkeccak_state_destroy(&state);
 .BR libkeccak_spec_check (3),
 .BR libkeccak_generalised_spec_initialise (3),
 .BR libkeccak_state_initialise (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

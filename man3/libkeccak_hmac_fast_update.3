@@ -2,15 +2,12 @@
 .SH NAME
 libkeccak_hmac_fast_update - Partially HMAC-hash a message without erasure
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-int
-libkeccak_hmac_fast_update(libkeccak_state_t *\fIstate\fP, const char *\fImsg\fP,
-                           size_t \fImsglen\fP);
+
+int libkeccak_hmac_fast_update(libkeccak_state_t *\fIstate\fP, const void *\fImsg\fP, size_t \fImsglen\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -54,6 +51,3 @@ or 0.
 .BR libkeccak_hmac_initialise (3),
 .BR libkeccak_hmac_fast_digest (3),
 .BR libkeccak_hmac_update (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

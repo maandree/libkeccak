@@ -2,14 +2,12 @@
 .SH NAME
 libkeccak_state_create - Allocate and initialise hash state
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-libkeccak_state_t *
-libkeccak_state_create(const libkeccak_spec_t *\fIspec\fP);
+
+libkeccak_state_t *libkeccak_state_create(const libkeccak_spec_t *\fIspec\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -41,6 +39,3 @@ function may fail for any specified for the function
 .BR libkeccak_state_free (3),
 .BR libkeccak_state_fast_free (3)
 .BR libkeccak_state_duplicate (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

@@ -2,14 +2,12 @@
 .SH NAME
 libkeccak_state_wipe_message - Securely erase the message chunk buffer
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-void
-libkeccak_state_wipe_message(libkeccak_state_t *\fIstate\fP);
+
+void libkeccak_state_wipe_message(libkeccak_state_t *\fIstate\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -30,6 +28,3 @@ function cannot fail.
 .BR libkeccak_state_fast_destroy (3),
 .BR libkeccak_state_destroy (3),
 .BR libkeccak_state_reset (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

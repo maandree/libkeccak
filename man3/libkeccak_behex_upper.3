@@ -1,16 +1,13 @@
 .TH LIBKECCAK_BEHEX_UPPER 3 LIBKECCAK
 .SH NAME
-libkeccak_behex_upper - Converts a binary hashsum to uppercase hexadecimal
+libkeccak_behex_upper - Converts a binary hashsum to upper case hexadecimal
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-void
-libkeccak_behex_upper(char *restrict \fIoutput\fP,
-                      const char *restrict \fIhashsum\fP, size_t \fIn\fP);
+
+void libkeccak_behex_upper(char *restrict \fIoutput\fP, const void *restrict \fIhashsum\fP, size_t \fIn\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -45,6 +42,3 @@ function cannot fail.
 .SH SEE ALSO
 .BR libkeccak_behex_lower (3),
 .BR libkeccak_unhex (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

@@ -2,14 +2,12 @@
 .SH NAME
 libkeccak_state_marshal_size - Calculates the marshal-size of a hash state
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-size_t
-libkeccak_state_marshal_size(const libkeccak_state_t *\fIstate\fP);
+
+size_t libkeccak_state_marshal_size(const libkeccak_state_t *\fIstate\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -31,6 +29,3 @@ function cannot fail.
 .BR libkeccak_state_marshal (3),
 .BR libkeccak_state_unmarshal (3),
 .BR libkeccak_state_unmarshal_skip (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

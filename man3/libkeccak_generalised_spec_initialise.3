@@ -2,14 +2,12 @@
 .SH NAME
 libkeccak_generalised_spec_initialise - Set all specification parameters to automatic
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-void
-libkeccak_generalised_spec_initialise(libkeccak_generalised_spec_t *\fIspec\fP);
+
+void libkeccak_generalised_spec_initialise(libkeccak_generalised_spec_t *\fIspec\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -41,6 +39,3 @@ function cannot fail.
 .BR libkeccak_spec_sha3 (3),
 .BR libkeccak_spec_rawshake (3),
 .BR libkeccak_spec_shake (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

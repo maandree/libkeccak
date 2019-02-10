@@ -2,15 +2,12 @@
 .SH NAME
 libkeccak_hmac_set_key - Changes key for a the HMAC-hashing state
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-int
-libkeccak_hmac_set_key(libkeccak_hmac_state_t *\fIstate\fP, const char *\fIkey\fP,
-                       size_t \fIkey_length\fP);
+
+int libkeccak_hmac_set_key(libkeccak_hmac_state_t *\fIstate\fP, const void *\fIkey\fP, size_t \fIkey_length\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -36,6 +33,3 @@ function may fail for any specified for the function
 .BR libkeccak_hmac_create (3),
 .BR libkeccak_hmac_initialise (3),
 .BR libkeccak_hmac_reset (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se

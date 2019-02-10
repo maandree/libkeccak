@@ -2,14 +2,12 @@
 .SH NAME
 libkeccak_spec_sha3 - Configure SHA-3 hashing parameters
 .SH SYNOPSIS
-.LP
 .nf
 #include <libkeccak.h>
-.P
-void
-libkeccak_spec_sha3(libkeccak_spec_t *\fIspec\fP, long int \fIx\fP);
+
+void libkeccak_spec_sha3(libkeccak_spec_t *\fIspec\fP, long int \fIx\fP);
 .fi
-.P
+.PP
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
@@ -34,7 +32,7 @@ function cannot fail.
 This example configure a
 .B libkeccak_spec_t
 to specify the Keccak parameters used for SHA3-256:
-.LP
+.PP
 .nf
 libkeccak_spec_t spec;
 libkeccak_spec_sha3(&spec, 256);
@@ -46,6 +44,3 @@ libkeccak_spec_sha3(&spec, 256);
 .BR libkeccak_generalised_spec_initialise (3),
 .BR libkeccak_state_initialise (3),
 .BR libkeccak_hmac_initialise (3)
-.SH BUGS
-Please report bugs to https://github.com/maandree/libkeccak/issues or to
-maandree@kth.se
