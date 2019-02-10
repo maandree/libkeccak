@@ -130,18 +130,26 @@ test_digest_case(const libkeccak_spec_t *restrict spec, const char *restrict suf
 	char *restrict hexsum;
 	int ok;
 
-	if (libkeccak_state_initialise(&state, spec))
-		return perror("libkeccak_state_initialise"), -1;
-	if (hashsum = malloc((spec->output + 7) / 8), hashsum == NULL)
-		return perror("malloc"), -1;
-	if (hexsum = malloc((spec->output + 7) / 8 * 2 + 1), hexsum == NULL)
-		return perror("malloc"), -1;
+	if (libkeccak_state_initialise(&state, spec)) {
+		perror("libkeccak_state_initialise");
+		return -1;
+	}
+	hashsum = malloc((size_t)((spec->output + 7) / 8));
+	if (!hashsum) {
+		perror("malloc");
+		return -1;
+	}
+	hexsum = malloc((size_t)((spec->output + 7) / 8 * 2 + 1));
+	if (!hexsum) {
+		perror("malloc");
+		return -1;
+	}
 
-	if (libkeccak_digest(&state, msg, strlen(msg) - !!bits, bits, suffix, hashsum))
+	if (libkeccak_digest(&state, msg, strlen(msg) - !!bits, (size_t)bits, suffix, hashsum))
 		return perror("libkeccak_digest"), -1;
 	libkeccak_state_fast_destroy(&state);
 
-	libkeccak_behex_lower(hexsum, hashsum, (spec->output + 7) / 8);
+	libkeccak_behex_lower(hexsum, hashsum, (size_t)((spec->output + 7) / 8));
 	ok = !strcmp(hexsum, expected_answer);
 	printf("%s%s\n", ok ? "OK" : "Fail: ", ok ? "" : hexsum);
 	if (!ok)
@@ -384,20 +392,32 @@ test_update_case(const libkeccak_spec_t *restrict spec, const char *restrict suf
 	char *restrict hexsum;
 	int ok;
 
-	if (libkeccak_state_initialise(&state, spec))
-		return perror("libkeccak_state_initialise"), -1;
-	if (hashsum = malloc((spec->output + 7) / 8), hashsum == NULL)
-		return perror("malloc"), -1;
-	if (hexsum = malloc((spec->output + 7) / 8 * 2 + 1), hexsum == NULL)
-		return perror("malloc"), -1;
+	if (libkeccak_state_initialise(&state, spec)) {
+		perror("libkeccak_state_initialise");
+		return -1;
+	}
+	hashsum = malloc((size_t)((spec->output + 7) / 8));
+	if (!hashsum) {
+		perror("malloc");
+		return -1;
+	}
+	hexsum = malloc((size_t)((spec->output + 7) / 8 * 2 + 1));
+	if (!hexsum) {
+		perror("malloc");
+		return -1;
+	}
 
-	if (libkeccak_update(&state, msg, strlen(msg)))
-		return perror("libkeccak_update"), -1;
-	if (libkeccak_digest(&state, NULL, 0, 0, suffix, hashsum))
-		return perror("libkeccak_digest"), -1;
+	if (libkeccak_update(&state, msg, strlen(msg))) {
+		perror("libkeccak_update");
+		return -1;
+	}
+	if (libkeccak_digest(&state, NULL, 0, 0, suffix, hashsum)) {
+		perror("libkeccak_digest");
+		return -1;
+	}
 	libkeccak_state_fast_destroy(&state);
 
-	libkeccak_behex_lower(hexsum, hashsum, (spec->output + 7) / 8);
+	libkeccak_behex_lower(hexsum, hashsum, (size_t)((spec->output + 7) / 8));
 	ok = !strcmp(hexsum, expected_answer);
 	printf("%s%s\n", ok ? "OK" : "Fail: ", ok ? "" : hexsum);
 	if (!ok)
@@ -495,7 +515,7 @@ static int test_squeeze_case(libkeccak_state_t *restrict state, const libkeccak_
 	for (i = fast_squeezes; i < squeezes; i++)
 		libkeccak_squeeze(state, hashsum);
 
-	libkeccak_behex_lower(hexsum, hashsum, (spec->output + 7) / 8);
+	libkeccak_behex_lower(hexsum, hashsum, (size_t)((spec->output + 7) / 8));
 	ok = !strcmp(hexsum, expected_answer);
 	printf("%s%s\n", ok ? "OK" : "Fail: ", ok ? "" : hexsum);
 	if (!ok)
@@ -528,12 +548,20 @@ test_squeeze(void)
 	char *restrict hexsum;
 
 	libkeccak_spec_sha3(&spec, 224);
-	if (hashsum = malloc((spec.output + 7) / 8), hashsum == NULL)
-		return perror("malloc"), -1;
-	if (hexsum = malloc((spec.output + 7) / 8 * 2 + 1), hexsum == NULL)
-		return perror("malloc"), -1;
-	if (libkeccak_state_initialise(&state, &spec))
-		return perror("libkeccak_state_initialise"), -1;
+	hashsum = malloc((size_t)((spec.output + 7) / 8));
+	if (!hashsum) {
+		perror("malloc");
+		return -1;
+	}
+	hexsum = malloc((size_t)((spec.output + 7) / 8 * 2 + 1));
+	if (!hexsum) {
+		perror("malloc");
+		return -1;
+	}
+	if (libkeccak_state_initialise(&state, &spec)) {
+		perror("libkeccak_state_initialise");
+		return -1;
+	}
 
 	printf("Testing squeeze functions with slow initial digest:\n");
 	printf("  1 extra squeeze,  including 0 fast squeezes: "), run_test(0, 1, 0);
@@ -595,18 +623,30 @@ test_file(const libkeccak_spec_t *restrict spec, const char *restrict suffix,
 
 	printf("Testing libkeccak_generalised_sum_fd on %s: ", filename);
 
-	if (hashsum = malloc((spec->output + 7) / 8), hashsum == NULL)
-		return perror("malloc"), -1;
-	if (hexsum = malloc((spec->output + 7) / 8 * 2 + 1), hexsum == NULL)
-		return perror("malloc"), -1;
+	hashsum = malloc((size_t)((spec->output + 7) / 8));
+	if (!hashsum) {
+		perror("malloc");
+		return -1;
+	}
+	hexsum = malloc((size_t)((spec->output + 7) / 8 * 2 + 1));
+	if (!hexsum) {
+		perror("malloc");
+		return -1;
+	}
 
-	if (fd = open(filename, O_RDONLY), fd < 0)
-		return perror("open"), -1;
+	fd = open(filename, O_RDONLY);
+	if (fd < 0) {
+		perror("open");
+		return -1;
+	}
 
-	if (libkeccak_generalised_sum_fd(fd, &state, spec, suffix, hashsum))
-		return perror("libkeccak_generalised_sum_fd"), close(fd), -1;
+	if (libkeccak_generalised_sum_fd(fd, &state, spec, suffix, hashsum)) {
+		perror("libkeccak_generalised_sum_fd");
+		close(fd);
+		return -1;
+	}
 
-	libkeccak_behex_lower(hexsum, hashsum, (spec->output + 7) / 8);
+	libkeccak_behex_lower(hexsum, hashsum, (size_t)((spec->output + 7) / 8));
 	ok = !strcmp(hexsum, expected_answer);
 	printf("%s%s\n", ok ? "OK" : "Fail: ", ok ? "" : hexsum);
 	if (!ok)

@@ -51,7 +51,7 @@ libkeccak_hmac_set_key(libkeccak_hmac_state_t *restrict state, const void *restr
 
 	memcpy(state->key_opad, key, key_bytes);
 	if (key_length & 7)
-		state->key_opad[(key_bytes >> 3) - 1] &= (1 << (key_length & 7)) - 1;
+		state->key_opad[(key_bytes >> 3) - 1] &= (char)((1 << (key_length & 7)) - 1);
 
 	if ((size_t)(state->sponge.r) > key_length)
 		__builtin_memset(state->key_opad + key_bytes / sizeof(char), 0, size - key_bytes);
@@ -147,8 +147,10 @@ libkeccak_hmac_unmarshal(libkeccak_hmac_state_t *restrict state, const void *res
 	size = (state->key_length + 7) >> 3;
 
 	state->key_opad = malloc(2 * size);
-	if (state->key_opad == NULL)
-		return libkeccak_state_destroy(&state->sponge), -1;
+	if (!state->key_opad) {
+		libkeccak_state_destroy(&state->sponge);
+		return 0;
+	}
 	memcpy(state->key_opad, data, size);
 	data += size / sizeof(char);
 
@@ -208,9 +210,9 @@ libkeccak_hmac_fast_update(libkeccak_hmac_state_t *restrict state, const void *r
 	n = (int)(state->key_length & 7);
 	cn = 8 - n;
 	for (i = 1; i < msglen; i++)
-		state->buffer[i] = (((unsigned char)(msg[i - 1])) >> cn) | (msg[i] << n);
-	state->buffer[0] = (state->leftover & ((1 << n) - 1)) | (msg[0] << n);
-	state->leftover = ((unsigned char)(msg[msglen - 1])) >> cn;
+		state->buffer[i] = (char)((msg[i - 1] >> cn) | (msg[i] << n));
+	state->buffer[0] = (char)((state->leftover & ((1 << n) - 1)) | (msg[0] << n));
+	state->leftover = (char)((unsigned char)msg[msglen - 1] >> cn);
 
 	return libkeccak_fast_update(&state->sponge, state->buffer, msglen);
 }
@@ -256,9 +258,9 @@ libkeccak_hmac_update(libkeccak_hmac_state_t *restrict state, const void *restri
 	n = (int)(state->key_length & 7);
 	cn = 8 - n;
 	for (i = 1; i < msglen; i++)
-		state->buffer[i] = (((unsigned char)(msg[i - 1])) >> cn) | (msg[i] << n);
-	state->buffer[0] = (state->leftover & ((1 << n) - 1)) | (msg[0] << n);
-	state->leftover = ((unsigned char)(msg[msglen - 1])) >> cn;
+		state->buffer[i] = (char)(((unsigned char)msg[i - 1] >> cn) | (msg[i] << n));
+	state->buffer[0] = (char)((state->leftover & ((1 << n) - 1)) | (msg[0] << n));
+	state->leftover = (char)((unsigned char)msg[msglen - 1] >> cn);
 
 	r = libkeccak_update(&state->sponge, state->buffer, msglen);
 	my_explicit_bzero(state->buffer, msglen);
@@ -285,8 +287,8 @@ libkeccak_hmac_fast_digest(libkeccak_hmac_state_t *restrict state, const void *r
                            size_t bits, const char *restrict suffix, void *restrict hashsum)
 {
 	const char *restrict msg = msg_;
-	size_t hashsize = state->sponge.n >> 3;
-	char *tmp = malloc(((state->sponge.n + 7) >> 3) * sizeof(char));
+	size_t hashsize = (size_t)state->sponge.n >> 3;
+	char *tmp = malloc((size_t)((state->sponge.n + 7) >> 3) * sizeof(char));
 	char leftover[2];
 	size_t newlen;
 
@@ -303,8 +305,8 @@ libkeccak_hmac_fast_digest(libkeccak_hmac_state_t *restrict state, const void *r
 		goto fail;
 	leftover[0] = state->leftover;
 	if (bits) {
-		leftover[0] |= msg[msglen] >> (state->key_length & 7);
-		leftover[1] = ((unsigned char)(msg[msglen])) << (8 - (state->key_length & 7));
+		leftover[0] |= (char)(msg[msglen] >> (state->key_length & 7));
+		leftover[1] = (char)((unsigned char)msg[msglen] << (8 - (state->key_length & 7)));
 	}
 	newlen = (state->key_length & 7) + bits;
 	if (libkeccak_fast_digest(&state->sponge, leftover, newlen >> 3, newlen & 7, suffix, tmp) < 0)
@@ -326,8 +328,8 @@ stage_2:
 		goto fail;
 	leftover[0] = state->leftover;
 	if (bits) {
-		leftover[0] |= tmp[hashsize] >> (state->key_length & 7);
-		leftover[1] = ((unsigned char)(tmp[hashsize])) << (8 - (state->key_length & 7));
+		leftover[0] |= (char)(tmp[hashsize] >> (state->key_length & 7));
+		leftover[1] = (char)((unsigned char)tmp[hashsize] << (8 - (state->key_length & 7)));
 	}
 	newlen = (state->key_length & 7) + bits;
 	if (libkeccak_fast_digest(&state->sponge, leftover, newlen >> 3, newlen & 7, suffix, tmp) < 0)
@@ -361,8 +363,8 @@ libkeccak_hmac_digest(libkeccak_hmac_state_t *restrict state, const void *restri
                       size_t bits, const char *restrict suffix, void *restrict hashsum)
 {
 	const char *restrict msg = msg_;
-	size_t hashsize = state->sponge.n >> 3;
-	char *tmp = malloc(((state->sponge.n + 7) >> 3) * sizeof(char));
+	size_t hashsize = (size_t)(state->sponge.n >> 3);
+	char *tmp = malloc((size_t)((state->sponge.n + 7) >> 3) * sizeof(char));
 	char leftover[2];
 	size_t newlen;
 
@@ -379,8 +381,8 @@ libkeccak_hmac_digest(libkeccak_hmac_state_t *restrict state, const void *restri
 		goto fail;
 	leftover[0] = state->leftover;
 	if (bits) {
-		leftover[0] |= msg[msglen] >> (state->key_length & 7);
-		leftover[1] = ((unsigned char)(msg[msglen])) << (8 - (state->key_length & 7));
+		leftover[0] |= (char)(msg[msglen] >> (state->key_length & 7));
+		leftover[1] = (char)((unsigned char)msg[msglen] << (8 - (state->key_length & 7)));
 	}
 	newlen = (state->key_length & 7) + bits;
 	if (libkeccak_digest(&state->sponge, leftover, newlen >> 3, newlen & 7, suffix, tmp) < 0)
@@ -402,19 +404,19 @@ stage_2:
 		goto fail;
 	leftover[0] = state->leftover;
 	if (bits) {
-		leftover[0] |= tmp[hashsize] >> (state->key_length & 7);
-		leftover[1] = ((unsigned char)(tmp[hashsize])) << (8 - (state->key_length & 7));
+		leftover[0] |= (char)(tmp[hashsize] >> (state->key_length & 7));
+		leftover[1] = (char)((unsigned char)tmp[hashsize] << (8 - (state->key_length & 7)));
 	}
 	newlen = (state->key_length & 7) + bits;
 	if (libkeccak_digest(&state->sponge, leftover, newlen >> 3, newlen & 7, suffix, tmp) < 0)
 		goto fail;
 
 stage_3:
-	my_explicit_bzero(tmp, ((state->sponge.n + 7) >> 3) * sizeof(char));
+	my_explicit_bzero(tmp, (size_t)((state->sponge.n + 7) >> 3) * sizeof(char));
 	free(tmp);
 	return 0;
 fail:
-	my_explicit_bzero(tmp, ((state->sponge.n + 7) >> 3) * sizeof(char));
+	my_explicit_bzero(tmp, (size_t)((state->sponge.n + 7) >> 3) * sizeof(char));
 	free(tmp);
 	return -1;
 }

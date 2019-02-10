@@ -181,7 +181,7 @@ libkeccak_f(register libkeccak_state_t *restrict state)
 			libkeccak_f_round64(state, (int_fast64_t)(RC[i]));
 	} else {
 		for (; i < nr; i++)
-			libkeccak_f_round(state, (int_fast64_t)(RC[i] & wmod));
+			libkeccak_f_round(state, (int_fast64_t)(RC[i] & (uint_fast64_t)wmod));
 	}
 }
 

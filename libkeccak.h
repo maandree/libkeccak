@@ -834,7 +834,7 @@ typedef struct libkeccak_hmac_state
 	 */
 	char leftover;
 
-	char __pad[sizeof(void*) / sizeof(char) - 1];
+	char __pad[sizeof(void *) / sizeof(char) - 1];
 
 } libkeccak_hmac_state_t;
 
