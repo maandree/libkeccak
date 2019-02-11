@@ -15,3 +15,22 @@
 # define __builtin_memcpy(dest, src, n) memcpy(dest, src, n)
 # define __builtin_memmove(dest, src, n) memmove(dest, src, n)
 #endif
+
+
+/**
+ * The outer pad pattern for HMAC
+ */
+#define HMAC_OUTER_PAD 0x5C
+
+/**
+ * The inner pad pattern for HMAC
+ */
+#define HMAC_INNER_PAD 0x36
+
+
+static void *(*volatile my_explicit_memset)(void *, int, size_t) = memset;
+static __attribute__((__optimize__("-O0"))) void
+my_explicit_bzero(void *ptr, size_t size)
+{
+	(*my_explicit_memset)(ptr, 0, size);
+}

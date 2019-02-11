@@ -1,5 +1,5 @@
 /* See LICENSE file for copyright and license details. */
-#include "../common.h"
+#include "common.h"
 
 
 #ifdef __GNUC__
@@ -10,7 +10,6 @@
 #define have(v)     (spec->v != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC)
 #define copy(v)     (v = spec->v)
 #define deft(v, dv) (have_##v ? v : (dv))
-
 
 
 /**

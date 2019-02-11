@@ -18,12 +18,28 @@ LIB_VERSION = $(LIB_MAJOR).$(LIB_MINOR)
 
 
 OBJ =\
-	libkeccak/digest.o\
-	libkeccak/files.o\
-	libkeccak/generalised-spec.o\
-	libkeccak/hex.o\
-	libkeccak/state.o\
-	libkeccak/hmac.o
+	digest.o\
+	libkeccak_behex_lower.o\
+	libkeccak_behex_upper.o\
+	libkeccak_degeneralise_spec.o\
+	libkeccak_generalised_sum_fd.o\
+	libkeccak_hmac_copy.o\
+	libkeccak_hmac_digest.o\
+	libkeccak_hmac_fast_digest.o\
+	libkeccak_hmac_fast_update.o\
+	libkeccak_hmac_set_key.o\
+	libkeccak_hmac_unmarshal.o\
+	libkeccak_hmac_update.o\
+	libkeccak_hmac_wipe.o\
+	libkeccak_state_copy.o\
+	libkeccak_state_initialise.o\
+	libkeccak_state_marshal.o\
+	libkeccak_state_unmarshal.o\
+	libkeccak_state_unmarshal_skip.o\
+	libkeccak_state_wipe.o\
+	libkeccak_state_wipe_message.o\
+	libkeccak_state_wipe_sponge.o\
+	libkeccak_unhex.o
 
 HDR =\
 	libkeccak.h\
@@ -154,7 +170,8 @@ uninstall:
 	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.a"
 	-rm -rf -- "$(DESTDIR)$(PREFIX)/include/libkeccak"
 	-rm -f -- "$(DESTDIR)$(PREFIX)/include/libkeccak.h"
-	-cd -- "$(DESTDIR)$(MANPREFIX)" && rm -f -- $(MAN3) $(MAN7)
+	-cd -- "$(DESTDIR)$(MANPREFIX)/man3" && rm -f -- $(MAN3)
+	-cd -- "$(DESTDIR)$(MANPREFIX)/man7" && rm -f -- $(MAN7)
 	-rm -rf -- "$(DESTDIR)$(PREFIX)/share/licenses/libkeccak"
 
 clean:

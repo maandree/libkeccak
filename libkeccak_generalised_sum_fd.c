@@ -1,5 +1,5 @@
 /* See LICENSE file for copyright and license details. */
-#include "../common.h"
+#include "common.h"
 
 
 /**
