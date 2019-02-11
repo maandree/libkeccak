@@ -5,7 +5,7 @@ libkeccak_hmac_wipe - Securely erase sensitive data from a HMAC-hashing state
 .nf
 #include <libkeccak.h>
 
-int libkeccak_hmac_wipe(libkeccak_hmac_state_t *\fIstate\fP);
+int libkeccak_hmac_wipe(struct libkeccak_hmac_state *\fIstate\fP);
 .fi
 .PP
 Link with

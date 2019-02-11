@@ -53,8 +53,8 @@ int
 main(void)
 {
 	char message[MESSAGE_LEN];
-	libkeccak_spec_t spec;
-	libkeccak_state_t state;
+	struct libkeccak_spec spec;
+	struct libkeccak_state state;
 	char hashsum[OUTPUT / 8];
 #ifndef IGNORE_BEHEXING
 	char hexsum[OUTPUT / 8 * 2 + 1];

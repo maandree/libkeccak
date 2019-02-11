@@ -3,14 +3,14 @@
 
 
 /**
- * Unmarshal a `libkeccak_hmac_state_t` from a buffer
+ * Unmarshal a `struct libkeccak_hmac_state` from a buffer
  * 
  * @param   state  The slot for the unmarshalled state, must not be initialised (memory leak otherwise)
  * @param   data   The input buffer
  * @return         The number of bytes read from `data`, 0 on error
  */
 size_t
-libkeccak_hmac_unmarshal(libkeccak_hmac_state_t *restrict state, const void *restrict data_)
+libkeccak_hmac_unmarshal(struct libkeccak_hmac_state *restrict state, const void *restrict data_)
 {
 	const char *restrict data = data_;
 	size_t parsed, size, i;

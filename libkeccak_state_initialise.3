@@ -5,7 +5,7 @@ libkeccak_state_initialise - Initialise hash state
 .nf
 #include <libkeccak.h>
 
-int libkeccak_state_initialise(libkeccak_state_t *\fIstate\fP, const libkeccak_spec_t *\fIspec\fP);
+int libkeccak_state_initialise(struct libkeccak_state *\fIstate\fP, const struct libkeccak_spec *\fIspec\fP);
 .fi
 .PP
 Link with

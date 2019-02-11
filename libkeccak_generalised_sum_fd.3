@@ -5,7 +5,7 @@ libkeccak_generalised_sum_fd - Calculate the hash of a file
 .nf
 #include <libkeccak.h>
 
-int libkeccak_generalised_sum_fd(int \fIfd\fP, libkeccak_state_t *\fIstate\fP, const libkeccak_spec_t *\fIspec\fP,
+int libkeccak_generalised_sum_fd(int \fIfd\fP, struct libkeccak_state *\fIstate\fP, const struct libkeccak_spec *\fIspec\fP,
                                  const char *\fIsuffix\fP, void *\fIhashsum\fP);
 .fi
 .PP
@@ -96,8 +96,8 @@ hash of the input from stdin, and prints the hash, in hexadecimal
 form, to stdout.
 .PP
 .nf
-libkeccak_state_t state;
-libkeccak_spec_t spec;
+struct libkeccak_state state;
+struct libkeccak_spec spec;
 char binhash[256 / 8];
 char hexhash[256 / 8 * 2 + 1];
 

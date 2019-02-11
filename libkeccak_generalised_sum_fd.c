@@ -15,7 +15,7 @@
  * @return           Zero on success, -1 on error
  */
 int
-libkeccak_generalised_sum_fd(int fd, libkeccak_state_t *restrict state, const libkeccak_spec_t *restrict spec,
+libkeccak_generalised_sum_fd(int fd, struct libkeccak_state *restrict state, const struct libkeccak_spec *restrict spec,
                              const char *restrict suffix, void *restrict hashsum)
 {
 	ssize_t got;

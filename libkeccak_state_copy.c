@@ -10,9 +10,9 @@
  * @return        Zero on success, -1 on error
  */
 int
-libkeccak_state_copy(libkeccak_state_t *restrict dest, const libkeccak_state_t *restrict src)
+libkeccak_state_copy(struct libkeccak_state *restrict dest, const struct libkeccak_state *restrict src)
 {
-	memcpy(dest, src, sizeof(libkeccak_state_t));
+	memcpy(dest, src, sizeof(struct libkeccak_state));
 	dest->M = malloc(src->mlen * sizeof(char));
 	if (!dest->M)
 		return -1;

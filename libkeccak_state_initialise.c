@@ -10,7 +10,7 @@
  * @return         Zero on success, -1 on error
  */
 int
-libkeccak_state_initialise(libkeccak_state_t *restrict state, const libkeccak_spec_t *restrict spec)
+libkeccak_state_initialise(struct libkeccak_state *restrict state, const struct libkeccak_spec *restrict spec)
 {
 	long int x;
 	state->r = spec->bitrate;

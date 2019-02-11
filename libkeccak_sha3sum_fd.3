@@ -5,7 +5,7 @@ libkeccak_sha3sum_fd - Calculate a SHA-3 hashsum of a file
 .nf
 #include <libkeccak.h>
 
-int libkeccak_sha3sum_fd(int \fIfd\fP, libkeccak_state_t *\fIstate\fP, long int \fIoutput\fP, void *\fIhashsum\fP);
+int libkeccak_sha3sum_fd(int \fIfd\fP, struct libkeccak_state *\fIstate\fP, long int \fIoutput\fP, void *\fIhashsum\fP);
 .fi
 .PP
 Link with
@@ -85,7 +85,7 @@ This example calculates the SHA3-256 hash of the input
 from stdin, and prints the hash, in hexadecimal form, to stdout.
 .LP
 .nf
-libkeccak_state_t state;
+struct libkeccak_state state;
 if (libkeccak_sha3sum_fd(STDIN_FILENO, &state, 256, binhash) < 0)
 	goto fail;
 libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));

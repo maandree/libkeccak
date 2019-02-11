@@ -5,7 +5,7 @@ libkeccak_state_duplicate - Allocate a duplicate hash state
 .nf
 #include <libkeccak.h>
 
-libkeccak_state_t *libkeccak_state_duplicate(const libkeccak_state_t *\fIsrc\fP);
+struct libkeccak_state *libkeccak_state_duplicate(const struct libkeccak_state *\fIsrc\fP);
 .fi
 .PP
 Link with
@@ -17,14 +17,14 @@ function allocates a new hash state and initialises it
 to be identical to
 .IR *src .
 This includes all members of the
-.B libkeccak_state_t
+.B struct libkeccak_state
 structure, including the state of the sponge and the
 message chunk buffer.
 .SH RETURN VALUES
 The
 .BR libkeccak_state_duplicate ()
 function returns a newly allocated
-.I libkeccak_state_t*
+.I struct libkeccak_state*
 (of one initialised element) upon successful completion.
 On error,
 .I NULL

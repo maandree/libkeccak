@@ -5,7 +5,7 @@ libkeccak_spec_shake - Configure SHAKE hashing parameters
 .nf
 #include <libkeccak.h>
 
-void libkeccak_spec_shake(libkeccak_spec_t *\fIspec\fP, long int \fIx\fP, long int \fId\fP);
+void libkeccak_spec_shake(struct libkeccak_spec *\fIspec\fP, long int \fIx\fP, long int \fId\fP);
 .fi
 .PP
 Link with
@@ -31,11 +31,11 @@ The
 function cannot fail.
 .SH EXAMPLE
 This example configure a
-.B libkeccak_spec_t
+.B struct libkeccak_spec
 to specify the Keccak parameters used for SHAKE256(, 512):
 .PP
 .nf
-libkeccak_spec_t spec;
+struct libkeccak_spec spec;
 libkeccak_spec_shake(&spec, 256, 512);
 .fi
 .SH SEE ALSO

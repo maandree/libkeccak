@@ -11,7 +11,7 @@
  * @return              Zero on success, -1 on error
  */
 int
-libkeccak_hmac_set_key(libkeccak_hmac_state_t *restrict state, const void *restrict key, size_t key_length)
+libkeccak_hmac_set_key(struct libkeccak_hmac_state *restrict state, const void *restrict key, size_t key_length)
 {
 	size_t i, size, new_key_length, key_bytes;
 	char *old;

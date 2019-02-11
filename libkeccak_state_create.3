@@ -5,7 +5,7 @@ libkeccak_state_create - Allocate and initialise hash state
 .nf
 #include <libkeccak.h>
 
-libkeccak_state_t *libkeccak_state_create(const libkeccak_spec_t *\fIspec\fP);
+struct libkeccak_state *libkeccak_state_create(const struct libkeccak_spec *\fIspec\fP);
 .fi
 .PP
 Link with
@@ -14,7 +14,7 @@ Link with
 The
 .BR libkeccak_state_create ()
 function allocates a new
-.I libkeccak_state_t*
+.I struct libkeccak_state *
 with one initialised element, and sets the algorithm
 tuning parameters to those specified by
 .IR *spec .
@@ -22,7 +22,7 @@ tuning parameters to those specified by
 The
 .BR libkeccak_state_create ()
 function returns a newly allocated
-.I libkeccak_state_t*
+.I struct libkeccak_state *
 (of one initialised element) upon successful completion.
 On error,
 .I NULL

@@ -13,7 +13,7 @@
 
 
 /**
- * Convert a `libkeccak_generalised_spec_t` to a `libkeccak_spec_t`
+ * Convert a `struct libkeccak_generalised_spec` to a `struct libkeccak_spec`
  *
  * If you are interrested in finding errors, you should call
  * `libkeccak_spec_check(output)` if this function returns zero
@@ -23,8 +23,8 @@
  * @return               Zero if `spec` is valid, a `LIBKECCAK_GENERALISED_SPEC_ERROR_*` if an error was found
  */
 int
-libkeccak_degeneralise_spec(libkeccak_generalised_spec_t *restrict spec,
-                            libkeccak_spec_t *restrict output_spec)
+libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict spec,
+                            struct libkeccak_spec *restrict output_spec)
 {
 	long int state_size, word_size, capacity, bitrate, output;
 	const int have_state_size = have(state_size);

@@ -5,7 +5,7 @@ libkeccak_hmac_fast_digest - Complete the HMAC-hashing of a message without eras
 .nf
 #include <libkeccak.h>
 
-int libkeccak_hmac_fast_digest(libkeccak_hmac_state_t *\fIstate\fP, const void *\fImsg\fP, size_t \fImsglen\fP,
+int libkeccak_hmac_fast_digest(struct libkeccak_hmac_state *\fIstate\fP, const void *\fImsg\fP, size_t \fImsglen\fP,
                                size_t \fIbits\fP, const char *\fIsuffix\fP, void *\fIhashsum\fP);
 .fi
 .PP

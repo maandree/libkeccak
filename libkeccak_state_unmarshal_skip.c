@@ -3,7 +3,7 @@
 
 
 /**
- * Gets the number of bytes the `libkeccak_state_t` stored
+ * Gets the number of bytes the `struct libkeccak_state` stored
  * at the beginning of `data` occupies
  * 
  * @param   data  The data buffer
@@ -14,5 +14,5 @@ libkeccak_state_unmarshal_skip(const void *restrict data_)
 {
 	const char *restrict data = data_;
 	data += (7 * sizeof(long int) + 26 * sizeof(int64_t)) / sizeof(char);
-	return sizeof(libkeccak_state_t) - sizeof(char *) + *(const size_t *)data * sizeof(char);
+	return sizeof(struct libkeccak_state) - sizeof(char *) + *(const size_t *)data * sizeof(char);
 }

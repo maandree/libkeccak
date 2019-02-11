@@ -3,14 +3,14 @@
 
 
 /**
- * Marshal a `libkeccak_state_t` into a buffer
+ * Marshal a `struct libkeccak_state` into a buffer
  * 
  * @param   state  The state to marshal
  * @param   data   The output buffer
  * @return         The number of bytes stored to `data`
  */
 size_t
-libkeccak_state_marshal(const libkeccak_state_t *restrict state, void *restrict data_)
+libkeccak_state_marshal(const struct libkeccak_state *restrict state, void *restrict data_)
 {
 #define set(type, var) *((type *)data) = state->var, data += sizeof(type) / sizeof(char)
 	char *restrict data = data_;
@@ -28,6 +28,6 @@ libkeccak_state_marshal(const libkeccak_state_t *restrict state, void *restrict 
 	set(size_t, mlen);
 	memcpy(data, state->M, state->mptr * sizeof(char));
 	data += state->mptr;
-	return sizeof(libkeccak_state_t) - sizeof(char *) + state->mptr * sizeof(char);
+	return sizeof(struct libkeccak_state) - sizeof(char *) + state->mptr * sizeof(char);
 #undef set
 }

@@ -5,7 +5,7 @@ libkeccak_hmac_set_key - Changes key for a the HMAC-hashing state
 .nf
 #include <libkeccak.h>
 
-int libkeccak_hmac_set_key(libkeccak_hmac_state_t *\fIstate\fP, const void *\fIkey\fP, size_t \fIkey_length\fP);
+int libkeccak_hmac_set_key(struct libkeccak_hmac_state *\fIstate\fP, const void *\fIkey\fP, size_t \fIkey_length\fP);
 .fi
 .PP
 Link with

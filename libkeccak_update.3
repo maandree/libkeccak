@@ -5,7 +5,7 @@ libkeccak_update - Partially hash a message with erasure
 .nf
 #include <libkeccak.h>
 
-int libkeccak_update(libkeccak_state_t *\fIstate\fP, const void *\fImsg\fP, size_t \fImsglen\fP);
+int libkeccak_update(struct libkeccak_state *\fIstate\fP, const void *\fImsg\fP, size_t \fImsglen\fP);
 .fi
 .PP
 Link with
@@ -49,8 +49,8 @@ hash of the input from stdin, and prints the hash, in hexadecimal
 form, to stdout.
 .PP
 .nf
-libkeccak_state_t state;
-libkeccak_spec_t spec;
+struct libkeccak_state state;
+struct libkeccak_spec spec;
 char binhash[256 / 8];
 char hexhash[256 / 8 * 2 + 1];
 char chunk[4 << 10];

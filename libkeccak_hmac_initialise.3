@@ -5,7 +5,7 @@ libkeccak_hmac_initialise - Initialise HMAC-hashing state
 .nf
 #include <libkeccak.h>
 
-int libkeccak_hmac_initialise(libkeccak_hmac_state_t *\fIstate\fP, const libkeccak_spec_t *\fIspec\fP,
+int libkeccak_hmac_initialise(struct libkeccak_hmac_state *\fIstate\fP, const struct libkeccak_spec *\fIspec\fP,
                               const void *\fIkey\fP, size_t \fIkey_length\fP);
 .fi
 .PP

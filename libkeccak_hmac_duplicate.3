@@ -5,7 +5,7 @@ libkeccak_hmac_duplicate - Allocate a duplicate an HMAC-hashing state
 .nf
 #include <libkeccak.h>
 
-libkeccak_hmac_state_t *libkeccak_hmac_duplicate(const libkeccak_hmac_state_t *\fIsrc\fP);
+struct libkeccak_hmac_state *libkeccak_hmac_duplicate(const struct libkeccak_hmac_state *\fIsrc\fP);
 .fi
 .PP
 Link with
@@ -17,7 +17,7 @@ function allocates a new hash state and initialises
 it to be identical to
 .IR *src .
 This includes all members of the
-.B libkeccak_hmac_state_t
+.B struct libkeccak_hmac_state
 structure, including the state of the sponge and the
 message chunk buffer.
 .SH RETURN VALUES

@@ -12,7 +12,7 @@
  * @return          Zero on success, -1 on error
  */
 int
-libkeccak_hmac_update(libkeccak_hmac_state_t *restrict state, const void *restrict msg_, size_t msglen)
+libkeccak_hmac_update(struct libkeccak_hmac_state *restrict state, const void *restrict msg_, size_t msglen)
 {
 	const char *restrict msg = msg_;
 	size_t i;

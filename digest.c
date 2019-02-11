@@ -1,5 +1,5 @@
 /* See LICENSE file for copyright and license details. */
-#include "../common.h"
+#include "common.h"
 
 
 /**
@@ -78,7 +78,7 @@ static const uint_fast64_t RC[] = {
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __hot__)))
 static void
-libkeccak_f_round(register libkeccak_state_t *restrict state, register int_fast64_t rc)
+libkeccak_f_round(register struct libkeccak_state *restrict state, register int_fast64_t rc)
 {
 	int_fast64_t *restrict A = state->S;
 	int_fast64_t B[25];
@@ -126,7 +126,7 @@ libkeccak_f_round(register libkeccak_state_t *restrict state, register int_fast6
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __hot__)))
 static void
-libkeccak_f_round64(register libkeccak_state_t *restrict state, register int_fast64_t rc)
+libkeccak_f_round64(register struct libkeccak_state *restrict state, register int_fast64_t rc)
 {
 	int_fast64_t *restrict A = state->S;
 	int_fast64_t B[25];
@@ -171,7 +171,7 @@ libkeccak_f_round64(register libkeccak_state_t *restrict state, register int_fas
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __gnu_inline__)))
 static inline void
-libkeccak_f(register libkeccak_state_t *restrict state)
+libkeccak_f(register struct libkeccak_state *restrict state)
 {
 	register long int i = 0;
 	register long int nr = state->nr;
@@ -245,7 +245,7 @@ libkeccak_to_lane64(register const char *restrict message, register size_t msgle
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __gnu_inline__)))
 static inline void
-libkeccak_pad10star1(register libkeccak_state_t *restrict state, register size_t bits)
+libkeccak_pad10star1(register struct libkeccak_state *restrict state, register size_t bits)
 {
 	register size_t r = (size_t)(state->r);
 	register size_t nrf = state->mptr - !!bits;
@@ -276,7 +276,7 @@ libkeccak_pad10star1(register libkeccak_state_t *restrict state, register size_t
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
 static void
-libkeccak_absorption_phase(register libkeccak_state_t *restrict state, register size_t len)
+libkeccak_absorption_phase(register struct libkeccak_state *restrict state, register size_t len)
 {
 	register long int rr = state->r >> 3;
 	register long int ww = state->w >> 3;
@@ -315,7 +315,7 @@ libkeccak_absorption_phase(register libkeccak_state_t *restrict state, register 
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __hot__)))
 static void
-libkeccak_squeezing_phase(register libkeccak_state_t *restrict state, long int rr,
+libkeccak_squeezing_phase(register struct libkeccak_state *restrict state, long int rr,
                           long int nn, long int ww, register unsigned char *restrict hashsum)
 {
 	register int_fast64_t v;
@@ -347,7 +347,7 @@ libkeccak_squeezing_phase(register libkeccak_state_t *restrict state, long int r
  * @return          Zero on success, -1 on error
  */
 int
-libkeccak_fast_update(libkeccak_state_t *restrict state, const void *restrict msg, size_t msglen)
+libkeccak_fast_update(struct libkeccak_state *restrict state, const void *restrict msg, size_t msglen)
 {
 	size_t len;
 	auto char *restrict new;
@@ -383,7 +383,7 @@ libkeccak_fast_update(libkeccak_state_t *restrict state, const void *restrict ms
  * @return          Zero on success, -1 on error
  */
 int
-libkeccak_update(libkeccak_state_t *restrict state, const void *restrict msg, size_t msglen)
+libkeccak_update(struct libkeccak_state *restrict state, const void *restrict msg, size_t msglen)
 {
 	size_t len;
 	auto char *restrict new;
@@ -424,7 +424,7 @@ libkeccak_update(libkeccak_state_t *restrict state, const void *restrict msg, si
  * @return           Zero on success, -1 on error
  */
 int
-libkeccak_fast_digest(libkeccak_state_t *restrict state, const void *restrict msg_, size_t msglen,
+libkeccak_fast_digest(struct libkeccak_state *restrict state, const void *restrict msg_, size_t msglen,
                       size_t bits, const char *restrict suffix, void *restrict hashsum)
 {
 	const char *restrict msg = msg_;
@@ -493,7 +493,7 @@ libkeccak_fast_digest(libkeccak_state_t *restrict state, const void *restrict ms
  * @return           Zero on success, -1 on error
  */
 int
-libkeccak_digest(libkeccak_state_t *restrict state, const void *restrict msg_, size_t msglen,
+libkeccak_digest(struct libkeccak_state *restrict state, const void *restrict msg_, size_t msglen,
                  size_t bits, const char *restrict suffix, void *restrict hashsum)
 {
 	const char *restrict msg = msg_;
@@ -558,7 +558,7 @@ libkeccak_digest(libkeccak_state_t *restrict state, const void *restrict msg_, s
  * @param  times  The number of rounds
  */
 void
-libkeccak_simple_squeeze(register libkeccak_state_t *restrict state, register long int times)
+libkeccak_simple_squeeze(register struct libkeccak_state *restrict state, register long int times)
 {
 	while (times--)
 		libkeccak_f(state);
@@ -572,7 +572,7 @@ libkeccak_simple_squeeze(register libkeccak_state_t *restrict state, register lo
  * @param  times  The number of digests
  */
 void
-libkeccak_fast_squeeze(register libkeccak_state_t *restrict state, register long int times)
+libkeccak_fast_squeeze(register struct libkeccak_state *restrict state, register long int times)
 {
 	times *= (state->n - 1) / state->r + 1;
 	while (times--)
@@ -587,7 +587,7 @@ libkeccak_fast_squeeze(register libkeccak_state_t *restrict state, register long
  * @param  hashsum  Output parameter for the hashsum
  */
 void
-libkeccak_squeeze(register libkeccak_state_t *restrict state, register void *restrict hashsum)
+libkeccak_squeeze(register struct libkeccak_state *restrict state, register void *restrict hashsum)
 {
 	libkeccak_f(state);
 	libkeccak_squeezing_phase(state, state->r >> 3, (state->n + 7) >> 3, state->w >> 3, hashsum);

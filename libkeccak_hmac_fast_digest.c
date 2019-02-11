@@ -17,7 +17,7 @@
  * @return           Zero on success, -1 on error
  */
 int
-libkeccak_hmac_fast_digest(libkeccak_hmac_state_t *restrict state, const void *restrict msg_, size_t msglen,
+libkeccak_hmac_fast_digest(struct libkeccak_hmac_state *restrict state, const void *restrict msg_, size_t msglen,
                            size_t bits, const char *restrict suffix, void *restrict hashsum)
 {
 	const char *restrict msg = msg_;

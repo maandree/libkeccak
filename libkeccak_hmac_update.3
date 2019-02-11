@@ -5,7 +5,7 @@ libkeccak_hmac_update - Partially HMAC-hash a message with erasure
 .nf
 #include <libkeccak.h>
 
-int libkeccak_hmac_update(libkeccak_state_t *\fIstate\fP, const void *\fImsg\fP, size_t \fImsglen\fP);
+int libkeccak_hmac_update(struct libkeccak_state *\fIstate\fP, const void *\fImsg\fP, size_t \fImsglen\fP);
 .fi
 .PP
 Link with

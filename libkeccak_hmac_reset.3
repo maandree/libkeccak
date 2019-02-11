@@ -5,7 +5,7 @@ libkeccak_hmac_reset - Reinitialise a HMAC-hashing state
 .nf
 #include <libkeccak.h>
 
-int libkeccak_hmac_reset(libkeccak_hmac_state_t *\fIstate\fP, const void *\fIkey\fP, size_t \fIkey_length\fP);
+int libkeccak_hmac_reset(struct libkeccak_hmac_state *\fIstate\fP, const void *\fIkey\fP, size_t \fIkey_length\fP);
 .fi
 .PP
 Link with

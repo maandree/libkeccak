@@ -5,7 +5,7 @@ libkeccak_shakesum_fd - Calculate a SHAKE hashsum of a file
 .nf
 #include <libkeccak.h>
 
-int libkeccak_shakesum_fd(int \fIfd\fP, libkeccak_state_t *\fIstate\fP, long int \fIsemicapacity\fP, long int \fIoutput\fP, void *\fIhashsum\fP);
+int libkeccak_shakesum_fd(int \fIfd\fP, struct libkeccak_state *\fIstate\fP, long int \fIsemicapacity\fP, long int \fIoutput\fP, void *\fIhashsum\fP);
 .fi
 .PP
 Link with
@@ -88,7 +88,7 @@ This example calculates the SHAKE256(, 512) hash of the input
 from stdin, and prints the hash, in hexadecimal form, to stdout.
 .LP
 .nf
-libkeccak_state_t state;
+struct libkeccak_state state;
 if (libkeccak_shakesum_fd(STDIN_FILENO, &state, 256, 512, binhash) < 0)
 	goto fail;
 libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));

@@ -10,7 +10,7 @@
  * @return        Zero on success, -1 on error
  */
 int
-libkeccak_hmac_copy(libkeccak_hmac_state_t *restrict dest, const libkeccak_hmac_state_t *restrict src)
+libkeccak_hmac_copy(struct libkeccak_hmac_state *restrict dest, const struct libkeccak_hmac_state *restrict src)
 {
 	size_t size;
 

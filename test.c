@@ -60,10 +60,10 @@ test_hex(void)
  * @return        Zero on success, -1 on error
  */
 static int
-test_state(libkeccak_spec_t *restrict spec)
+test_state(struct libkeccak_spec *restrict spec)
 {
-	libkeccak_state_t *restrict state;
-	libkeccak_state_t *restrict state2;
+	struct libkeccak_state *restrict state;
+	struct libkeccak_state *restrict state2;
 	size_t marshal_size, marshalled_size, i, n;
 	char *restrict marshalled_data;
 
@@ -90,7 +90,7 @@ test_state(libkeccak_spec_t *restrict spec)
 
 	libkeccak_state_free(state);
 
-	if (state = malloc(sizeof(libkeccak_state_t)), state == NULL)
+	if (state = malloc(sizeof(struct libkeccak_state)), state == NULL)
 		return perror("malloc"), -1;
 	marshalled_size = libkeccak_state_unmarshal(state, marshalled_data);
 	if (marshalled_size == 0)
@@ -122,10 +122,10 @@ test_state(libkeccak_spec_t *restrict spec)
  * @return                   Zero on success, -1 on error
  */
 static int
-test_digest_case(const libkeccak_spec_t *restrict spec, const char *restrict suffix,
+test_digest_case(const struct libkeccak_spec *restrict spec, const char *restrict suffix,
                  const char *restrict msg, long bits, const char *restrict expected_answer)
 {
-	libkeccak_state_t state;
+	struct libkeccak_state state;
 	char *restrict hashsum;
 	char *restrict hexsum;
 	int ok;
@@ -205,7 +205,7 @@ static int test_digest(void)
 	 test_digest_case(&spec, "", message, 0, answer))
 
 
-	libkeccak_spec_t spec;
+	struct libkeccak_spec spec;
 	const char *answer;
 
 	printf("Testing libkeccak_digest:\n");
@@ -384,10 +384,10 @@ static int test_digest(void)
  * @return                   Zero on success, -1 on error
  */
 static int
-test_update_case(const libkeccak_spec_t *restrict spec, const char *restrict suffix,
+test_update_case(const struct libkeccak_spec *restrict spec, const char *restrict suffix,
                  const char *restrict msg, const char *restrict expected_answer)
 {
-	libkeccak_state_t state;
+	struct libkeccak_state state;
 	char *restrict hashsum;
 	char *restrict hexsum;
 	int ok;
@@ -442,7 +442,7 @@ static int test_update(void)
 	 libkeccak_spec_sha3(&spec, output),\
 	 test_update_case(&spec, LIBKECCAK_SHA3_SUFFIX, message, answer))
 
-	libkeccak_spec_t spec;
+	struct libkeccak_spec spec;
 	const char* answer;
 
 	printf("Testing libkeccak_update:\n");
@@ -499,7 +499,7 @@ static int test_update(void)
  * @param   expected_answer  The hashum we expect, must be in lowercase hexadecimal
  * @return                   Zero on success, -1 on error
  */
-static int test_squeeze_case(libkeccak_state_t *restrict state, const libkeccak_spec_t *restrict spec,
+static int test_squeeze_case(struct libkeccak_state *restrict state, const struct libkeccak_spec *restrict spec,
                              long fast_squeezes, long squeezes, int fast_digest, char* restrict hashsum,
                              char *restrict hexsum, const char *restrict expected_answer)
 {
@@ -542,8 +542,8 @@ test_squeeze(void)
 #define run_test(fast_squeezes, squeezes, fast_digest)\
 	test_squeeze_case(&state, &spec, fast_squeezes, squeezes, fast_digest, hashsum, hexsum, answer##squeezes)
 
-	libkeccak_spec_t spec;
-	libkeccak_state_t state;
+	struct libkeccak_spec spec;
+	struct libkeccak_state state;
 	char *restrict hashsum;
 	char *restrict hexsum;
 
@@ -613,10 +613,10 @@ test_squeeze(void)
  * @return                   Zero on success, -1 on error
  */
 static int
-test_file(const libkeccak_spec_t *restrict spec, const char *restrict suffix,
+test_file(const struct libkeccak_spec *restrict spec, const char *restrict suffix,
           const char *restrict filename, const char *restrict expected_answer)
 {
-	libkeccak_state_t state;
+	struct libkeccak_state state;
 	char *restrict hashsum;
 	char *restrict hexsum;
 	int ok, fd;
@@ -670,8 +670,8 @@ test_file(const libkeccak_spec_t *restrict spec, const char *restrict suffix,
 int
 main(void)
 {
-	libkeccak_generalised_spec_t gspec;
-	libkeccak_spec_t spec;
+	struct libkeccak_generalised_spec gspec;
+	struct libkeccak_spec spec;
 
 	libkeccak_generalised_spec_initialise(&gspec);
 	if (libkeccak_degeneralise_spec(&gspec, &spec))

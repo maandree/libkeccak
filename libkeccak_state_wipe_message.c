@@ -8,7 +8,7 @@
  * @param  state  The state that should be wipe
  */
 void
-libkeccak_state_wipe_message(volatile libkeccak_state_t *restrict state)
+libkeccak_state_wipe_message(volatile struct libkeccak_state *restrict state)
 {
 	volatile char *restrict M = state->M;
 	size_t i;

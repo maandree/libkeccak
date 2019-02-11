@@ -3,14 +3,14 @@
 
 
 /**
- * Unmarshal a `libkeccak_state_t` from a buffer
+ * Unmarshal a `struct libkeccak_state` from a buffer
  * 
  * @param   state  The slot for the unmarshalled state, must not be initialised (memory leak otherwise)
  * @param   data   The input buffer
  * @return         The number of bytes read from `data`, 0 on error
  */
 size_t
-libkeccak_state_unmarshal(libkeccak_state_t *restrict state, const void *restrict data_)
+libkeccak_state_unmarshal(struct libkeccak_state *restrict state, const void *restrict data_)
 {
 #define get(type, var) state->var = *((const type *)data), data += sizeof(type) / sizeof(char)
 	const char *restrict data = data_;
@@ -31,6 +31,6 @@ libkeccak_state_unmarshal(libkeccak_state_t *restrict state, const void *restric
 		return 0;
 	memcpy(state->M, data, state->mptr * sizeof(char));
 	data += state->mptr;
-	return sizeof(libkeccak_state_t) - sizeof(char *) + state->mptr * sizeof(char);
+	return sizeof(struct libkeccak_state) - sizeof(char *) + state->mptr * sizeof(char);
 #undef get
 }

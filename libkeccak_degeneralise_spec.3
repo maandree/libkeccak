@@ -5,7 +5,7 @@ libkeccak_degeneralise_spec - Set all specification parameters to automatic
 .nf
 #include <libkeccak.h>
 
-int libkeccak_degeneralise_spec(libkeccak_generalised_spec_t *\fIspec\fP, libkeccak_spec_t *\fIoutput_spec\fP);
+int libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *\fIspec\fP, struct libkeccak_spec *\fIoutput_spec\fP);
 .fi
 .PP
 Link with
@@ -30,13 +30,13 @@ function after calling
 .BR libkeccak_degeneralise_spec ().
 .PP
 .nf
-typedef struct libkeccak_generalised_spec {
-	long int bitrate;     /* bitrate (in bits) */
-	long int capacity;    /* capacity (in bits) */
-	long int output;      /* output size (in bits) */
-	long int state_size;  /* state size (in bits) */
-	long int word_size;   /* word size (in bits) */
-} libkeccak_generalised_spec_t;
+struct libkeccak_generalised_spec {
+	long int bitrate;    /* bitrate (in bits) */
+	long int capacity;   /* capacity (in bits) */
+	long int output;     /* output size (in bits) */
+	long int state_size; /* state size (in bits) */
+	long int word_size;  /* word size (in bits) */
+};
 .fi
 .SH RETURN VALUES
 The
@@ -94,13 +94,13 @@ function cannot fail.
 .fi
 .SH EXAMPLE
 This examples configure a
-.B libkeccak_spec_t
+.B struct libkeccak_spec
 to specify settings for Keccak[c = 512]:
 .PP
 .nf
 int r;
-libkeccak_spec_t spec;
-libkeccak_generalised_spec_t gspec;
+struct libkeccak_spec spec;
+struct libkeccak_generalised_spec gspec;
 libkeccak_generalised_spec_initialise(&gspec);
 gspec.capacity = 512;
 if ((r = libkeccak_degeneralise_spec(&gspec, &spec)))
