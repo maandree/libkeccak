@@ -12,7 +12,7 @@ include $(OSCONFIGFILE)
 
 # The version of the library.
 LIB_MAJOR = 1
-LIB_MINOR = 1
+LIB_MINOR = 2
 LIB_VERSION = $(LIB_MAJOR).$(LIB_MINOR)
 
 
@@ -47,65 +47,65 @@ HDR =\
 	common.h
 
 MAN3 =\
-	man3/libkeccak_behex_lower.3\
-	man3/libkeccak_behex_upper.3\
-	man3/libkeccak_degeneralise_spec.3\
-	man3/libkeccak_digest.3\
-	man3/libkeccak_fast_digest.3\
-	man3/libkeccak_fast_squeeze.3\
-	man3/libkeccak_fast_update.3\
-	man3/libkeccak_generalised_spec_initialise.3\
-	man3/libkeccak_generalised_sum_fd.3\
-	man3/libkeccak_hmac_copy.3\
-	man3/libkeccak_hmac_create.3\
-	man3/libkeccak_hmac_destroy.3\
-	man3/libkeccak_hmac_digest.3\
-	man3/libkeccak_hmac_duplicate.3\
-	man3/libkeccak_hmac_fast_destroy.3\
-	man3/libkeccak_hmac_fast_digest.3\
-	man3/libkeccak_hmac_fast_free.3\
-	man3/libkeccak_hmac_fast_update.3\
-	man3/libkeccak_hmac_free.3\
-	man3/libkeccak_hmac_initialise.3\
-	man3/libkeccak_hmac_marshal.3\
-	man3/libkeccak_hmac_marshal_size.3\
-	man3/libkeccak_hmac_reset.3\
-	man3/libkeccak_hmac_set_key.3\
-	man3/libkeccak_hmac_unmarshal.3\
-	man3/libkeccak_hmac_unmarshal_skip.3\
-	man3/libkeccak_hmac_update.3\
-	man3/libkeccak_hmac_wipe.3\
-	man3/libkeccak_keccaksum_fd.3\
-	man3/libkeccak_rawshakesum_fd.3\
-	man3/libkeccak_sha3sum_fd.3\
-	man3/libkeccak_shakesum_fd.3\
-	man3/libkeccak_simple_squeeze.3\
-	man3/libkeccak_spec_check.3\
-	man3/libkeccak_spec_rawshake.3\
-	man3/libkeccak_spec_sha3.3\
-	man3/libkeccak_spec_shake.3\
-	man3/libkeccak_squeeze.3\
-	man3/libkeccak_state_copy.3\
-	man3/libkeccak_state_create.3\
-	man3/libkeccak_state_destroy.3\
-	man3/libkeccak_state_duplicate.3\
-	man3/libkeccak_state_fast_destroy.3\
-	man3/libkeccak_state_fast_free.3\
-	man3/libkeccak_state_free.3\
-	man3/libkeccak_state_initialise.3\
-	man3/libkeccak_state_marshal.3\
-	man3/libkeccak_state_marshal_size.3\
-	man3/libkeccak_state_reset.3\
-	man3/libkeccak_state_unmarshal.3\
-	man3/libkeccak_state_unmarshal_skip.3\
-	man3/libkeccak_state_wipe.3\
-	man3/libkeccak_state_wipe_message.3\
-	man3/libkeccak_state_wipe_sponge.3\
-	man3/libkeccak_unhex.3\
-	man3/libkeccak_update.3
+	libkeccak_behex_lower.3\
+	libkeccak_behex_upper.3\
+	libkeccak_degeneralise_spec.3\
+	libkeccak_digest.3\
+	libkeccak_fast_digest.3\
+	libkeccak_fast_squeeze.3\
+	libkeccak_fast_update.3\
+	libkeccak_generalised_spec_initialise.3\
+	libkeccak_generalised_sum_fd.3\
+	libkeccak_hmac_copy.3\
+	libkeccak_hmac_create.3\
+	libkeccak_hmac_destroy.3\
+	libkeccak_hmac_digest.3\
+	libkeccak_hmac_duplicate.3\
+	libkeccak_hmac_fast_destroy.3\
+	libkeccak_hmac_fast_digest.3\
+	libkeccak_hmac_fast_free.3\
+	libkeccak_hmac_fast_update.3\
+	libkeccak_hmac_free.3\
+	libkeccak_hmac_initialise.3\
+	libkeccak_hmac_marshal.3\
+	libkeccak_hmac_marshal_size.3\
+	libkeccak_hmac_reset.3\
+	libkeccak_hmac_set_key.3\
+	libkeccak_hmac_unmarshal.3\
+	libkeccak_hmac_unmarshal_skip.3\
+	libkeccak_hmac_update.3\
+	libkeccak_hmac_wipe.3\
+	libkeccak_keccaksum_fd.3\
+	libkeccak_rawshakesum_fd.3\
+	libkeccak_sha3sum_fd.3\
+	libkeccak_shakesum_fd.3\
+	libkeccak_simple_squeeze.3\
+	libkeccak_spec_check.3\
+	libkeccak_spec_rawshake.3\
+	libkeccak_spec_sha3.3\
+	libkeccak_spec_shake.3\
+	libkeccak_squeeze.3\
+	libkeccak_state_copy.3\
+	libkeccak_state_create.3\
+	libkeccak_state_destroy.3\
+	libkeccak_state_duplicate.3\
+	libkeccak_state_fast_destroy.3\
+	libkeccak_state_fast_free.3\
+	libkeccak_state_free.3\
+	libkeccak_state_initialise.3\
+	libkeccak_state_marshal.3\
+	libkeccak_state_marshal_size.3\
+	libkeccak_state_reset.3\
+	libkeccak_state_unmarshal.3\
+	libkeccak_state_unmarshal_skip.3\
+	libkeccak_state_wipe.3\
+	libkeccak_state_wipe_message.3\
+	libkeccak_state_wipe_sponge.3\
+	libkeccak_unhex.3\
+	libkeccak_update.3
 
 MAN7 =\
-	man7/libkeccak.7
+	libkeccak.7
 
 
 all: libkeccak.a libkeccak.$(LIBEXT) test benchmark
@@ -156,6 +156,7 @@ install: libkeccak.$(LIBEXT) libkeccak.a
 	ln -sf -- libkeccak.$(LIBMINOREXT) "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBMAJOREXT)"
 	ln -sf -- libkeccak.$(LIBMINOREXT) "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBEXT)"
 	cp -- libkeccak.a "$(DESTDIR)$(PREFIX)/lib/libkeccak.a"
+	mkdir -p -- "$(DESTDIR)$(PREFIX)/include"
 	cp -- libkeccak.h libkeccak-legacy.h "$(DESTDIR)$(PREFIX)/include/"
 	mkdir -p -- "$(DESTDIR)$(MANPREFIX)/man3"
 	mkdir -p -- "$(DESTDIR)$(MANPREFIX)/man7"
@@ -169,7 +170,6 @@ uninstall:
 	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBMAJOREXT)"
 	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBEXT)"
 	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.a"
-	-rm -rf -- "$(DESTDIR)$(PREFIX)/include/libkeccak"
 	-rm -f -- "$(DESTDIR)$(PREFIX)/include/libkeccak.h"
 	-rm -f -- "$(DESTDIR)$(PREFIX)/include/libkeccak-legacy.h"
 	-cd -- "$(DESTDIR)$(MANPREFIX)/man3" && rm -f -- $(MAN3)
