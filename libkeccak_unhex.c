@@ -15,6 +15,7 @@ libkeccak_unhex(void *restrict output_, const char *restrict hashsum)
 	unsigned char *restrict output = output_;
 	size_t n = strlen(hashsum) / 2;
 	unsigned char a, b;
+
 	while (n--) {
 		a = (unsigned char)hashsum[2 * n + 0];
 		b = (unsigned char)hashsum[2 * n + 1];
@@ -22,7 +23,7 @@ libkeccak_unhex(void *restrict output_, const char *restrict hashsum)
 		a = (unsigned char)((a & 15) + (a > '9' ? 9 : 0));
 		b = (unsigned char)((b & 15) + (b > '9' ? 9 : 0));
 
-		a <<= 4;
+		a = (unsigned char)(a << 4);
 		a |= b;
 		output[n] = a;
 	}

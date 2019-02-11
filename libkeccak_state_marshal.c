@@ -13,7 +13,7 @@ size_t
 libkeccak_state_marshal(const struct libkeccak_state *restrict state, void *restrict data_)
 {
 #define set(type, var) *((type *)data) = state->var, data += sizeof(type) / sizeof(char)
-	char *restrict data = data_;
+	unsigned char *restrict data = data_;
 	set(long int, r);
 	set(long int, c);
 	set(long int, n);

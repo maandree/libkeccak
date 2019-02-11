@@ -21,26 +21,26 @@ libkeccak_generalised_sum_fd(int fd, struct libkeccak_state *restrict state, con
 	ssize_t got;
 	struct stat attr;
 	size_t blksize = 4096;
-	char *restrict chunk;
+	void *restrict chunk;
 
 	if (libkeccak_state_initialise(state, spec) < 0)
 		return -1;
 
 	if (fstat(fd, &attr) == 0)
 		if (attr.st_blksize > 0)
-			blksize = (size_t)(attr.st_blksize);
+			blksize = (size_t)attr.st_blksize;
   
 	chunk = alloca(blksize);
 
 	for (;;) {
 		got = read(fd, chunk, blksize);
-		if (got < 0) {
+		if (got <= 0) {
+			if (!got)
+				break;
 			if (errno == EINTR)
 				continue;
 			return -1;
 		}
-		if (got == 0)
-			break;
 		if (libkeccak_fast_update(state, chunk, (size_t)got) < 0)
 			return -1;
 	}

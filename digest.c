@@ -13,15 +13,10 @@
 #define LIST_8 LIST_5 X(5) X(6) X(7)
 
 /**
- * X-macro-enabled listing of all intergers in [0, 23]
- */
-#define LIST_24 LIST_8 X(8) X(9) X(10) X(11) X(12) X(13) X(14) X(15)\
-                X(16) X(17) X(18) X(19) X(20) X(21) X(22) X(23)
-
-/**
  * X-macro-enabled listing of all intergers in [0, 24]
  */
-#define LIST_25 LIST_24 X(24) 
+#define LIST_25 LIST_8 X(8) X(9) X(10) X(11) X(12) X(13) X(14) X(15)\
+                X(16) X(17) X(18) X(19) X(20) X(21) X(22) X(23) X(24)
 
 
 
@@ -198,7 +193,7 @@ libkeccak_f(register struct libkeccak_state *restrict state)
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __pure__, __warn_unused_result__, __gnu_inline__)))
 static inline int_fast64_t
-libkeccak_to_lane(register const char *restrict message, register size_t msglen,
+libkeccak_to_lane(register const unsigned char *restrict message, register size_t msglen,
                   register long int rr, register long int ww, size_t off)
 {
 	register long int n = (long)((msglen < (size_t)rr ? msglen : (size_t)rr) - off);
@@ -223,7 +218,7 @@ libkeccak_to_lane(register const char *restrict message, register size_t msglen,
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __pure__, __hot__, __warn_unused_result__, __gnu_inline__)))
 static inline int_fast64_t
-libkeccak_to_lane64(register const char *restrict message, register size_t msglen, register long int rr, size_t off)
+libkeccak_to_lane64(register const unsigned char *restrict message, register size_t msglen, register long int rr, size_t off)
 {
 	register long int n = (long)((msglen < (size_t)rr ? msglen : (size_t)rr) - off);
 	int_fast64_t rc = 0;
@@ -251,10 +246,10 @@ libkeccak_pad10star1(register struct libkeccak_state *restrict state, register s
 	register size_t nrf = state->mptr - !!bits;
 	register size_t len = (nrf << 3) | bits;
 	register size_t ll = len % r;
-	register char b = (char)(bits ? (state->M[nrf] | (1 << bits)) : 1);
+	register unsigned char b = (unsigned char)(bits ? (state->M[nrf] | (1 << bits)) : 1);
 
 	if (r - 8 <= ll && ll <= r - 2) {
-		state->M[nrf] = (char)(b ^ 0x80);
+		state->M[nrf] = (unsigned char)(b ^ 0x80);
 		state->mptr = nrf + 1;
 	} else {
 		len = ++nrf << 3;
@@ -263,7 +258,7 @@ libkeccak_pad10star1(register struct libkeccak_state *restrict state, register s
 
 		state->M[nrf - 1] = b;
 		__builtin_memset(state->M + nrf, 0, (len - nrf) * sizeof(char));
-		state->M[len] = (char)0x80;
+		state->M[len] = (unsigned char)0x80;
 	}
 }
 
@@ -281,7 +276,7 @@ libkeccak_absorption_phase(register struct libkeccak_state *restrict state, regi
 	register long int rr = state->r >> 3;
 	register long int ww = state->w >> 3;
 	register long int n = (long)len / rr;
-	register const char* restrict message = state->M;
+	register const unsigned char *restrict message = state->M;
 	if (__builtin_expect(ww >= 8, 1)) { /* ww > 8 is impossible, it is just for optimisation possibilities. */
 		while (n--) {
 #define X(N) state->S[N] ^= libkeccak_to_lane64(message, len, rr, (size_t)(LANE_TRANSPOSE_MAP[N] * 8));
@@ -350,7 +345,7 @@ int
 libkeccak_fast_update(struct libkeccak_state *restrict state, const void *restrict msg, size_t msglen)
 {
 	size_t len;
-	auto char *restrict new;
+	auto unsigned char *restrict new;
 
 	if (__builtin_expect(state->mptr + msglen > state->mlen, 0)) {
 		state->mlen += msglen;
@@ -386,12 +381,12 @@ int
 libkeccak_update(struct libkeccak_state *restrict state, const void *restrict msg, size_t msglen)
 {
 	size_t len;
-	auto char *restrict new;
+	auto unsigned char *restrict new;
 
 	if (__builtin_expect(state->mptr + msglen > state->mlen, 0)) {
 		state->mlen += msglen;
 		new = malloc(state->mlen * sizeof(char));
-		if (new == NULL)
+		if (!new)
 			return state->mlen -= msglen, -1;
 		libkeccak_state_wipe_message(state);
 		free(state->M);
@@ -427,8 +422,8 @@ int
 libkeccak_fast_digest(struct libkeccak_state *restrict state, const void *restrict msg_, size_t msglen,
                       size_t bits, const char *restrict suffix, void *restrict hashsum)
 {
-	const char *restrict msg = msg_;
-	auto char *restrict new;
+	const unsigned char *restrict msg = msg_;
+	auto unsigned char *restrict new;
 	register long int rr = state->r >> 3;
 	auto size_t suffix_len = suffix ? __builtin_strlen(suffix) : 0;
 	register size_t ext;
@@ -453,12 +448,12 @@ libkeccak_fast_digest(struct libkeccak_state *restrict state, const void *restri
 	state->mptr += msglen;
 
 	if (bits)
-		state->M[state->mptr] = msg[msglen] & (char)((1 << bits) - 1);
+		state->M[state->mptr] = msg[msglen] & (unsigned char)((1 << bits) - 1);
 	if (__builtin_expect(!!suffix_len, 1)) {
-		if (bits == 0)
+		if (!bits)
 			state->M[state->mptr] = 0;
 		while (suffix_len--) {
-			state->M[state->mptr] |= (char)((*suffix++ & 1) << bits++);
+			state->M[state->mptr] |= (unsigned char)((*suffix++ & 1) << bits++);
 			if (bits == 8)
 				bits = 0, state->M[++(state->mptr)] = 0;
 		}
@@ -496,8 +491,8 @@ int
 libkeccak_digest(struct libkeccak_state *restrict state, const void *restrict msg_, size_t msglen,
                  size_t bits, const char *restrict suffix, void *restrict hashsum)
 {
-	const char *restrict msg = msg_;
-	auto char *restrict new;
+	const unsigned char *restrict msg = msg_;
+	auto unsigned char *restrict new;
 	register long int rr = state->r >> 3;
 	auto size_t suffix_len = suffix ? __builtin_strlen(suffix) : 0;
 	register size_t ext;
@@ -524,12 +519,12 @@ libkeccak_digest(struct libkeccak_state *restrict state, const void *restrict ms
 	state->mptr += msglen;
 
 	if (bits)
-		state->M[state->mptr] = msg[msglen] & (char)((1 << bits) - 1);
+		state->M[state->mptr] = msg[msglen] & (unsigned char)((1 << bits) - 1);
 	if (__builtin_expect(!!suffix_len, 1)) {
-		if (bits == 0)
+		if (!bits)
 			state->M[state->mptr] = 0;
 		while (suffix_len--) {
-			state->M[state->mptr] |= (char)((*suffix++ & 1) << bits++);
+			state->M[state->mptr] |= (unsigned char)((*suffix++ & 1) << bits++);
 			if (bits == 8)
 				bits = 0, state->M[++(state->mptr)] = 0;
 		}

@@ -1,4 +1,5 @@
 /* See LICENSE file for copyright and license details. */
+#define NEED_EXPLICIT_BZERO 1
 #include "common.h"
 
 
@@ -14,7 +15,7 @@
 int
 libkeccak_hmac_update(struct libkeccak_hmac_state *restrict state, const void *restrict msg_, size_t msglen)
 {
-	const char *restrict msg = msg_;
+	const unsigned char *restrict msg = msg_;
 	size_t i;
 	int n, cn, r;
 
@@ -42,9 +43,9 @@ libkeccak_hmac_update(struct libkeccak_hmac_state *restrict state, const void *r
 	n = (int)(state->key_length & 7);
 	cn = 8 - n;
 	for (i = 1; i < msglen; i++)
-		state->buffer[i] = (char)(((unsigned char)msg[i - 1] >> cn) | (msg[i] << n));
-	state->buffer[0] = (char)((state->leftover & ((1 << n) - 1)) | (msg[0] << n));
-	state->leftover = (char)((unsigned char)msg[msglen - 1] >> cn);
+		state->buffer[i] = (unsigned char)((msg[i - 1] >> cn) | (msg[i] << n));
+	state->buffer[0] = (unsigned char)((state->leftover & ((1 << n) - 1)) | (msg[0] << n));
+	state->leftover = (unsigned char)(msg[msglen - 1] >> cn);
 
 	r = libkeccak_update(&state->sponge, state->buffer, msglen);
 	my_explicit_bzero(state->buffer, msglen);

@@ -269,7 +269,7 @@ struct libkeccak_state {
 	/**
 	 * Left over water to fill the sponge with at next update
 	 */
-	char *M;
+	unsigned char *M;
 };
 
 
@@ -796,12 +796,12 @@ struct libkeccak_hmac_state {
 	/**
 	 * The key right-padded and XOR:ed with the outer pad
 	 */
-	char *restrict key_opad;
+	unsigned char *restrict key_opad;
 
 	/**
 	 * The key right-padded and XOR:ed with the inner pad
 	 */
-	char *restrict key_ipad;
+	unsigned char *restrict key_ipad;
 	/* Not marshalled, implicitly unmarshalled using `key_opad`. */
 	/* Shares allocation with `key_opad`, do not `free`. */
 
@@ -819,7 +819,7 @@ struct libkeccak_hmac_state {
 	 * Buffer used to temporarily store bit shift message if
 	 * `.key_length` is not zero modulus 8
 	 */
-	char *restrict buffer;
+	unsigned char *restrict buffer;
 
 	/**
 	 * The allocation size of `.buffer`
@@ -829,7 +829,7 @@ struct libkeccak_hmac_state {
 	/**
 	 * Part of feed key, message or digest that have not been passed yet
 	 */
-	char leftover;
+	unsigned char leftover;
 
 	char __pad[sizeof(void *) / sizeof(char) - 1];
 };
@@ -1043,14 +1043,14 @@ LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
 static inline size_t
 libkeccak_hmac_marshal(const struct libkeccak_hmac_state *restrict state, void *restrict data_)
 {
-	char *restrict data = data_;
+	unsigned char *restrict data = data_;
 	size_t written = libkeccak_state_marshal(&state->sponge, data);
 	data += written / sizeof(char);
 	*(size_t *)data = state->key_length;
 	data += sizeof(size_t) / sizeof(char);
 	memcpy(data, state->key_opad, (state->key_length + 7) >> 3);
 	data += ((state->key_length + 7) >> 3) / sizeof(char);
-	data[0] = (char)!!state->key_ipad;
+	data[0] = (unsigned char)!!state->key_ipad;
 	data[1] = state->leftover;
 	return written + sizeof(size_t) + ((state->key_length + 7) >> 3) + 2 * sizeof(char);
 }

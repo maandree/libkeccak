@@ -14,7 +14,7 @@ int
 libkeccak_hmac_set_key(struct libkeccak_hmac_state *restrict state, const void *restrict key, size_t key_length)
 {
 	size_t i, size, new_key_length, key_bytes;
-	char *old;
+	unsigned char *old;
 
 	size = (size_t)(state->sponge.r) > key_length ? (size_t)(state->sponge.r) : key_length;
 	new_key_length = size;
@@ -30,7 +30,7 @@ libkeccak_hmac_set_key(struct libkeccak_hmac_state *restrict state, const void *
 
 	memcpy(state->key_opad, key, key_bytes);
 	if (key_length & 7)
-		state->key_opad[(key_bytes >> 3) - 1] &= (char)((1 << (key_length & 7)) - 1);
+		state->key_opad[(key_bytes >> 3) - 1] &= (unsigned char)((1 << (key_length & 7)) - 1);
 
 	if ((size_t)(state->sponge.r) > key_length)
 		__builtin_memset(state->key_opad + key_bytes / sizeof(char), 0, size - key_bytes);

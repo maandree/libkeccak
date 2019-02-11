@@ -12,7 +12,7 @@
 size_t
 libkeccak_hmac_unmarshal(struct libkeccak_hmac_state *restrict state, const void *restrict data_)
 {
-	const char *restrict data = data_;
+	const unsigned char *restrict data = data_;
 	size_t parsed, size, i;
 
 	state->key_opad = NULL;

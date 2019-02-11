@@ -60,42 +60,59 @@ main(void)
 	char hexsum[OUTPUT / 8 * 2 + 1];
 #endif
 	struct timespec start, end;
-	long i, r;
-
-	/* Fill message with content from the file. */
+	long int i, r;
 	int fd;
 	ssize_t got;
 	size_t ptr;
-	if (fd = open(MESSAGE_FILE, O_RDONLY), fd < 0)
-		return perror("open"), 1;
-	for (ptr = 0; ptr < MESSAGE_LEN; ptr += (size_t)got)
-		if (got = read(fd, message, MESSAGE_LEN - ptr), got <= 0)
-			return perror("read"), close(fd), 1;
+
+	/* Fill message with content from the file. */
+	fd = open(MESSAGE_FILE, O_RDONLY);
+	if (fd < 0) {
+		perror("open");
+		return 1;
+	}
+	for (ptr = 0; ptr < MESSAGE_LEN; ptr += (size_t)got) {
+		got = read(fd, message, MESSAGE_LEN - ptr);
+		if (got <= 0) {
+			perror("read");
+			close(fd);
+			return 1;
+		}
+	}
 	close(fd);
 
 	/* Initialise state. */
 	spec.bitrate = BITRATE;
 	spec.capacity = CAPACITY;
 	spec.output = OUTPUT;
-	if (libkeccak_state_initialise(&state, &spec))
-		return perror("libkeccak_state_initialise"), 1;
+	if (libkeccak_state_initialise(&state, &spec)) {
+		perror("libkeccak_state_initialise");
+		return 1;
+	}
 
 	/* Get start-time. */
-	if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start) < 0)
-		return perror("clock_gettime"), 1;
+	if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start) < 0) {
+		perror("clock_gettime");
+		return 1;
+	}
 
 	/* Run benchmarking loop. */
 	for (r = 0; r < RERUNS; r++) {
 		/* Updates. */
 #if UPDATE_RUNS > 0
-		for (i = 0; i < UPDATE_RUNS; i++)
-			if (libkeccak_fast_update(&state, message, MESSAGE_LEN) < 0)
-				return perror("libkeccak_update"), 1;
+		for (i = 0; i < UPDATE_RUNS; i++) {
+			if (libkeccak_fast_update(&state, message, MESSAGE_LEN) < 0) {
+				perror("libkeccak_update");
+				return 1;
+			}
+		}
 #endif
 
 		/* Digest. */
-		if (libkeccak_fast_digest(&state, NULL, 0, 0, NULL, hashsum) < 0)
-			return perror("libkeccak_digest"), 1;
+		if (libkeccak_fast_digest(&state, NULL, 0, 0, NULL, hashsum) < 0) {
+			perror("libkeccak_digest");
+			return 1;
+		}
 #ifndef IGNORE_BEHEXING
 		libkeccak_behex_lower(hexsum, hashsum, OUTPUT / 8);
 #endif
@@ -117,8 +134,10 @@ main(void)
 	}
 
 	/* Get end-time. */
-	if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end) < 0)
-		return perror("clock_gettime"), -1;
+	if (clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end) < 0) {
+		perror("clock_gettime");
+		return -1;
+	}
 
 	/* Print execution-time. */
 	end.tv_sec -= start.tv_sec;

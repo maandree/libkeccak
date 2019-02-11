@@ -28,9 +28,11 @@
 #define HMAC_INNER_PAD 0x36
 
 
+#ifdef NEED_EXPLICIT_BZERO
 static void *(*volatile my_explicit_memset)(void *, int, size_t) = memset;
 static __attribute__((__optimize__("-O0"))) void
 my_explicit_bzero(void *ptr, size_t size)
 {
 	(*my_explicit_memset)(ptr, 0, size);
 }
+#endif

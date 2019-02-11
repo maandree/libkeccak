@@ -7,8 +7,6 @@
 # pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #endif
 
-#define have(v)     (spec->v != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC)
-#define copy(v)     (v = spec->v)
 #define deft(v, dv) (have_##v ? v : (dv))
 
 
@@ -27,24 +25,29 @@ libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict spec,
                             struct libkeccak_spec *restrict output_spec)
 {
 	long int state_size, word_size, capacity, bitrate, output;
-	const int have_state_size = have(state_size);
-	const int have_word_size  = have(word_size);
-	const int have_capacity   = have(capacity);
-	const int have_bitrate    = have(bitrate);
-	const int have_output     = have(output);
+	const int have_state_size = spec->state_size != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
+	const int have_word_size  = spec->word_size  != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
+	const int have_capacity   = spec->capacity   != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
+	const int have_bitrate    = spec->bitrate    != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
+	const int have_output     = spec->output     != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
 
 
 	if (have_state_size) {
-		copy(state_size);
-		if (state_size <= 0)   return LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_NONPOSITIVE;
-		if (state_size > 1600) return LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_TOO_LARGE;
-		if (state_size % 25)   return LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_MOD_25;
+		state_size = spec->state_size;
+		if (state_size <= 0)
+			return LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_NONPOSITIVE;
+		if (state_size > 1600)
+			return LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_TOO_LARGE;
+		if (state_size % 25)
+			return LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_MOD_25;
 	}
 
 	if (have_word_size) {
-		copy(word_size);
-		if (word_size <= 0) return LIBKECCAK_GENERALISED_SPEC_ERROR_WORD_NONPOSITIVE;
-		if (word_size > 64) return LIBKECCAK_GENERALISED_SPEC_ERROR_WORD_TOO_LARGE;
+		word_size = spec->word_size;
+		if (word_size <= 0)
+			return LIBKECCAK_GENERALISED_SPEC_ERROR_WORD_NONPOSITIVE;
+		if (word_size > 64)
+			return LIBKECCAK_GENERALISED_SPEC_ERROR_WORD_TOO_LARGE;		
 		if (have_state_size && state_size != word_size * 25)
 			return LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_WORD_INCOHERENCY;
 		else if (!have_state_size)
@@ -52,20 +55,25 @@ libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict spec,
 	}
 
 	if (have_capacity) {
-		copy(capacity);
-		if (capacity <= 0) return LIBKECCAK_GENERALISED_SPEC_ERROR_CAPACITY_NONPOSITIVE;
-		if (capacity & 7)  return LIBKECCAK_GENERALISED_SPEC_ERROR_CAPACITY_MOD_8;
+		capacity = spec->capacity;
+		if (capacity <= 0)
+			return LIBKECCAK_GENERALISED_SPEC_ERROR_CAPACITY_NONPOSITIVE;
+		if (capacity & 7)
+			return LIBKECCAK_GENERALISED_SPEC_ERROR_CAPACITY_MOD_8;
 	}
 
 	if (have_bitrate) {
-		copy(bitrate);
-		if (bitrate <= 0) return LIBKECCAK_GENERALISED_SPEC_ERROR_BITRATE_NONPOSITIVE;
-		if (bitrate & 7)  return LIBKECCAK_GENERALISED_SPEC_ERROR_BITRATE_MOD_8;
+		bitrate = spec->bitrate;
+		if (bitrate <= 0)
+			return LIBKECCAK_GENERALISED_SPEC_ERROR_BITRATE_NONPOSITIVE;
+		if (bitrate & 7)
+			return LIBKECCAK_GENERALISED_SPEC_ERROR_BITRATE_MOD_8;
 	}
 
 	if (have_output) {
-		copy(output);
-		if (output <= 0) return LIBKECCAK_GENERALISED_SPEC_ERROR_OUTPUT_NONPOSITIVE;
+		output = spec->output;
+		if (output <= 0)
+			return LIBKECCAK_GENERALISED_SPEC_ERROR_OUTPUT_NONPOSITIVE;
 	}
 
 
@@ -103,8 +111,6 @@ libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict spec,
 
 
 #undef deft
-#undef copy
-#undef have
 
 #ifdef __GNUC__
 # pragma GCC diagnostic pop

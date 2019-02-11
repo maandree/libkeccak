@@ -12,6 +12,7 @@ libkeccak_state_wipe_sponge(volatile struct libkeccak_state *restrict state)
 {
 	volatile int64_t *restrict S = state->S;
 	size_t i;
+
 	for (i = 0; i < 25; i++)
 		S[i] = 0;
 }

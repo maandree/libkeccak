@@ -10,10 +10,12 @@
 void
 libkeccak_hmac_wipe(volatile struct libkeccak_hmac_state *restrict state)
 {
-	volatile char *restrict key_pads;
+	volatile unsigned char *restrict key_pads;
 	size_t i, size;
+
 	key_pads = state->key_opad;
 	size = 2 * ((state->key_length + 7) >> 3);
+
 	libkeccak_state_wipe(&state->sponge);
 	for (i = 0; i < size; i++)
 		key_pads[i] = 0;

@@ -25,7 +25,7 @@ libkeccak_hmac_copy(struct libkeccak_hmac_state *restrict dest, const struct lib
 
 	size = (src->key_length + 7) >> 3;
 	dest->key_opad = malloc(2 * size);
-	if (dest->key_opad == NULL) {
+	if (!dest->key_opad) {
 		libkeccak_state_destroy(&dest->sponge);
 		return -1;
 	}

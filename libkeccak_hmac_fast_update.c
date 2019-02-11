@@ -14,8 +14,8 @@
 int
 libkeccak_hmac_fast_update(struct libkeccak_hmac_state *restrict state, const void *restrict msg_, size_t msglen)
 {
-	const char *restrict msg = msg_;
-	char *old;
+	const unsigned char *restrict msg = msg_;
+	unsigned char *old;
 	size_t i;
 	int n, cn;
 
@@ -43,9 +43,9 @@ libkeccak_hmac_fast_update(struct libkeccak_hmac_state *restrict state, const vo
 	n = (int)(state->key_length & 7);
 	cn = 8 - n;
 	for (i = 1; i < msglen; i++)
-		state->buffer[i] = (char)((msg[i - 1] >> cn) | (msg[i] << n));
-	state->buffer[0] = (char)((state->leftover & ((1 << n) - 1)) | (msg[0] << n));
-	state->leftover = (char)((unsigned char)msg[msglen - 1] >> cn);
+		state->buffer[i] = (unsigned char)((msg[i - 1] >> cn) | (msg[i] << n));
+	state->buffer[0] = (unsigned char)((state->leftover & ((1 << n) - 1)) | (msg[0] << n));
+	state->leftover = (unsigned char)(msg[msglen - 1] >> cn);
 
 	return libkeccak_fast_update(&state->sponge, state->buffer, msglen);
 }

@@ -1,4 +1,5 @@
 /* See LICENSE file for copyright and license details. */
+#define NEED_EXPLICIT_BZERO 1
 #include "common.h"
 
 
@@ -20,10 +21,10 @@ int
 libkeccak_hmac_digest(struct libkeccak_hmac_state *restrict state, const void *restrict msg_, size_t msglen,
                       size_t bits, const char *restrict suffix, void *restrict hashsum)
 {
-	const char *restrict msg = msg_;
+	const unsigned char *restrict msg = msg_;
 	size_t hashsize = (size_t)(state->sponge.n >> 3);
 	char *tmp = malloc((size_t)((state->sponge.n + 7) >> 3) * sizeof(char));
-	char leftover[2];
+	unsigned char leftover[2];
 	size_t newlen;
 
 	if (!tmp)
@@ -39,8 +40,8 @@ libkeccak_hmac_digest(struct libkeccak_hmac_state *restrict state, const void *r
 		goto fail;
 	leftover[0] = state->leftover;
 	if (bits) {
-		leftover[0] |= (char)(msg[msglen] >> (state->key_length & 7));
-		leftover[1] = (char)((unsigned char)msg[msglen] << (8 - (state->key_length & 7)));
+		leftover[0] |= (unsigned char)(msg[msglen] >> (state->key_length & 7));
+		leftover[1] = (unsigned char)(msg[msglen] << (8 - (state->key_length & 7)));
 	}
 	newlen = (state->key_length & 7) + bits;
 	if (libkeccak_digest(&state->sponge, leftover, newlen >> 3, newlen & 7, suffix, tmp) < 0)
@@ -62,8 +63,8 @@ stage_2:
 		goto fail;
 	leftover[0] = state->leftover;
 	if (bits) {
-		leftover[0] |= (char)(tmp[hashsize] >> (state->key_length & 7));
-		leftover[1] = (char)((unsigned char)tmp[hashsize] << (8 - (state->key_length & 7)));
+		leftover[0] |= (unsigned char)(tmp[hashsize] >> (state->key_length & 7));
+		leftover[1] = (unsigned char)(tmp[hashsize] << (8 - (state->key_length & 7)));
 	}
 	newlen = (state->key_length & 7) + bits;
 	if (libkeccak_digest(&state->sponge, leftover, newlen >> 3, newlen & 7, suffix, tmp) < 0)

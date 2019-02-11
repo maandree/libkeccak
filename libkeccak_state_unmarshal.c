@@ -13,7 +13,7 @@ size_t
 libkeccak_state_unmarshal(struct libkeccak_state *restrict state, const void *restrict data_)
 {
 #define get(type, var) state->var = *((const type *)data), data += sizeof(type) / sizeof(char)
-	const char *restrict data = data_;
+	const unsigned char *restrict data = data_;
 	get(long int, r);
 	get(long int, c);
 	get(long int, n);
