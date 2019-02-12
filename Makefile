@@ -35,7 +35,6 @@ OBJ =\
 	libkeccak_state_initialise.o\
 	libkeccak_state_marshal.o\
 	libkeccak_state_unmarshal.o\
-	libkeccak_state_unmarshal_skip.o\
 	libkeccak_state_wipe.o\
 	libkeccak_state_wipe_message.o\
 	libkeccak_state_wipe_sponge.o\
@@ -68,11 +67,9 @@ MAN3 =\
 	libkeccak_hmac_free.3\
 	libkeccak_hmac_initialise.3\
 	libkeccak_hmac_marshal.3\
-	libkeccak_hmac_marshal_size.3\
 	libkeccak_hmac_reset.3\
 	libkeccak_hmac_set_key.3\
 	libkeccak_hmac_unmarshal.3\
-	libkeccak_hmac_unmarshal_skip.3\
 	libkeccak_hmac_update.3\
 	libkeccak_hmac_wipe.3\
 	libkeccak_keccaksum_fd.3\
@@ -94,10 +91,8 @@ MAN3 =\
 	libkeccak_state_free.3\
 	libkeccak_state_initialise.3\
 	libkeccak_state_marshal.3\
-	libkeccak_state_marshal_size.3\
 	libkeccak_state_reset.3\
 	libkeccak_state_unmarshal.3\
-	libkeccak_state_unmarshal_skip.3\
 	libkeccak_state_wipe.3\
 	libkeccak_state_wipe_message.3\
 	libkeccak_state_wipe_sponge.3\

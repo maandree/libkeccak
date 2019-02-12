@@ -8,7 +8,7 @@
 
 
 /**
- * Test functions in <libkeccak/hex.h>
+ * Test hexdecimal-coding functions
  * 
  * @return  Zero on success, -1 on error
  */
@@ -62,7 +62,7 @@ test_hex(void)
 
 
 /**
- * Test functions in <libkeccak/state.h>
+ * Test state functions
  * 
  * @param   spec  The specifications for the state
  * @return        Zero on success, -1 on error
@@ -96,7 +96,7 @@ test_state(struct libkeccak_spec *restrict spec)
 		return -1;
 	}
 
-	marshal_size = libkeccak_state_marshal_size(state2);
+	marshal_size = libkeccak_state_marshal(state2, NULL);
 	marshalled_data = malloc(marshal_size);
 	if (!marshalled_data) {
 		perror("malloc");
@@ -126,8 +126,8 @@ test_state(struct libkeccak_spec *restrict spec)
 		return -1;
 	}
 
-	if (libkeccak_state_unmarshal_skip(marshalled_data) != marshal_size) {
-		printf("libkeccak_state_unmarshal_skip returned an unexpected value.\n");
+	if (libkeccak_state_unmarshal(NULL, marshalled_data) != marshal_size) {
+		printf("libkeccak_state_unmarshal(NULL, .) returned an unexpected value.\n");
 		return -1;
 	}
 

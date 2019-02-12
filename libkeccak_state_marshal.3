@@ -18,11 +18,11 @@ function marshals
 into the beginning of
 .IR data .
 .PP
-Use the
-.BR libkeccak_state_marshal_size (3)
-function to get minimum usable allocation size
-for
-.IR data .
+Specific
+.I NULL
+as
+.I data
+to get minimum usable allocation size for
 .SH RETURN VALUES
 The
 .BR libkeccak_state_marshal ()
@@ -33,6 +33,4 @@ The
 .BR libkeccak_state_marshal ()
 function cannot fail.
 .SH SEE ALSO
-.BR libkeccak_state_marshal_size (3),
-.BR libkeccak_state_unmarshal (3),
-.BR libkeccak_state_unmarshal_skip (3)
+.BR libkeccak_state_unmarshal (3)

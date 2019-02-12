@@ -17,17 +17,30 @@ function unmarshals an HMAC-hashing state from the beginning of
 .IR data .
 and stores it in
 .IR *state .
+.I state
+may be
+.IR NULL .
 .SH RETURN VALUES
 The
 .BR libkeccak_hmac_unmarshal ()
 returns the number of bytes reads from
-.IR data .
+.I data
+upon successful completion.
+On error, -1 is returned and
+.I errno
+is set to describe the error.
+If
+.I state
+is
+.IR NULL ,
+the number the function will always be
+successful and return a positive value,
+this value is the number of bytes that
+make un the marshalled state.
 .SH ERRORS
 The
 .BR libkeccak_hmac_unmarshal ()
 function may fail for any specified for the function
 .BR malloc (3).
 .SH SEE ALSO
-.BR libkeccak_hmac_marshal_size (3),
-.BR libkeccak_hmac_marshal (3),
-.BR libkeccak_hmac_unmarshal_skip (3)
+.BR libkeccak_hmac_marshal (3)

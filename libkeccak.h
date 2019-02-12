@@ -528,48 +528,25 @@ libkeccak_state_duplicate(const struct libkeccak_state *restrict src)
 }
 
 /**
- * Calculates the allocation size required for the second argument
- * of `libkeccak_state_marshal` (`char* restrict data)`)
- * 
- * @param   state  The state as it will be marshalled by a subsequent call to `libkeccak_state_marshal`
- * @return         The allocation size needed for the buffer to which the state will be marshalled
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __unused__, __warn_unused_result__, __pure__)))
-static inline size_t
-libkeccak_state_marshal_size(const struct libkeccak_state *restrict state)
-{
-	return sizeof(struct libkeccak_state) - sizeof(char *) + state->mptr * sizeof(char);
-}
-
-/**
  * Marshal a `struct libkeccak_state` into a buffer
  * 
  * @param   state  The state to marshal
- * @param   data   The output buffer
+ * @param   data   The output buffer, can be `NULL`
  * @return         The number of bytes stored to `data`
  */
-LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__, __nothrow__)))
+LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__(1), __nothrow__)))
 size_t libkeccak_state_marshal(const struct libkeccak_state *restrict, void *restrict);
 
 /**
  * Unmarshal a `struct libkeccak_state` from a buffer
  * 
- * @param   state  The slot for the unmarshalled state, must not be initialised (memory leak otherwise)
+ * @param   state  The slot for the unmarshalled state, must not be
+ *                 initialised (memory leak otherwise), can be `NULL`
  * @param   data   The input buffer
  * @return         The number of bytes read from `data`, 0 on error
  */
-LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__)))
+LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__(2))))
 size_t libkeccak_state_unmarshal(struct libkeccak_state *restrict, const void *restrict);
-
-/**
- * Gets the number of bytes the `struct libkeccak_state` stored
- * at the beginning of `data` occupies
- * 
- * @param   data  The data buffer
- * @return        The byte size of the stored state
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__, __nothrow__, __warn_unused_result__, __pure__)))
-size_t libkeccak_state_unmarshal_skip(const void *restrict);
 
 /**
  * Absorb more of the message to the Keccak sponge
@@ -1018,69 +995,40 @@ libkeccak_hmac_duplicate(const struct libkeccak_hmac_state *restrict src)
 }
 
 /**
- * Calculates the allocation size required for the second argument
- * of `libkeccak_hmac_marshal` (`char* restrict data)`)
- * 
- * @param   state  The state as it will be marshalled by a subsequent call to `libkeccak_hamc_marshal`
- * @return         The allocation size needed for the buffer to which the state will be marshalled
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __unused__, __warn_unused_result__, __pure__)))
-static inline size_t
-libkeccak_hmac_marshal_size(const struct libkeccak_hmac_state *restrict state)
-{
-	return libkeccak_state_marshal_size(&state->sponge) + sizeof(size_t) +
-	       ((state->key_length + 7) >> 3) + 2 * sizeof(char);
-}
-
-/**
  * Marshal a `struct libkeccak_hmac_state` into a buffer
  * 
  * @param   state  The state to marshal
- * @param   data   The output buffer
+ * @param   data   The output buffer, can be `NULL`
  * @return         The number of bytes stored to `data`
  */
-LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
+LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__(1), __nothrow__)))
 static inline size_t
 libkeccak_hmac_marshal(const struct libkeccak_hmac_state *restrict state, void *restrict data_)
 {
 	unsigned char *restrict data = data_;
-	size_t written = libkeccak_state_marshal(&state->sponge, data);
-	data += written / sizeof(char);
-	*(size_t *)data = state->key_length;
-	data += sizeof(size_t) / sizeof(char);
-	memcpy(data, state->key_opad, (state->key_length + 7) >> 3);
-	data += ((state->key_length + 7) >> 3) / sizeof(char);
-	data[0] = (unsigned char)!!state->key_ipad;
-	data[1] = state->leftover;
+	size_t written = libkeccak_state_marshal(state ? &state->sponge : NULL, data);
+	if (data) {
+		data += written / sizeof(char);
+		*(size_t *)data = state->key_length;
+		data += sizeof(size_t) / sizeof(char);
+		memcpy(data, state->key_opad, (state->key_length + 7) >> 3);
+		data += ((state->key_length + 7) >> 3) / sizeof(char);
+		data[0] = (unsigned char)!!state->key_ipad;
+		data[1] = state->leftover;
+	}
 	return written + sizeof(size_t) + ((state->key_length + 7) >> 3) + 2 * sizeof(char);
 }
 
 /**
  * Unmarshal a `struct libkeccak_hmac_state` from a buffer
  * 
- * @param   state  The slot for the unmarshalled state, must not be initialised (memory leak otherwise)
+ * @param   state  The slot for the unmarshalled state, must not be
+ *                 initialised (memory leak otherwise), can be `NULL`
  * @param   data   The input buffer
  * @return         The number of bytes read from `data`, 0 on error
  */
-LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__)))
+LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__(2))))
 size_t libkeccak_hmac_unmarshal(struct libkeccak_hmac_state *restrict, const void *restrict);
-
-/**
- * Gets the number of bytes the `struct libkeccak_hmac_state` stored
- * at the beginning of `data` occupies
- * 
- * @param   data  The data buffer
- * @return        The byte size of the stored state
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __warn_unused_result__, __pure__)))
-static inline size_t
-libkeccak_hmac_unmarshal_skip(const void *restrict data_)
-{
-	const char *restrict data = data_;
-	size_t skip = libkeccak_state_unmarshal_skip(data);
-	data += skip / sizeof(char);
-	return skip + sizeof(size_t) + *(const size_t *)data + 2 * sizeof(char);
-}
 
 /**
  * Absorb more, or the first part, of the message

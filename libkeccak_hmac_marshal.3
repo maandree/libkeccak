@@ -18,10 +18,11 @@ function marshals
 into the beginning of
 .IR data .
 .PP
-Use the
-.BR libkeccak_hmac_marshal_size (3)
-function to get minimum usable allocation size
-for
+Specific
+.I NULL
+as
+.I data
+to get minimum usable allocation size for
 .IR data .
 .SH RETURN VALUES
 The
@@ -33,6 +34,4 @@ The
 .BR libkeccak_hmac_marshal ()
 function cannot fail.
 .SH SEE ALSO
-.BR libkeccak_hmac_marshal_size (3),
-.BR libkeccak_hmac_unmarshal (3),
-.BR libkeccak_hmac_unmarshal_skip (3)
+.BR libkeccak_hmac_unmarshal (3)
