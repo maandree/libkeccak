@@ -4,12 +4,12 @@
 
 #include <sys/stat.h>
 #if defined(__GLIBC__) || defined(__sun) || defined(__CYGWIN__)
-#include <alloca.h>
+# include <alloca.h>
 #elif defined(_WIN32)
-#include <malloc.h>
-#if !defined(alloca)
-#define alloca _alloca  // for clang with MS Codegen
-#endif
+# include <malloc.h>
+# if !defined(alloca)
+#  define alloca _alloca  /* For clang with MS Codegen */
+# endif
 #endif
 #include <errno.h>
 #include <unistd.h>
