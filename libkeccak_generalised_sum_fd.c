@@ -19,16 +19,20 @@ libkeccak_generalised_sum_fd(int fd, struct libkeccak_state *restrict state, con
                              const char *restrict suffix, void *restrict hashsum)
 {
 	ssize_t got;
+#ifndef _WIN32
 	struct stat attr;
+#endif
 	size_t blksize = 4096;
 	void *restrict chunk;
 
 	if (libkeccak_state_initialise(state, spec) < 0)
 		return -1;
 
+#ifndef _WIN32
 	if (fstat(fd, &attr) == 0)
 		if (attr.st_blksize > 0)
 			blksize = (size_t)attr.st_blksize;
+#endif
   
 	chunk = alloca(blksize);
 
