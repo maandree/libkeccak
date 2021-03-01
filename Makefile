@@ -1,4 +1,4 @@
-.NONPOSIX:
+.POSIX:
 
 # If possible, use CONFIGFILE=optimised.mk
 CONFIGFILE = config.mk
@@ -110,21 +110,22 @@ $(OBJ): $(HDR)
 	$(CC) -fPIC -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
 
 libkeccak.$(LIBEXT): $(OBJ)
-	$(CC) $(LIBFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CC) $(LIBFLAGS) -o $@ $(OBJ) $(LDFLAGS)
 
 libkeccak.a: $(OBJ)
-	$(AR) rc $@ $?
+	-rm -f -- $@
+	$(AR) rc $@ $(OBJ)
 	$(AR) -s $@
 
 
 test: test.o libkeccak.a
-	$(CC) $(FLAGS) -o $@ $^ $(LDFLAGS)
+	$(CC) $(FLAGS) -o $@ test.o libkeccak.a $(LDFLAGS)
 
 test.o: test.c $(HDR)
 	$(CC) $(FLAGS) -O3 -c -o $@ test.c $(CFLAGS) $(CPPFLAGS)
 
 benchmark: benchmark.o libkeccak.a
-	$(CC) $(FLAGS) -o $@ $^ $(LDFLAGS)
+	$(CC) $(FLAGS) -o $@ benchmark.o libkeccak.a $(LDFLAGS)
 
 benchmark.o: benchmark.c $(HDR)
 	$(CC) $(FLAGS) -O3 -c -o $@ benchmark.c $(CFLAGS) $(CPPFLAGS)
