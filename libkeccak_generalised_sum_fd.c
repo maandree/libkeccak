@@ -33,8 +33,16 @@ libkeccak_generalised_sum_fd(int fd, struct libkeccak_state *restrict state, con
 		if (attr.st_blksize > 0)
 			blksize = (size_t)attr.st_blksize;
 #endif
-  
+
+#if ALLOCA_LIMIT > 0
+	if (blksize > (size_t)ALLOCA_LIMIT)
+		blksize = (size_t)ALLOCA_LIMIT;
 	chunk = alloca(blksize);
+#else
+	chunk = malloc(blksize);
+	if (!chunk)
+		return -1;
+#endif
 
 	for (;;) {
 		got = read(fd, chunk, blksize);
@@ -43,11 +51,17 @@ libkeccak_generalised_sum_fd(int fd, struct libkeccak_state *restrict state, con
 				break;
 			if (errno == EINTR)
 				continue;
-			return -1;
+			goto fail;
 		}
 		if (libkeccak_fast_update(state, chunk, (size_t)got) < 0)
-			return -1;
+			goto fail;
 	}
 
 	return libkeccak_fast_digest(state, NULL, 0, 0, suffix, hashsum);
+
+fail:
+#if ALLOCA_LIMIT <= 0
+	free(chunk);
+#endif
+	return -1;
 }

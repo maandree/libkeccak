@@ -2,13 +2,20 @@
 #include "libkeccak.h"
 
 
+#ifndef ALLOCA_LIMIT
+# define ALLOCA_LIMIT (16UL << 10)
+#endif
+
+
 #include <sys/stat.h>
-#if defined(__GLIBC__) || defined(__sun) || defined(__CYGWIN__)
-# include <alloca.h>
-#elif defined(_WIN32)
-# include <malloc.h>
-# if !defined(alloca)
-#  define alloca _alloca  /* For clang with MS Codegen */
+#if ALLOCA_LIMIT > 0
+# if defined(__GLIBC__) || defined(__sun) || defined(__CYGWIN__)
+#  include <alloca.h>
+# elif defined(_WIN32)
+#  include <malloc.h>
+#  if !defined(alloca)
+#   define alloca _alloca  /* For clang with MS Codegen */
+#  endif
 # endif
 #endif
 #include <errno.h>
