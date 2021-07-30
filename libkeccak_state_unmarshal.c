@@ -13,10 +13,10 @@
 size_t
 libkeccak_state_unmarshal(struct libkeccak_state *restrict state, const void *restrict data_)
 {
-#define get(type, var) state->var = *((const type *)data), data += sizeof(type) / sizeof(char)
+#define get(type, var) state->var = *((const type *)data), data += sizeof(type)
 	const unsigned char *restrict data = data_;
 	if (!state) {
-		data += (7 * sizeof(long int) + 26 * sizeof(int64_t)) / sizeof(char);
+		data += (7 * sizeof(long int) + 26 * sizeof(int64_t));
 		return sizeof(struct libkeccak_state) - sizeof(char *) + *(const size_t *)data * sizeof(char);
 	}
 	get(long int, r);
@@ -28,7 +28,7 @@ libkeccak_state_unmarshal(struct libkeccak_state *restrict state, const void *re
 	get(long int, l);
 	get(long int, nr);
 	memcpy(state->S, data, sizeof(state->S));
-	data += sizeof(state->S) / sizeof(char);
+	data += sizeof(state->S);
 	get(size_t, mptr);
 	get(size_t, mlen);
 	state->M = malloc(state->mptr * sizeof(char));

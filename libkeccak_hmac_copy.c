@@ -29,7 +29,7 @@ libkeccak_hmac_copy(struct libkeccak_hmac_state *restrict dest, const struct lib
 		libkeccak_state_destroy(&dest->sponge);
 		return -1;
 	}
-	dest->key_ipad = dest->key_opad + size / sizeof(char);
+	dest->key_ipad = dest->key_opad + size;
 
 	memcpy(dest->key_opad, src->key_opad, size);
 	memcpy(dest->key_ipad, src->key_ipad, size);

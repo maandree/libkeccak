@@ -25,7 +25,7 @@ libkeccak_hmac_set_key(struct libkeccak_hmac_state *restrict state, const void *
 		state->key_opad = realloc(old = state->key_opad, 2 * size);
 		if (!state->key_opad)
 			return state->key_opad = old, -1;
-		state->key_ipad = state->key_opad + size / sizeof(char);
+		state->key_ipad = state->key_opad + size;
 	}
 
 	memcpy(state->key_opad, key, key_bytes);
@@ -33,7 +33,7 @@ libkeccak_hmac_set_key(struct libkeccak_hmac_state *restrict state, const void *
 		state->key_opad[(key_bytes >> 3) - 1] &= (unsigned char)((1 << (key_length & 7)) - 1);
 
 	if ((size_t)(state->sponge.r) > key_length)
-		__builtin_memset(state->key_opad + key_bytes / sizeof(char), 0, size - key_bytes);
+		__builtin_memset(state->key_opad + key_bytes, 0, size - key_bytes);
 
 	for (i = 0; i < size; i++) {
 		state->key_ipad[i] = state->key_opad[i] ^ HMAC_INNER_PAD;

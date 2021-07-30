@@ -808,7 +808,7 @@ struct libkeccak_hmac_state {
 	 */
 	unsigned char leftover;
 
-	char __pad[sizeof(void *) / sizeof(char) - 1];
+	char __pad[sizeof(void *) - 1];
 };
 
 
@@ -1008,11 +1008,11 @@ libkeccak_hmac_marshal(const struct libkeccak_hmac_state *restrict state, void *
 	unsigned char *restrict data = data_;
 	size_t written = libkeccak_state_marshal(&state->sponge, data);
 	if (data) {
-		data += written / sizeof(char);
+		data += written;
 		*(size_t *)data = state->key_length;
-		data += sizeof(size_t) / sizeof(char);
+		data += sizeof(size_t);
 		memcpy(data, state->key_opad, (state->key_length + 7) >> 3);
-		data += ((state->key_length + 7) >> 3) / sizeof(char);
+		data += (state->key_length + 7) >> 3;
 		data[0] = (unsigned char)!!state->key_ipad;
 		data[1] = state->leftover;
 	}
