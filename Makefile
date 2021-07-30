@@ -22,18 +22,42 @@ OBJ =\
 	libkeccak_behex_lower.o\
 	libkeccak_behex_upper.o\
 	libkeccak_degeneralise_spec.o\
+	libkeccak_generalised_spec_initialise.o\
 	libkeccak_generalised_sum_fd.o\
 	libkeccak_hmac_copy.o\
+	libkeccak_hmac_create.o\
+	libkeccak_hmac_destroy.o\
 	libkeccak_hmac_digest.o\
+	libkeccak_hmac_duplicate.o\
+	libkeccak_hmac_fast_destroy.o\
 	libkeccak_hmac_fast_digest.o\
+	libkeccak_hmac_fast_free.o\
 	libkeccak_hmac_fast_update.o\
+	libkeccak_hmac_free.o\
+	libkeccak_hmac_initialise.o\
+	libkeccak_hmac_marshal.o\
+	libkeccak_hmac_reset.o\
 	libkeccak_hmac_set_key.o\
 	libkeccak_hmac_unmarshal.o\
 	libkeccak_hmac_update.o\
 	libkeccak_hmac_wipe.o\
+	libkeccak_keccaksum_fd.o\
+	libkeccak_rawshakesum_fd.o\
+	libkeccak_sha3sum_fd.o\
+	libkeccak_shakesum_fd.o\
+	libkeccak_spec_check.o\
+	libkeccak_spec_rawshake.o\
+	libkeccak_spec_sha3.o\
 	libkeccak_state_copy.o\
+	libkeccak_state_create.o\
+	libkeccak_state_destroy.o\
+	libkeccak_state_duplicate.o\
+	libkeccak_state_fast_destroy.o\
+	libkeccak_state_fast_free.o\
+	libkeccak_state_free.o\
 	libkeccak_state_initialise.o\
 	libkeccak_state_marshal.o\
+	libkeccak_state_reset.o\
 	libkeccak_state_unmarshal.o\
 	libkeccak_state_wipe.o\
 	libkeccak_state_wipe_message.o\

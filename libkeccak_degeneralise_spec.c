@@ -24,8 +24,7 @@
  * @return               Zero if `spec` is valid, a `LIBKECCAK_GENERALISED_SPEC_ERROR_*` if an error was found
  */
 int
-libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict spec,
-                            struct libkeccak_spec *restrict output_spec)
+libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict spec, struct libkeccak_spec *restrict output_spec)
 {
 	long int state_size, word_size, capacity, bitrate, output;
 	const int have_state_size = spec->state_size != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
