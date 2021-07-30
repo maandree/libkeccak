@@ -84,7 +84,7 @@ libkeccak_f_round(register struct libkeccak_state *restrict state, register int_
 
 	/* θ step (step 1 of 3). */
 #define X(N) C[N] = A[N * 5] ^ A[N * 5 + 1] ^ A[N * 5 + 2] ^ A[N * 5 + 3] ^ A[N * 5 + 4];
-	LIST_5;
+	LIST_5
 #undef X
 
 	/* θ step (step 2 of 3). */
@@ -105,7 +105,7 @@ libkeccak_f_round(register struct libkeccak_state *restrict state, register int_
 
 	/* ξ step. */
 #define X(N) A[N] = B[N] ^ ((~(B[(N + 5) % 25])) & B[(N + 10) % 25]);
-	LIST_25;
+	LIST_25
 #undef X
 
 	/* ι step. */
@@ -130,7 +130,7 @@ libkeccak_f_round64(register struct libkeccak_state *restrict state, register in
 
 	/* θ step (step 1 of 3). */
 #define X(N) C[N] = A[N * 5] ^ A[N * 5 + 1] ^ A[N * 5 + 2] ^ A[N * 5 + 3] ^ A[N * 5 + 4];
-	LIST_5;
+	LIST_5
 #undef X
 
 	/* θ step (step 2 of 3). */
@@ -151,7 +151,7 @@ libkeccak_f_round64(register struct libkeccak_state *restrict state, register in
 
 	/* ξ step. */
 #define X(N) A[N] = B[N] ^ ((~(B[(N + 5) % 25])) & B[(N + 10) % 25]);
-	LIST_25;
+	LIST_25
 #undef X
 
 	/* ι step. */
@@ -225,7 +225,7 @@ libkeccak_to_lane64(register const unsigned char *restrict message, register siz
 	message += off;
 #define X(N) if (__builtin_expect(N < n, 1)) rc |= (int_fast64_t)(unsigned char)(message[N]) << (N * 8);\
              else  return rc;
-	LIST_8;
+	LIST_8
 #undef X
 	return rc;
 }
@@ -280,7 +280,7 @@ libkeccak_absorption_phase(register struct libkeccak_state *restrict state, regi
 	if (__builtin_expect(ww >= 8, 1)) { /* ww > 8 is impossible, it is just for optimisation possibilities. */
 		while (n--) {
 #define X(N) state->S[N] ^= libkeccak_to_lane64(message, len, rr, (size_t)(LANE_TRANSPOSE_MAP[N] * 8));
-			LIST_25;
+			LIST_25
 #undef X
 			libkeccak_f(state);
 			message += (size_t)rr;
@@ -289,7 +289,7 @@ libkeccak_absorption_phase(register struct libkeccak_state *restrict state, regi
 	} else {
 		while (n--) {
 #define X(N) state->S[N] ^= libkeccak_to_lane(message, len, rr, ww, (size_t)(LANE_TRANSPOSE_MAP[N] * ww));
-			LIST_25;
+			LIST_25
 #undef X
 			libkeccak_f(state);
 			message += (size_t)rr;
@@ -324,7 +324,8 @@ libkeccak_squeezing_phase(register struct libkeccak_state *restrict state, long 
 			for (k = 0; k++ < ww && j++ < nn; v >>= 8)
 				*hashsum++ = (unsigned char)v;
 		}
-		if (olen -= state->r, olen > 0)
+		olen -= state->r;
+		if (olen > 0)
 			libkeccak_f(state);
 	}
 	if (state->n & 7)
@@ -350,8 +351,10 @@ libkeccak_fast_update(struct libkeccak_state *restrict state, const void *restri
 	if (__builtin_expect(state->mptr + msglen > state->mlen, 0)) {
 		state->mlen += msglen;
 		new = realloc(state->M, state->mlen * sizeof(char));
-		if (!new)
-			return state->mlen -= msglen, -1;
+		if (!new) {
+			state->mlen -= msglen;
+			return -1;
+		}
 		state->M = new;
 	}
 
@@ -386,8 +389,10 @@ libkeccak_update(struct libkeccak_state *restrict state, const void *restrict ms
 	if (__builtin_expect(state->mptr + msglen > state->mlen, 0)) {
 		state->mlen += msglen;
 		new = malloc(state->mlen * sizeof(char));
-		if (!new)
-			return state->mlen -= msglen, -1;
+		if (!new) {
+			state->mlen -= msglen;
+			return -1;
+		}
 		libkeccak_state_wipe_message(state);
 		free(state->M);
 		state->M = new;
@@ -411,7 +416,7 @@ libkeccak_update(struct libkeccak_state *restrict state, const void *restrict ms
  * without wiping sensitive data when possible
  * 
  * @param   state    The hashing state
- * @param   msg      The rest of the message, may be `NULL`
+ * @param   msg_     The rest of the message, may be `NULL`
  * @param   msglen   The length of the partial message
  * @param   bits     The number of bits at the end of the message not covered by `msglen`
  * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
@@ -429,17 +434,22 @@ libkeccak_fast_digest(struct libkeccak_state *restrict state, const void *restri
 	register size_t ext;
 	register long int i;
 
-	if (!msg)
-		msglen = bits = 0;
-	else
-		msglen += bits >> 3, bits &= 7;
+	if (!msg) {
+		msglen = 0;
+		bits = 0;
+	} else {
+		msglen += bits >> 3;
+		bits &= 7;
+	}
 
 	ext = msglen + ((bits + suffix_len + 7) >> 3) + (size_t)rr;
 	if (__builtin_expect(state->mptr + ext > state->mlen, 0)) {
 		state->mlen += ext;
 		new = realloc(state->M, state->mlen * sizeof(char));
-		if (!new)
-			return state->mlen -= ext, -1;
+		if (!new) {
+			state->mlen -= ext;
+			return -1;
+		}
 		state->M = new;
 	}
 
@@ -454,8 +464,10 @@ libkeccak_fast_digest(struct libkeccak_state *restrict state, const void *restri
 			state->M[state->mptr] = 0;
 		while (suffix_len--) {
 			state->M[state->mptr] |= (unsigned char)((*suffix++ & 1) << bits++);
-			if (bits == 8)
-				bits = 0, state->M[++(state->mptr)] = 0;
+			if (bits == 8) {
+				bits = 0;
+				state->M[++(state->mptr)] = 0;
+			}
 		}
 	}
 	if (bits)
@@ -480,7 +492,7 @@ libkeccak_fast_digest(struct libkeccak_state *restrict state, const void *restri
  * and wipe sensitive data when possible
  * 
  * @param   state    The hashing state
- * @param   msg      The rest of the message, may be `NULL`
+ * @param   msg_     The rest of the message, may be `NULL`
  * @param   msglen   The length of the partial message
  * @param   bits     The number of bits at the end of the message not covered by `msglen`
  * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
@@ -498,17 +510,22 @@ libkeccak_digest(struct libkeccak_state *restrict state, const void *restrict ms
 	register size_t ext;
 	register long int i;
 
-	if (!msg)
-		msglen = bits = 0;
-	else
-		msglen += bits >> 3, bits &= 7;
+	if (!msg) {
+		msglen = 0;
+		bits = 0;
+	} else {
+		msglen += bits >> 3;
+		bits &= 7;
+	}
 
 	ext = msglen + ((bits + suffix_len + 7) >> 3) + (size_t)rr;
 	if (__builtin_expect(state->mptr + ext > state->mlen, 0)) {
 		state->mlen += ext;
 		new = malloc(state->mlen * sizeof(char));
-		if (!new)
-			return state->mlen -= ext, -1;
+		if (!new) {
+			state->mlen -= ext;
+			return -1;
+		}
 		libkeccak_state_wipe_message(state);
 		free(state->M);
 		state->M = new;
@@ -525,8 +542,10 @@ libkeccak_digest(struct libkeccak_state *restrict state, const void *restrict ms
 			state->M[state->mptr] = 0;
 		while (suffix_len--) {
 			state->M[state->mptr] |= (unsigned char)((*suffix++ & 1) << bits++);
-			if (bits == 8)
-				bits = 0, state->M[++(state->mptr)] = 0;
+			if (bits == 8) {
+				bits = 0;
+				state->M[++(state->mptr)] = 0;
+			}
 		}
 	}
 	if (bits)

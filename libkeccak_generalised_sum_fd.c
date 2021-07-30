@@ -37,7 +37,16 @@ libkeccak_generalised_sum_fd(int fd, struct libkeccak_state *restrict state, con
 #if ALLOCA_LIMIT > 0
 	if (blksize > (size_t)ALLOCA_LIMIT)
 		blksize = (size_t)ALLOCA_LIMIT;
+# if defined(__clang__)
+	/* We are using a limit so it's just like declaring an array
+	 * in a function, except we might use less of the stack. */
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Walloca"
+# endif
 	chunk = alloca(blksize);
+# if defined(__clang__)
+#  pragma clang diagnostic pop
+# endif
 #else
 	chunk = malloc(blksize);
 	if (!chunk)

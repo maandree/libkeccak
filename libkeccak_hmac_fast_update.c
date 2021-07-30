@@ -7,7 +7,7 @@
  * without wiping sensitive data when possible
  * 
  * @param   state   The hashing state
- * @param   msg     The partial message
+ * @param   msg_    The partial message
  * @param   msglen  The length of the partial message, in bytes
  * @return          Zero on success, -1 on error
  */
@@ -35,8 +35,10 @@ libkeccak_hmac_fast_update(struct libkeccak_hmac_state *restrict state, const vo
 
 	if (msglen != state->buffer_size) {
 		state->buffer = realloc(old = state->buffer, msglen);
-		if (!state->buffer)
-			return state->buffer = old, -1;
+		if (!state->buffer) {
+			state->buffer = old;
+			return -1;
+		}
 		state->buffer_size = msglen;
 	}
 

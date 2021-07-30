@@ -5,9 +5,9 @@
 /**
  * Convert a binary hashsum to upper case hexadecimal representation
  * 
- * @param  output   Output array, should have an allocation size of at least `2 * n + 1`
- * @param  hashsum  The hashsum to convert
- * @param  n        The size of `hashsum`
+ * @param  output    Output array, should have an allocation size of at least `2 * n + 1`
+ * @param  hashsum_  The hashsum to convert
+ * @param  n         The size of `hashsum`
  */
 void
 libkeccak_behex_upper(char *restrict output, const void *restrict hashsum_, size_t n)

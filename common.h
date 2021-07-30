@@ -44,9 +44,18 @@
 
 #ifdef NEED_EXPLICIT_BZERO
 static void *(*volatile my_explicit_memset)(void *, int, size_t) = memset;
-static __attribute__((__optimize__("-O0"))) void
+
+# if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wunknown-attributes"
+# endif
+__attribute__((__optimize__("-O0")))
+static void
 my_explicit_bzero(void *ptr, size_t size)
 {
 	(*my_explicit_memset)(ptr, 0, size);
 }
+# if defined(__clang__)
+#  pragma clang diagnostic pop
+# endif
 #endif

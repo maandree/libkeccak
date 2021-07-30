@@ -7,7 +7,7 @@
  * 
  * @param   state  The slot for the unmarshalled state, must not be
  *                 initialised (memory leak otherwise), can be `NULL`
- * @param   data   The input buffer
+ * @param   data_  The input buffer
  * @return         The number of bytes read from `data`, 0 on error
  */
 size_t

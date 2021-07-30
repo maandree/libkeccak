@@ -23,8 +23,10 @@ libkeccak_hmac_set_key(struct libkeccak_hmac_state *restrict state, const void *
 
 	if (size != key_bytes) {
 		state->key_opad = realloc(old = state->key_opad, 2 * size);
-		if (!state->key_opad)
-			return state->key_opad = old, -1;
+		if (!state->key_opad) {
+			state->key_opad = old;
+			return -1;
+		}
 		state->key_ipad = state->key_opad + size;
 	}
 

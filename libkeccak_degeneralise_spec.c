@@ -2,7 +2,10 @@
 #include "common.h"
 
 
-#ifdef __GNUC__
+#if defined(__clang__)
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wconditional-uninitialized"
+#elif defined(__GNUC__)
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #endif
@@ -50,8 +53,10 @@ libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict spec,
 			return LIBKECCAK_GENERALISED_SPEC_ERROR_WORD_TOO_LARGE;		
 		if (have_state_size && state_size != word_size * 25)
 			return LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_WORD_INCOHERENCY;
-		else if (!have_state_size)
-			spec->state_size = 1, state_size = word_size * 25;
+		else if (!have_state_size) {
+			spec->state_size = 1;
+			state_size = word_size * 25;
+		}
 	}
 
 	if (have_capacity) {
@@ -112,6 +117,8 @@ libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict spec,
 
 #undef deft
 
-#ifdef __GNUC__
+#if defined(__clang__)
+# pragma clang diagnostic pop
+#elif defined(__GNUC__)
 # pragma GCC diagnostic pop
 #endif

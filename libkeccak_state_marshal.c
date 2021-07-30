@@ -2,11 +2,16 @@
 #include "common.h"
 
 
+#if defined(__clang__)
+# pragma clang diagnostic ignored "-Wcast-align"
+#endif
+
+
 /**
  * Marshal a `struct libkeccak_state` into a buffer
  * 
  * @param   state  The state to marshal
- * @param   data   The output buffer, can be `NULL`
+ * @param   data_  The output buffer, can be `NULL`
  * @return         The number of bytes stored to `data`
  */
 size_t

@@ -6,7 +6,7 @@
  * Convert a hexadecimal hashsum (both lower case, upper
  * case and mixed is supported) to binary representation
  * 
- * @param  output   Output array, should have an allocation size of at least `strlen(hashsum) / 2`
+ * @param  output_  Output array, should have an allocation size of at least `strlen(hashsum) / 2`
  * @param  hashsum  The hashsum to convert
  */
 void

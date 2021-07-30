@@ -9,6 +9,14 @@
 #include <string.h>
 
 
+#if defined(__clang__)
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wdocumentation"
+# pragma clang diagnostic ignored "-Wunknown-attributes"
+#endif
+
+
+
 /**
  * Only include some C code if compiling with GCC.
  * 
@@ -988,9 +996,11 @@ LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __unused__, __warn_unused_result_
 static inline struct libkeccak_hmac_state *
 libkeccak_hmac_duplicate(const struct libkeccak_hmac_state *restrict src)
 {
-	struct libkeccak_hmac_state* restrict dest = malloc(sizeof(struct libkeccak_hmac_state));
-	if (!dest || libkeccak_hmac_copy(dest, src))
-		return libkeccak_hmac_free(dest), NULL;
+	struct libkeccak_hmac_state *restrict dest = malloc(sizeof(struct libkeccak_hmac_state));
+	if (!dest || libkeccak_hmac_copy(dest, src)) {
+		libkeccak_hmac_free(dest);
+		return NULL;
+	}
 	return dest;
 }
 
@@ -1093,5 +1103,9 @@ int libkeccak_hmac_digest(struct libkeccak_hmac_state *restrict state, const voi
 
 #include "libkeccak-legacy.h"
 
+
+#if defined(__clang__)
+# pragma clang diagnostic pop
+#endif
 
 #endif

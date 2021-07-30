@@ -8,7 +8,7 @@
  * and wipe sensitive data when possible
  * 
  * @param   state   The hashing state
- * @param   msg     The partial message
+ * @param   msg_    The partial message
  * @param   msglen  The length of the partial message, in bytes
  * @return          Zero on success, -1 on error
  */

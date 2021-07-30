@@ -177,8 +177,10 @@ test_digest_case(const struct libkeccak_spec *restrict spec, const char *restric
 		return -1;
 	}
 
-	if (libkeccak_digest(&state, msg, strlen(msg) - !!bits, (size_t)bits, suffix, hashsum))
-		return perror("libkeccak_digest"), -1;
+	if (libkeccak_digest(&state, msg, strlen(msg) - !!bits, (size_t)bits, suffix, hashsum)) {
+		perror("libkeccak_digest");
+		return -1;
+	}
 	libkeccak_state_fast_destroy(&state);
 
 	libkeccak_behex_lower(hexsum, hashsum, (size_t)((spec->output + 7) / 8));
@@ -649,6 +651,11 @@ test_squeeze(void)
 		return -1;
 	}
 
+# if defined(__clang__)
+#  pragma clang diagnostic push
+#  pragma clang diagnostic ignored "-Wcomma"
+# endif
+
 	printf("Testing squeeze functions with slow initial digest:\n");
 	printf("  1 extra squeeze,  including 0 fast squeezes: "), run_test(0, 1, 0);
 	printf("  2 extra squeezes, including 0 fast squeezes: "), run_test(0, 2, 0);
@@ -674,6 +681,10 @@ test_squeeze(void)
 	printf("  4 extra squeezes, including 2 fast squeezes: "), run_test(2, 4, 1);
 	printf("  4 extra squeezes, including 3 fast squeezes: "), run_test(3, 4, 1);
 	printf("\n");
+
+# if defined(__clang__)
+#  pragma clang diagnostic pop
+# endif
 
 	libkeccak_state_fast_destroy(&state);
 	free(hashsum);

@@ -9,7 +9,7 @@
  * You may use `&state->sponge` for continued squeezing
  * 
  * @param   state    The hashing state
- * @param   msg      The rest of the message, may be `NULL`, may be modified
+ * @param   msg_     The rest of the message, may be `NULL`, may be modified
  * @param   msglen   The length of the partial message
  * @param   bits     The number of bits at the end of the message not covered by `msglen`
  * @param   suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
