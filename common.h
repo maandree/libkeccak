@@ -9,7 +9,7 @@
 
 #include <sys/stat.h>
 #if ALLOCA_LIMIT > 0
-# if defined(__GLIBC__) || defined(__sun) || defined(__CYGWIN__)
+# if defined(__GLIBC__) || defined(__sun) || defined(__CYGWIN__) || defined(__APPLE__)
 #  include <alloca.h>
 # elif defined(_WIN32)
 #  include <malloc.h>
