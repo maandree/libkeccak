@@ -1006,7 +1006,7 @@ static inline size_t
 libkeccak_hmac_marshal(const struct libkeccak_hmac_state *restrict state, void *restrict data_)
 {
 	unsigned char *restrict data = data_;
-	size_t written = libkeccak_state_marshal(state ? &state->sponge : NULL, data);
+	size_t written = libkeccak_state_marshal(&state->sponge, data);
 	if (data) {
 		data += written / sizeof(char);
 		*(size_t *)data = state->key_length;
