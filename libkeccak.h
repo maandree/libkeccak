@@ -999,7 +999,14 @@ libkeccak_hmac_marshal(const struct libkeccak_hmac_state *restrict state, void *
 	size_t written = libkeccak_state_marshal(&state->sponge, data);
 	if (data) {
 		data += written;
+#if defined(__clang__)
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wcast-align"
+#endif
 		*(size_t *)data = state->key_length;
+#if defined(__clang__)
+# pragma clang diagnostic pop
+#endif
 		data += sizeof(size_t);
 		memcpy(data, state->key_opad, (state->key_length + 7) >> 3);
 		data += (state->key_length + 7) >> 3;

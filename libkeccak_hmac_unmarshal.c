@@ -1,6 +1,10 @@
 /* See LICENSE file for copyright and license details. */
 #include "common.h"
 
+#if defined(__clang__)
+# pragma clang diagnostic ignored "-Wcast-align"
+#endif
+
 
 /**
  * Unmarshal a `struct libkeccak_hmac_state` from a buffer
