@@ -232,51 +232,56 @@ libkeccak_to_lane64(register const unsigned char *restrict message, register siz
 
 
 /**
- * pad 10*1
+ * Right-pad message with a 10*1-pad
  * 
- * @param  state  The hashing state, `state->M` and `state->mptr` will be updated,
- *                `state->M` should have `state->r / 8` bytes left over at the end
- * @param  bits   The number of bits in the end of the message that does not make a whole byte
+ * @param   r       Should be `state->r` where `state` is the hashing state
+ * @param   msg     The message to append padding to; should have `r / 8`
+ *                  extra bytes allocated at the end for the function to
+ *                  write the pad to
+ * @param   msglen  The length of the message to append padding to
+ * @param   bits    The number of bits in the end of the message that does not make a whole byte
+ * @return          The length of the message after padding
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __gnu_inline__)))
-static inline void
-libkeccak_pad10star1(register struct libkeccak_state *restrict state, register size_t bits)
+static inline size_t
+libkeccak_pad10star1(register size_t r, unsigned char *msg, size_t msglen, register size_t bits)
 {
-	register size_t r = (size_t)(state->r);
-	register size_t nrf = state->mptr - !!bits;
+	register size_t nrf = msglen - !!bits;
 	register size_t len = (nrf << 3) | bits;
 	register size_t ll = len % r;
-	register unsigned char b = (unsigned char)(bits ? (state->M[nrf] | (1 << bits)) : 1);
+	register unsigned char b = (unsigned char)(bits ? (msg[nrf] | (1 << bits)) : 1);
 
 	if (r - 8 <= ll && ll <= r - 2) {
-		state->M[nrf] = (unsigned char)(b ^ 0x80);
-		state->mptr = nrf + 1;
+		msg[nrf] = (unsigned char)(b ^ 0x80);
+		msglen = nrf + 1;
 	} else {
 		len = ++nrf << 3;
 		len = (len - (len % r) + (r - 8)) >> 3;
-		state->mptr = len + 1;
+		msglen = len + 1;
 
-		state->M[nrf - 1] = b;
-		__builtin_memset(state->M + nrf, 0, (len - nrf) * sizeof(char));
-		state->M[len] = (unsigned char)0x80;
+		msg[nrf - 1] = b;
+		__builtin_memset(&msg[nrf], 0, (len - nrf) * sizeof(char));
+		msg[len] = (unsigned char)0x80;
 	}
+	return msglen;
 }
 
 
 /**
  * Perform the absorption phase
  * 
- * @param  state  The hashing state
- * @param  len    The number of bytes from `state->M` to absorb
+ * @param  state    The hashing state
+ * @param  message  The bytes to absorb
+ * @param  len      The number of bytes from `message` to absorb
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
 static void
-libkeccak_absorption_phase(register struct libkeccak_state *restrict state, register size_t len)
+libkeccak_absorption_phase(register struct libkeccak_state *restrict state,
+                           register const unsigned char *restrict message, register size_t len)
 {
 	register long int rr = state->r >> 3;
 	register long int ww = state->w >> 3;
 	register long int n = (long)len / rr;
-	register const unsigned char *restrict message = state->M;
 	if (__builtin_expect(ww >= 8, 1)) { /* ww > 8 is impossible, it is just for optimisation possibilities. */
 		while (n--) {
 #define X(N) state->S[N] ^= libkeccak_to_lane64(message, len, rr, (size_t)(LANE_TRANSPOSE_MAP[N] * 8));
@@ -335,6 +340,28 @@ libkeccak_squeezing_phase(register struct libkeccak_state *restrict state, long 
 
 /**
  * Absorb more of the message to the Keccak sponge
+ * without copying the data to an internal buffer
+ * 
+ * It is safe run zero-copy functions before non-zero-copy
+ * functions for the same state, running zero-copy functions
+ * after non-zero-copy functions on the other hand can
+ * cause the message to be misread
+ * 
+ * @param  state   The hashing state
+ * @param  msg     The partial message
+ * @param  msglen  The length of the partial message; must be a
+ *                 multiple of `libkeccak_zerocopy_chunksize(state)`
+ *                 (undefined behaviour otherwise)
+ */
+void
+libkeccak_zerocopy_update(struct libkeccak_state *restrict state, const void *restrict msg, size_t msglen)
+{
+	libkeccak_absorption_phase(state, msg, msglen);
+}
+
+
+/**
+ * Absorb more of the message to the Keccak sponge
  * without wiping sensitive data when possible
  * 
  * @param   state   The hashing state
@@ -361,10 +388,10 @@ libkeccak_fast_update(struct libkeccak_state *restrict state, const void *restri
 	__builtin_memcpy(state->M + state->mptr, msg, msglen * sizeof(char));
 	state->mptr += msglen;
 	len = state->mptr;
-	len -= state->mptr % (size_t)((state->r * state->b) >> 3);
+	len -= state->mptr % (size_t)(state->r >> 3);
 	state->mptr -= len;
 
-	libkeccak_absorption_phase(state, len);
+	libkeccak_absorption_phase(state, state->M, len);
 	__builtin_memmove(state->M, state->M + len, state->mptr * sizeof(char));
 
 	return 0;
@@ -401,13 +428,79 @@ libkeccak_update(struct libkeccak_state *restrict state, const void *restrict ms
 	__builtin_memcpy(state->M + state->mptr, msg, msglen * sizeof(char));
 	state->mptr += msglen;
 	len = state->mptr;
-	len -= state->mptr % (size_t)((state->r * state->b) >> 3);
+	len -= state->mptr % (size_t)(state->r >> 3);
 	state->mptr -= len;
 
-	libkeccak_absorption_phase(state, len);
+	libkeccak_absorption_phase(state, state->M, len);
 	__builtin_memmove(state->M, state->M + len, state->mptr * sizeof(char));
 
 	return 0;
+}
+
+
+/**
+ * Absorb the last part of the message and squeeze the Keccak sponge
+ * without copying the data to an internal buffer
+ * 
+ * It is safe run zero-copy functions before non-zero-copy
+ * functions for the same state, running zero-copy functions
+ * after non-zero-copy functions on the other hand can
+ * cause the message to be misread
+ * 
+ * @param  state    The hashing state
+ * @param  msg_     The rest of the message; will be edited; extra memory
+ *                  shall be allocated such that `suffix` and a 10*1 pad (which
+ *                  is at least 2 bits long) can be added in a why the makes it's
+ *                  length a multiple of `libkeccak_zerocopy_chunksize(state)`
+ * @param  msglen   The length of the partial message
+ * @param  bits     The number of bits at the end of the message not covered by `msglen`
+ * @param  suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
+ * @param  hashsum  Output parameter for the hashsum, may be `NULL`
+ */
+void
+libkeccak_zerocopy_digest(struct libkeccak_state *restrict state, void *restrict msg_, size_t msglen,
+                          size_t bits, const char *restrict suffix, void *restrict hashsum)
+{
+	unsigned char *restrict msg = msg_;
+	auto unsigned char *restrict new;
+	register long int rr = state->r >> 3;
+	auto size_t suffix_len = suffix ? __builtin_strlen(suffix) : 0;
+	register size_t ext;
+	register long int i;
+
+	if (!msg) {
+		msglen = 0;
+		bits = 0;
+	} else {
+		msglen += bits >> 3;
+		bits &= 7;
+	}
+
+	if (bits)
+		msg[msglen] = msg[msglen] & (unsigned char)((1 << bits) - 1);
+	if (__builtin_expect(!!suffix_len, 1)) {
+		if (!bits)
+			msg[msglen] = 0;
+		while (suffix_len--) {
+			msg[msglen] |= (unsigned char)((*suffix++ & 1) << bits++);
+			if (bits == 8) {
+				bits = 0;
+				msg[++msglen] = 0;
+			}
+		}
+	}
+	if (bits)
+		msglen++;
+
+	msglen = libkeccak_pad10star1((size_t)state->r, msg, msglen, bits);
+	libkeccak_absorption_phase(state, msg, msglen);
+
+	if (hashsum) {
+		libkeccak_squeezing_phase(state, rr, (state->n + 7) >> 3, state->w >> 3, hashsum);
+	} else {
+		for (i = (state->n - 1) / state->r; i--;)
+			libkeccak_f(state);
+	}
 }
 
 
@@ -473,8 +566,8 @@ libkeccak_fast_digest(struct libkeccak_state *restrict state, const void *restri
 	if (bits)
 		state->mptr++;
 
-	libkeccak_pad10star1(state, bits);
-	libkeccak_absorption_phase(state, state->mptr);
+	state->mptr = libkeccak_pad10star1((size_t)state->r, state->M, state->mptr, bits);
+	libkeccak_absorption_phase(state, state->M, state->mptr);
 
 	if (hashsum) {
 		libkeccak_squeezing_phase(state, rr, (state->n + 7) >> 3, state->w >> 3, hashsum);
@@ -551,8 +644,8 @@ libkeccak_digest(struct libkeccak_state *restrict state, const void *restrict ms
 	if (bits)
 		state->mptr++;
 
-	libkeccak_pad10star1(state, bits);
-	libkeccak_absorption_phase(state, state->mptr);
+	state->mptr = libkeccak_pad10star1((size_t)state->r, state->M, state->mptr, bits);
+	libkeccak_absorption_phase(state, state->M, state->mptr);
 
 	if (hashsum) {
 		libkeccak_squeezing_phase(state, rr, (state->n + 7) >> 3, state->w >> 3, hashsum);

@@ -62,7 +62,8 @@ OBJ =\
 	libkeccak_state_wipe.o\
 	libkeccak_state_wipe_message.o\
 	libkeccak_state_wipe_sponge.o\
-	libkeccak_unhex.o
+	libkeccak_unhex.o\
+	libkeccak_zerocopy_chunksize.o
 
 HDR =\
 	libkeccak.h\

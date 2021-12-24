@@ -19,11 +19,16 @@ libkeccak_generalised_sum_fd(int fd, struct libkeccak_state *restrict state, con
                              const char *restrict suffix, void *restrict hashsum)
 {
 	ssize_t got;
+	size_t offset;
 #ifndef _WIN32
 	struct stat attr;
 #endif
 	size_t blksize = 4096;
-	void *restrict chunk;
+	unsigned char *restrict chunk;
+	size_t chunksize = libkeccak_zerocopy_chunksize(state);
+	size_t extrasize = (strlen(suffix) + 2 + 7) >> 3;
+	size_t extrachunks = (extrasize + (chunksize - 1)) / chunksize;
+	size_t chunks, chunkmod;
 
 	if (libkeccak_state_initialise(state, spec) < 0)
 		return -1;
@@ -33,6 +38,16 @@ libkeccak_generalised_sum_fd(int fd, struct libkeccak_state *restrict state, con
 		if (attr.st_blksize > 0)
 			blksize = (size_t)attr.st_blksize;
 #endif
+
+	chunks = blksize / chunksize;
+	chunkmod = blksize % chunksize;
+	if (chunkmod) {
+		blksize -= chunkmod;
+		blksize += chunksize;
+		chunks += 1;
+	}
+	if (chunks < extrachunks + 1)
+		blksize = (extrachunks + 1) * chunksize;
 
 #if ALLOCA_LIMIT > 0
 	if (blksize > (size_t)ALLOCA_LIMIT)
@@ -53,8 +68,9 @@ libkeccak_generalised_sum_fd(int fd, struct libkeccak_state *restrict state, con
 		return -1;
 #endif
 
+	offset = 0;
 	for (;;) {
-		got = read(fd, chunk, blksize);
+		got = read(fd, &chunk[offset], blksize - offset);
 		if (got <= 0) {
 			if (!got)
 				break;
@@ -62,11 +78,22 @@ libkeccak_generalised_sum_fd(int fd, struct libkeccak_state *restrict state, con
 				continue;
 			goto fail;
 		}
-		if (libkeccak_fast_update(state, chunk, (size_t)got) < 0)
-			goto fail;
+		offset += (size_t)got;
+		if (offset == blksize) {
+			libkeccak_zerocopy_update(state, chunk, blksize);
+			offset = 0;
+		}
 	}
 
-	return libkeccak_fast_digest(state, NULL, 0, 0, suffix, hashsum);
+	if (extrasize > blksize - offset) {
+		chunkmod = offset % chunksize;
+		libkeccak_zerocopy_update(state, chunk, offset - chunkmod);
+		__builtin_memcpy(chunk, &chunk[offset - chunkmod], chunkmod * sizeof(char));
+		offset = chunkmod;
+	}
+
+	libkeccak_zerocopy_digest(state, chunk, offset, 0, suffix, hashsum);
+	return 0;
 
 fail:
 #if ALLOCA_LIMIT <= 0

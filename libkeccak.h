@@ -538,6 +538,38 @@ LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__(2))))
 size_t libkeccak_state_unmarshal(struct libkeccak_state *restrict, const void *restrict);
 
 /**
+ * Get the number of bytes that are absorbed during
+ * one pass of the absorption phase
+ * 
+ * @param   state  The hashing state
+ * @return         The number of bytes absorbed during one pass
+ */
+LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __warn_unused_result__, __pure__)))
+inline size_t
+libkeccak_zerocopy_chunksize(struct libkeccak_state *restrict state)
+{
+	return state->r >> 3;
+}
+
+/**
+ * Absorb more of the message to the Keccak sponge
+ * without copying the data to an internal buffer
+ * 
+ * It is safe run zero-copy functions before non-zero-copy
+ * functions for the same state, running zero-copy functions
+ * after non-zero-copy functions on the other hand can
+ * cause the message to be misread
+ * 
+ * @param  state   The hashing state
+ * @param  msg     The partial message
+ * @param  msglen  The length of the partial message; must be a
+ *                 multiple of `libkeccak_zerocopy_chunksize(state)`
+ *                 (undefined behaviour otherwise)
+ */
+LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
+void libkeccak_zerocopy_update(struct libkeccak_state *restrict, const void *restrict, size_t);
+
+/**
  * Absorb more of the message to the Keccak sponge
  * without wiping sensitive data when possible
  * 
@@ -560,6 +592,30 @@ int libkeccak_fast_update(struct libkeccak_state *restrict, const void *restrict
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__)))
 int libkeccak_update(struct libkeccak_state *restrict, const void *restrict, size_t);
+
+
+/**
+ * Absorb the last part of the message and squeeze the Keccak sponge
+ * without copying the data to an internal buffer
+ * 
+ * It is safe run zero-copy functions before non-zero-copy
+ * functions for the same state, running zero-copy functions
+ * after non-zero-copy functions on the other hand can
+ * cause the message to be misread
+ * 
+ * @param  state    The hashing state
+ * @param  msg      The rest of the message; will be edited; extra memory
+ *                  shall be allocated such that `suffix` and a 10*1 pad (which
+ *                  is at least 2 bits long) can be added in a why the makes it's
+ *                  length a multiple of `libkeccak_zerocopy_chunksize(state)`
+ * @param  msglen   The length of the partial message
+ * @param  bits     The number of bits at the end of the message not covered by `msglen`
+ * @param  suffix   The suffix concatenate to the message, only '1':s and '0':s, and NUL-termination
+ * @param  hashsum  Output parameter for the hashsum, may be `NULL`
+ */
+LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__(1, 2))))
+void libkeccak_zerocopy_digest(struct libkeccak_state *restrict, void *restrict, size_t,
+                               size_t, const char *restrict, void *restrict);
 
 /**
  * Absorb the last part of the message and squeeze the Keccak sponge
