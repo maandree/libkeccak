@@ -12,7 +12,7 @@ include $(OSCONFIGFILE)
 
 # The version of the library.
 LIB_MAJOR = 1
-LIB_MINOR = 2
+LIB_MINOR = 3
 LIB_VERSION = $(LIB_MAJOR).$(LIB_MINOR)
 
 
