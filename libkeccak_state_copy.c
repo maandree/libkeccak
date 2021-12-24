@@ -13,9 +13,13 @@ int
 libkeccak_state_copy(struct libkeccak_state *restrict dest, const struct libkeccak_state *restrict src)
 {
 	memcpy(dest, src, sizeof(struct libkeccak_state));
-	dest->M = malloc(src->mlen * sizeof(char));
-	if (!dest->M)
-		return -1;
-	memcpy(dest->M, src->M, src->mptr * sizeof(char));
+	if (src->mlen) {
+		dest->M = malloc(src->mlen * sizeof(char));
+		if (!dest->M)
+			return -1;
+		memcpy(dest->M, src->M, src->mptr * sizeof(char));
+	} else {
+		dest->M = NULL;
+	}
 	return 0;
 }
