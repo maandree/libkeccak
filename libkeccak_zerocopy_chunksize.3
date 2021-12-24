@@ -1,0 +1,40 @@
+.TH LIBKECCAK_ZEROCOPY_CHUNKSIZE 3 LIBKECCAK
+.SH NAME
+libkeccak_zerocopy_chunksize - Get chunk size for zero-copy processing
+.RB ( ADVANCED )
+.SH SYNOPSIS
+.nf
+#include <libkeccak.h>
+
+size_t libkeccak_zerocopy_chunksize(struct libkeccak_state *\fIstate\fP);
+.fi
+.PP
+Link with
+.IR -lkeccak .
+.SH DESCRIPTION
+The
+.BR libkeccak_zerocopy_chunksize ()
+function returns the number of bytes the sponge
+in the
+.I state
+parameter processes per round. Input to the
+.BR libkeccak_zerocopy_update (3)
+function must be an integer multiple of this
+number, and memory allocated for the
+.BR libkeccak_zerocopy_digest (3)
+function must also be a multiple of this
+number (further restrictions apply, see
+.BR libkeccak_zerocopy_digest (3)
+for more details.)
+.SH RETURN VALUES
+The
+.BR libkeccak_zerocopy_chunksize ()
+function returns the number of bytes that
+the sponge processes per processing round.
+.SH ERRORS
+The
+.BR libkeccak_zerocopy_chunksize ()
+function cannot fail.
+.SH SEE ALSO
+.BR libkeccak_zerocopy_update (3),
+.BR libkeccak_zerocopy_digest (3)

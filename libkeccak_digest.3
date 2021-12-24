@@ -22,9 +22,10 @@ parameter, and its byte-size is specified by the
 .I msglen
 parameter. If all of the message has already be processed
 by calls to the
-.BR libkeccak_update (3)
-function or the
-.BR libkeccak_fast_update (3)
+.BR libkeccak_update (3),
+.BR libkeccak_fast_update (3),
+or
+.BR libkeccak_zerocopy_update (3)
 function (with the same pointer on
 .IR state ,)
 .I msg
@@ -134,6 +135,7 @@ libkeccak_state_destroy(&state);
 .BR libkeccak_fast_update (3),
 .BR libkeccak_update (3),
 .BR libkeccak_fast_digest (3),
+.BR libkeccak_zerocopy_digest (3),
 .BR libkeccak_simple_squeeze (3),
 .BR libkeccak_fast_squeeze (3),
 .BR libkeccak_squeeze (3)

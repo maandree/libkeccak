@@ -1,0 +1,80 @@
+.TH LIBKECCAK_ZEROCOPY_UPDATE 3 LIBKECCAK
+.SH NAME
+libkeccak_zerocopy_update - Partially hash a message without copying
+.RB ( ADVANCED )
+.SH SYNOPSIS
+.nf
+#include <libkeccak.h>
+
+void libkeccak_zerocopy_update(struct libkeccak_state *\fIstate\fP, const void *\fImsg\fP, size_t \fImsglen\fP);
+.fi
+.PP
+Link with
+.IR -lkeccak .
+.SH DESCRIPTION
+The
+.BR libkeccak_zerocopy_update ()
+function continues (or starts) hashing a message.
+The current state of the hashing is stored in
+.IR *state ,
+and will be updated. The message specified by the
+.I msg
+parameter with the byte-size specified by the
+.I msglen
+parameter, will be hashed.
+.PP
+As a restriction specific to the
+.BR libkeccak_zerocopy_update ()
+function, the
+.I msglen
+argument must be an integer multiple of the bitrate
+divided by eight. This is returned by the
+.BR libkeccak_zerocopy_chunksize (3)
+function. The
+.BR libkeccak_update (3)
+or
+.BR libkeccak_fast_update (3)
+functions can be used to avoid this restriction,
+but these, unlike the
+.BR libkeccak_zerocopy_update ()
+function, will copy the message and move around
+copied data.
+.SH RETURN VALUES
+The
+.BR libkeccak_zerocopy_update ()
+function does not return a value.
+.SH ERRORS
+The
+.BR libkeccak_zerocopy_update ()
+function cannot fail.
+.SH NOTES
+Neither parameter by be
+.I NULL
+or 0.
+.PP
+It is safe call the
+.BR libkeccak_zerocopy_update ()
+function before the
+.BR libkeccak_update (3),
+.BR libkeccak_fast_update (3)
+.BR libkeccak_digest (3)
+and
+.BR libkeccak_fast_digest (3)
+functions with the same
+.I state
+argument. However, calling the
+.BR libkeccak_zerocopy_update ()
+function after the
+.BR libkeccak_update (3)
+or
+.BR libkeccak_fast_update (3)
+functions may cause the message
+to be misread.
+.SH SEE ALSO
+.BR libkeccak_state_initialise (3),
+.BR libkeccak_zerocopy_chunksize (3),
+.BR libkeccak_fast_update (3),
+.BR libkeccak_update (3),
+.BR libkeccak_fast_digest (3),
+.BR libkeccak_zerocopy_digest (3),
+.BR libkeccak_digest (3)

@@ -122,7 +122,10 @@ MAN3 =\
 	libkeccak_state_wipe_message.3\
 	libkeccak_state_wipe_sponge.3\
 	libkeccak_unhex.3\
-	libkeccak_update.3
+	libkeccak_update.3\
+	libkeccak_zerocopy_chunksize.3\
+	libkeccak_zerocopy_digest.3\
+	libkeccak_zerocopy_update.3
 
 MAN7 =\
 	libkeccak.7

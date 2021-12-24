@@ -1,20 +1,21 @@
-.TH LIBKECCAK_FAST_DIGEST 3 LIBKECCAK
+.TH LIBKECCAK_ZEROCOPY_DIGEST 3 LIBKECCAK
 .SH NAME
-libkeccak_fast_digest - Complete the hashing of a message without erasure
+libkeccak_zerocopy_digest - Complete the hashing of a message without copying
+.RB ( ADVANCED )
 .SH SYNOPSIS
 .LP
 .nf
 #include <libkeccak.h>
 
-int libkeccak_fast_digest(struct libkeccak_state *\fIstate\fP, const void *\fImsg\fP, size_t \fImsglen\fP,
-                          size_t \fIbits\fP, const char *\fIsuffix\fP, void *\fIhashsum\fP);
+void libkeccak_zerocopy_digest(struct libkeccak_state *\fIstate\fP, void *\fImsg\fP, size_t \fImsglen\fP,
+                               size_t \fIbits\fP, const char *\fIsuffix\fP, void *\fIhashsum\fP);
 .fi
 .P
 Link with
 .IR -lkeccak .
 .SH DESCRIPTION
 The
-.BR libkeccak_fast_digest ()
+.BR libkeccak_zerocopy_digest ()
 function absorbs the last part of (or all of) a message,
 and returns the hash of the entire message. The last part
 of the message is specified by the
@@ -23,9 +24,6 @@ parameter, and its byte-size is specified by the
 .I msglen
 parameter. If all of the message has already be processed
 by calls to the
-.BR libkeccak_update (3),
-.BR libkeccak_fast_update (3),
-or
 .BR libkeccak_zerocopy_update (3)
 function (with the same pointer on
 .IR state ,)
@@ -75,65 +73,43 @@ Therefore,
 .I hashsum
 needs at least an allocation size of that number of bytes.
 .PP
-The
-.BR libkeccak_fast_digest ()
-function may reallocate the state's message chunk buffer.
-When doing so, it attempts to do so as quickly as possible,
-rather than ensuring that the information in the old
-allocation is securely removed if a new allocation is required.
+.BR libkeccak_zerocopy_digest ()
+will write at and beyond
+.IR &msg[msglen] .
+The caller must make sure that enough memory is allocated
+for the
+.I suffix
+as well as padding of at least 2 bits, for
+.IR msg .
+The sum of
+.IR msglen ,
+the bits specified in
+.IR suffix ,
+and the padded, shall, in bytes, be an integer multiple of
+the bitrate divided by eight, which is returned by the
+.BR libkeccak_zerocopy_chunksize (3)
+function.
 .SH RETURN VALUES
 The
-.BR libkeccak_fast_digest ()
-function returns 0 upon successful completion. On error,
--1 is returned and
-.I errno
-is set to describe the error.
+.BR libkeccak_zerocopy_digest ()
+function does not return a value.
 .SH ERRORS
 The
-.BR libkeccak_fast_digest ()
-function may fail for any reason specified by the function
-.BR realloc (3).
-.SH EXAMPLE
-This example calculates the Keccak[b = 1024, c = 576, n = 256]
-hash of the input from stdin, and prints the hash, in hexadecimal
-form, to stdout.
-.PP
-.nf
-struct libkeccak_state state;
-struct libkeccak_spec spec;
-char binhash[256 / 8];
-char hexhash[256 / 8 * 2 + 1];
-char chunk[4 << 10];
-ssize_t len;
-
-spec.bitrate = 1024;
-spec.capacity = 576;
-spec.output = 256;
-if (libkeccak_state_initialise(&state, &spec) < 0)
-	goto fail;
-
-for (;;) {
-	len = read(STDIN_FILENO, chunk, sizeof(chunk));
-
-	if ((len < 0) && (errno == EINTR))
-		continue;
-	if (len < 0)
-		goto fail;
-	if (len == 0)
-		break;
-
-	if (libkeccak_fast_update(&state, chunk, (size_t)len) < 0)
-		goto fail;
-}
-if (libkeccak_fast_digest(&state, NULL, 0, 0, \(dq\(dq, binhash) < 0)
-	goto fail;
-
-libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
-printf(\(dq%s\en\(dq, hexhash);
-libkeccak_state_fast_destroy(&state);
-.fi
+.BR libkeccak_zerocopy_digest ()
+function cannot fail.
+.SH NOTES
+Calling the
+.BR libkeccak_zerocopy_digest (3)
+function after the
+.BR libkeccak_update (3)
+or
+.BR libkeccak_fast_update (3)
+functions, with the same
+.I state
+argument, may cause the message to be misread.
 .SH SEE ALSO
 .BR libkeccak_state_initialise (3),
+.BR libkeccak_zerocopy_chunksize (3),
 .BR libkeccak_fast_update (3),
 .BR libkeccak_zerocopy_update (3),
 .BR libkeccak_update (3),
