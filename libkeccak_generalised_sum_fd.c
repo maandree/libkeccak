@@ -1,5 +1,6 @@
 /* See LICENSE file for copyright and license details. */
 #include "common.h"
+#include <stdio.h>
 
 
 /**
@@ -25,13 +26,15 @@ libkeccak_generalised_sum_fd(int fd, struct libkeccak_state *restrict state, con
 #endif
 	size_t blksize = 4096;
 	unsigned char *restrict chunk;
-	size_t chunksize = libkeccak_zerocopy_chunksize(state);
-	size_t extrasize = (strlen(suffix) + 2 + 7) >> 3;
-	size_t extrachunks = (extrasize + (chunksize - 1)) / chunksize;
+	size_t chunksize, extrasize, extrachunks;
 	size_t chunks, chunkmod;
 
 	if (libkeccak_state_initialise(state, spec) < 0)
 		return -1;
+
+	chunksize = libkeccak_zerocopy_chunksize(state);
+	extrasize = ((suffix ? strlen(suffix) : 0) + 2 + 7) >> 3;
+	extrachunks = (extrasize + (chunksize - 1)) / chunksize;
 
 #ifndef _WIN32
 	if (fstat(fd, &attr) == 0)
