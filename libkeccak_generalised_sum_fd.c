@@ -53,8 +53,12 @@ libkeccak_generalised_sum_fd(int fd, struct libkeccak_state *restrict state, con
 		blksize = (extrachunks + 1) * chunksize;
 
 #if ALLOCA_LIMIT > 0
-	if (blksize > (size_t)ALLOCA_LIMIT)
+	if (blksize > (size_t)ALLOCA_LIMIT) {
 		blksize = (size_t)ALLOCA_LIMIT;
+		blksize -= blksize % chunksize;
+		if (!blksize)
+			blksize = chunksize;
+	}
 # if defined(__clang__)
 	/* We are using a limit so it's just like declaring an array
 	 * in a function, except we might use less of the stack. */
