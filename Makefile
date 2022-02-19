@@ -175,6 +175,9 @@ run-benchmark: benchmark benchfile
 	for i in $$(seq 7) ; do ./benchmark ; done | median
 
 install: libkeccak.$(LIBEXT) libkeccak.a
+ifeq ($(shell uname),Darwin)
+	install_name_tool -id "$(PREFIX)/lib/libkeccak.$(LIBMAJOREXT)" libkeccak.$(LIBEXT)
+endif
 	mkdir -p -- "$(DESTDIR)$(PREFIX)/lib"
 	cp -- libkeccak.$(LIBEXT) "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBMINOREXT)"
 	ln -sf -- libkeccak.$(LIBMINOREXT) "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBMAJOREXT)"
