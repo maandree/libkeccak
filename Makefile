@@ -139,7 +139,6 @@ $(OBJ): $(HDR)
 
 libkeccak.$(LIBEXT): $(OBJ)
 	$(CC) $(LIBFLAGS) -o $@ $(OBJ) $(LDFLAGS)
-	$(FIX_INSTALL_NAME)
 
 libkeccak.a: $(OBJ)
 	-rm -f -- $@
