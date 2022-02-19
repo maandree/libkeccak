@@ -177,7 +177,7 @@ run-benchmark: benchmark benchfile
 install: libkeccak.$(LIBEXT) libkeccak.a
 	mkdir -p -- "$(DESTDIR)$(PREFIX)/lib"
 	cp -- libkeccak.$(LIBEXT) "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBMINOREXT)"
-	$(FIX_INSTALL_NAME)
+	$(FIX_INSTALL_NAME) "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBEXT)"
 	ln -sf -- libkeccak.$(LIBMINOREXT) "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBMAJOREXT)"
 	ln -sf -- libkeccak.$(LIBMINOREXT) "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBEXT)"
 	cp -- libkeccak.a "$(DESTDIR)$(PREFIX)/lib/libkeccak.a"
