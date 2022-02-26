@@ -160,6 +160,14 @@
  */
 #define LIBKECCAK_GENERALISED_SPEC_ERROR_OUTPUT_NONPOSITIVE 11
 
+/**
+ * Invalid `struct libkeccak_generalised_spec.state_size`,
+ * `struct libkeccak_generalised_spec.bitrate`, and
+ * `struct libkeccak_generalised_spec.capacity`:
+ * `.bitrate + .capacity != .state_size`
+ */
+#define LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_BITRATE_CAPACITY_INCONSISTENCY 12
+
 
 /**
  * Data structure that describes the parameters
@@ -313,7 +321,7 @@ libkeccak_spec_rawshake(struct libkeccak_spec *spec, long int x, long int d)
 }
 
 /**
- * Fill in a `struct libkeccak_spec` for a SHAKEx hashing
+< * Fill in a `struct libkeccak_spec` for a SHAKEx hashing
  * 
  * @param  spec:struct libkeccak_spec *  The specifications datastructure to fill in
  * @param  x:long                        The value of x in `SHAKEx`, half the capacity

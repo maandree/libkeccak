@@ -81,28 +81,26 @@ libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict spec, st
 	}
 
 
-	if (!have_bitrate && !have_capacity && !have_output) {
+	if (have_bitrate + have_capacity == 2) {
+		if (!have_state_size) {
+			state_size = bitrate + capacity;
+			output = deft(output, capacity * 2L <= 8 ? 8 : capacity * 2L);
+		} else if (state_size != bitrate + capacity) {
+			return LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_BITRATE_CAPACITY_INCONSISTENCY;
+		}
+	} else if (have_bitrate + have_capacity == 1) {
 		state_size = deft(state_size, 1600L);
-		output = ((state_size << 5) / 100L + 7L) & ~0x07L;
-		bitrate = output << 1;
-		capacity = state_size - bitrate;
-		output = output >= 8 ? output : 8;
-	} else if (!have_bitrate && !have_capacity) {
-		bitrate = 1024;
-		capacity = 1600 - 1024;
-		state_size = deft(state_size, bitrate + capacity);
-	} else if (!have_bitrate) {
-		state_size = deft(state_size, 1600L);
-		bitrate = state_size - capacity;
-		output = deft(output, capacity == 8 ? 8 : (capacity << 1));
-	} else if (!have_capacity) {
-		state_size = deft(state_size, 1600L);
-		capacity = state_size - bitrate;
-		output = deft(output, capacity == 8 ? 8 : (capacity << 1));
+		bitrate = deft(bitrate, state_size - capacity);
+		capacity = deft(capacity, state_size - bitrate);
+		output = deft(output, capacity * 2L <= 8 ? 8 : capacity * 2L);
 	} else {
-		state_size = deft(state_size, bitrate + capacity);
-		output = deft(output, capacity == 8 ? 8 : (capacity << 1));
+		state_size = deft(state_size, 1600L);
+		output = deft(output, (state_size * 32L / 100L + 7L) & ~7L);
+		bitrate = 2L * output;
+		capacity = state_size - bitrate;
+		output = deft(output, bitrate / 2L <= 8 ? 8 : bitrate / 2L);
 	}
+
 
 	spec->capacity   = output_spec->capacity = capacity;
 	spec->bitrate    = output_spec->bitrate  = bitrate;

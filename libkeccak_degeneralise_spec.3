@@ -84,6 +84,10 @@ modulus 8, that is, it was not in whole bytes.
 .TP
 .B LIBKECCAK_GENERALISED_SPEC_ERROR_OUTPUT_NONPOSITIVE
 The specified output size was non-positive.
+.TP
+.B LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_BITRATE_CAPACITY_INCONSISTENCY
+The sum of the bitrate and the capacity does not equal
+the state size (25 times the word size).
 .PP
 Note that there may be more than one error. Only the first
 detected is returned.
