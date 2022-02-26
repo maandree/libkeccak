@@ -289,7 +289,7 @@ struct libkeccak_state {
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
 inline void
-libkeccak_spec_sha3(struct libkeccak_spec *restrict spec, long int x)
+libkeccak_spec_sha3(struct libkeccak_spec *spec, long int x)
 {
 	spec->bitrate = 1600 - 2 * x;
 	spec->capacity = 2 * x;
@@ -305,7 +305,7 @@ libkeccak_spec_sha3(struct libkeccak_spec *restrict spec, long int x)
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
 inline void
-libkeccak_spec_rawshake(struct libkeccak_spec *restrict spec, long int x, long int d)
+libkeccak_spec_rawshake(struct libkeccak_spec *spec, long int x, long int d)
 {
 	spec->bitrate = 1600 - 2 * x;
 	spec->capacity = 2 * x;
@@ -329,7 +329,7 @@ libkeccak_spec_rawshake(struct libkeccak_spec *restrict spec, long int x, long i
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __warn_unused_result__, __pure__)))
 inline int
-libkeccak_spec_check(const struct libkeccak_spec *restrict spec)
+libkeccak_spec_check(const struct libkeccak_spec *spec)
 {
 	long int state_size = spec->capacity + spec->bitrate;
 	int32_t word_size = (int32_t)(state_size / 25);
@@ -360,7 +360,7 @@ libkeccak_spec_check(const struct libkeccak_spec *restrict spec)
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
 inline void
-libkeccak_generalised_spec_initialise(struct libkeccak_generalised_spec *restrict spec)
+libkeccak_generalised_spec_initialise(struct libkeccak_generalised_spec *spec)
 {
 	spec->bitrate    = LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
 	spec->capacity   = LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
@@ -377,7 +377,7 @@ libkeccak_generalised_spec_initialise(struct libkeccak_generalised_spec *restric
  * @return               Zero if `spec` is valid, a `LIBKECCAK_GENERALISED_SPEC_ERROR_*` if an error was found
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__, __nothrow__)))
-int libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict, struct libkeccak_spec *restrict);
+int libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *, struct libkeccak_spec *);
 
 /**
  * Initialise a state according to hashing specifications
@@ -387,7 +387,7 @@ int libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict, str
  * @return         Zero on success, -1 on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__)))
-int libkeccak_state_initialise(struct libkeccak_state *restrict, const struct libkeccak_spec *restrict);
+int libkeccak_state_initialise(struct libkeccak_state *, const struct libkeccak_spec *);
 
 /**
  * Reset a state according to hashing specifications
@@ -396,7 +396,7 @@ int libkeccak_state_initialise(struct libkeccak_state *restrict, const struct li
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
 inline void
-libkeccak_state_reset(struct libkeccak_state *restrict state)
+libkeccak_state_reset(struct libkeccak_state *state)
 {
 	state->mptr = 0;
 	memset(state->S, 0, sizeof(state->S));
@@ -408,7 +408,7 @@ libkeccak_state_reset(struct libkeccak_state *restrict state)
  * @param  state  The state that should be destroyed
  */
 inline void
-libkeccak_state_fast_destroy(struct libkeccak_state *restrict state)
+libkeccak_state_fast_destroy(struct libkeccak_state *state)
 {
 	if (state) {
 		free(state->M);
@@ -422,7 +422,7 @@ libkeccak_state_fast_destroy(struct libkeccak_state *restrict state)
  * @param  state  The state that should be wipe
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__, __nothrow__, __optimize__("-O0"))))
-void libkeccak_state_wipe_message(volatile struct libkeccak_state *restrict);
+void libkeccak_state_wipe_message(volatile struct libkeccak_state *);
 
 /**
  * Wipe data in the state's sponge wihout freeing any data
@@ -430,7 +430,7 @@ void libkeccak_state_wipe_message(volatile struct libkeccak_state *restrict);
  * @param  state  The state that should be wipe
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__, __nothrow__, __optimize__("-O0"))))
-void libkeccak_state_wipe_sponge(volatile struct libkeccak_state *restrict);
+void libkeccak_state_wipe_sponge(volatile struct libkeccak_state *);
 
 /**
  * Wipe sensitive data wihout freeing any data
@@ -438,7 +438,7 @@ void libkeccak_state_wipe_sponge(volatile struct libkeccak_state *restrict);
  * @param  state  The state that should be wipe
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __optimize__("-O0"))))
-void libkeccak_state_wipe(volatile struct libkeccak_state *restrict);
+void libkeccak_state_wipe(volatile struct libkeccak_state *);
 
 /**
  * Release resources allocation for a state and wipe sensitive data
@@ -447,7 +447,7 @@ void libkeccak_state_wipe(volatile struct libkeccak_state *restrict);
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__optimize__("-O0"))))
 inline void
-libkeccak_state_destroy(volatile struct libkeccak_state *restrict state)
+libkeccak_state_destroy(volatile struct libkeccak_state *state)
 {
 	if (state) {
 		libkeccak_state_wipe(state);
@@ -463,7 +463,7 @@ libkeccak_state_destroy(volatile struct libkeccak_state *restrict state)
  * @return        The state, `NULL` on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __warn_unused_result__, __malloc__)))
-struct libkeccak_state *libkeccak_state_create(const struct libkeccak_spec *restrict);
+struct libkeccak_state *libkeccak_state_create(const struct libkeccak_spec *);
 
 /**
  * Wrapper for `libkeccak_state_fast_destroy` that also frees the allocation of the state
@@ -471,7 +471,7 @@ struct libkeccak_state *libkeccak_state_create(const struct libkeccak_spec *rest
  * @param  state  The state that should be freed
  */
 inline void
-libkeccak_state_fast_free(struct libkeccak_state *restrict state)
+libkeccak_state_fast_free(struct libkeccak_state *state)
 {
 	libkeccak_state_fast_destroy(state);
 	free(state);
@@ -484,7 +484,7 @@ libkeccak_state_fast_free(struct libkeccak_state *restrict state)
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__optimize__("-O0"))))
 inline void
-libkeccak_state_free(volatile struct libkeccak_state *restrict state)
+libkeccak_state_free(volatile struct libkeccak_state *state)
 {
 #ifdef __GNUC__
 # pragma GCC diagnostic push
@@ -514,7 +514,7 @@ int libkeccak_state_copy(struct libkeccak_state *restrict, const struct libkecca
  * @return       The duplicate, `NULL` on error
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __warn_unused_result__, __malloc__)))
-struct libkeccak_state *libkeccak_state_duplicate(const struct libkeccak_state *restrict);
+struct libkeccak_state *libkeccak_state_duplicate(const struct libkeccak_state *);
 
 /**
  * Marshal a `struct libkeccak_state` into a buffer
@@ -546,7 +546,7 @@ size_t libkeccak_state_unmarshal(struct libkeccak_state *restrict, const void *r
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __warn_unused_result__, __pure__)))
 inline size_t
-libkeccak_zerocopy_chunksize(struct libkeccak_state *restrict state)
+libkeccak_zerocopy_chunksize(struct libkeccak_state *state)
 {
 	return state->r >> 3;
 }
@@ -656,7 +656,7 @@ int libkeccak_digest(struct libkeccak_state *restrict, const void *restrict, siz
  * @param  times  The number of rounds
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
-void libkeccak_simple_squeeze(register struct libkeccak_state *restrict, register long int);
+void libkeccak_simple_squeeze(register struct libkeccak_state *, register long int);
 
 /**
  * Squeeze as much as is needed to get a digest a number of times
@@ -665,7 +665,7 @@ void libkeccak_simple_squeeze(register struct libkeccak_state *restrict, registe
  * @param  times  The number of digests
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
-void libkeccak_fast_squeeze(register struct libkeccak_state *restrict, register long int);
+void libkeccak_fast_squeeze(register struct libkeccak_state *, register long int);
 
 /**
  * Squeeze out another digest
@@ -906,7 +906,7 @@ LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __warn_unused_result__, __malloc_
 inline struct libkeccak_hmac_state *
 libkeccak_hmac_create(const struct libkeccak_spec *restrict spec, const void *restrict key, size_t key_length)
 {
-	struct libkeccak_hmac_state *restrict state = malloc(sizeof(struct libkeccak_hmac_state));
+	struct libkeccak_hmac_state *state = malloc(sizeof(struct libkeccak_hmac_state));
 	if (!state || libkeccak_hmac_initialise(state, spec, key, key_length)) {
 		free(state);
 		return NULL;
@@ -937,7 +937,7 @@ libkeccak_hmac_reset(struct libkeccak_hmac_state *restrict state, const void *re
  * @param  state  The state that should be wipe
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __optimize__("-O0"))))
-void libkeccak_hmac_wipe(volatile struct libkeccak_hmac_state *restrict);
+void libkeccak_hmac_wipe(volatile struct libkeccak_hmac_state *);
 
 /**
  * Release resources allocation for an HMAC hashing-state without wiping sensitive data
@@ -945,7 +945,7 @@ void libkeccak_hmac_wipe(volatile struct libkeccak_hmac_state *restrict);
  * @param  state  The state that should be destroyed
  */
 inline void
-libkeccak_hmac_fast_destroy(struct libkeccak_hmac_state *restrict state)
+libkeccak_hmac_fast_destroy(struct libkeccak_hmac_state *state)
 {
 	if (!state)
 		return;
@@ -965,7 +965,7 @@ libkeccak_hmac_fast_destroy(struct libkeccak_hmac_state *restrict state)
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__optimize__("-O0"))))
 inline void
-libkeccak_hmac_destroy(volatile struct libkeccak_hmac_state *restrict state)
+libkeccak_hmac_destroy(volatile struct libkeccak_hmac_state *state)
 {
 	if (!state)
 		return;
@@ -986,7 +986,7 @@ libkeccak_hmac_destroy(volatile struct libkeccak_hmac_state *restrict state)
  * @param  state  The state that should be freed
  */
 inline void
-libkeccak_hmac_fast_free(struct libkeccak_hmac_state *restrict state)
+libkeccak_hmac_fast_free(struct libkeccak_hmac_state *state)
 {
 	libkeccak_hmac_fast_destroy(state);
 	free(state);
@@ -999,14 +999,14 @@ libkeccak_hmac_fast_free(struct libkeccak_hmac_state *restrict state)
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__optimize__("-O0"))))
 inline void
-libkeccak_hmac_free(volatile struct libkeccak_hmac_state *restrict state)
+libkeccak_hmac_free(volatile struct libkeccak_hmac_state *state)
 {
 #ifdef __GNUC__
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wcast-qual"
 #endif
 	libkeccak_hmac_destroy(state);
-	free((struct libkeccak_hmac_state*)state);
+	free((struct libkeccak_hmac_state *)state);
 #ifdef __GNUC__
 # pragma GCC diagnostic pop
 #endif
@@ -1030,9 +1030,9 @@ int libkeccak_hmac_copy(struct libkeccak_hmac_state *restrict, const struct libk
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __warn_unused_result__, __malloc__)))
 inline struct libkeccak_hmac_state *
-libkeccak_hmac_duplicate(const struct libkeccak_hmac_state *restrict src)
+libkeccak_hmac_duplicate(const struct libkeccak_hmac_state *src)
 {
-	struct libkeccak_hmac_state *restrict dest = malloc(sizeof(struct libkeccak_hmac_state));
+	struct libkeccak_hmac_state *dest = malloc(sizeof(struct libkeccak_hmac_state));
 	if (!dest || libkeccak_hmac_copy(dest, src)) {
 		libkeccak_hmac_free(dest);
 		return NULL;

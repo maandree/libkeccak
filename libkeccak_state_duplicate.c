@@ -9,9 +9,9 @@
  * @return       The duplicate, `NULL` on error
  */
 struct libkeccak_state *
-libkeccak_state_duplicate(const struct libkeccak_state *restrict src)
+libkeccak_state_duplicate(const struct libkeccak_state *src)
 {
-	struct libkeccak_state *restrict dest = malloc(sizeof(struct libkeccak_state));
+	struct libkeccak_state *dest = malloc(sizeof(struct libkeccak_state));
 	if (!dest || libkeccak_state_copy(dest, src)) {
 		libkeccak_state_free(dest);
 		return NULL;

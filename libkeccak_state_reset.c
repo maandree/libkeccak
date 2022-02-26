@@ -2,4 +2,4 @@
 #include "common.h"
 
 
-extern inline void libkeccak_state_reset(struct libkeccak_state *restrict);
+extern inline void libkeccak_state_reset(struct libkeccak_state *);

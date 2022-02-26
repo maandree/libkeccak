@@ -2,4 +2,4 @@
 #include "common.h"
 
 
-extern inline void libkeccak_hmac_fast_destroy(struct libkeccak_hmac_state *restrict);
+extern inline void libkeccak_hmac_fast_destroy(struct libkeccak_hmac_state *);

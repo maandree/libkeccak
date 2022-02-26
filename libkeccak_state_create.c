@@ -9,9 +9,9 @@
  * @return        The state, `NULL` on error
  */
 struct libkeccak_state *
-libkeccak_state_create(const struct libkeccak_spec *restrict spec)
+libkeccak_state_create(const struct libkeccak_spec *spec)
 {
-	struct libkeccak_state *restrict state = malloc(sizeof(struct libkeccak_state));
+	struct libkeccak_state *state = malloc(sizeof(struct libkeccak_state));
 	if (!state || libkeccak_state_initialise(state, spec)) {
 		free(state);
 		return NULL;

@@ -8,7 +8,7 @@
  * @param  state  The state that should be wipe
  */
 void
-libkeccak_hmac_wipe(volatile struct libkeccak_hmac_state *restrict state)
+libkeccak_hmac_wipe(volatile struct libkeccak_hmac_state *state)
 {
 	volatile unsigned char *restrict key_pads;
 	size_t i, size;

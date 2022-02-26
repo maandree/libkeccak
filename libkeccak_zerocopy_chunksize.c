@@ -2,4 +2,4 @@
 #include "common.h"
 
 
-extern inline size_t libkeccak_zerocopy_chunksize(struct libkeccak_state *restrict);
+extern inline size_t libkeccak_zerocopy_chunksize(struct libkeccak_state *);

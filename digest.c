@@ -663,7 +663,7 @@ libkeccak_digest(struct libkeccak_state *restrict state, const void *restrict ms
  * @param  times  The number of rounds
  */
 void
-libkeccak_simple_squeeze(register struct libkeccak_state *restrict state, register long int times)
+libkeccak_simple_squeeze(register struct libkeccak_state *state, register long int times)
 {
 	while (times--)
 		libkeccak_f(state);
@@ -677,7 +677,7 @@ libkeccak_simple_squeeze(register struct libkeccak_state *restrict state, regist
  * @param  times  The number of digests
  */
 void
-libkeccak_fast_squeeze(register struct libkeccak_state *restrict state, register long int times)
+libkeccak_fast_squeeze(register struct libkeccak_state *state, register long int times)
 {
 	times *= (state->n - 1) / state->r + 1;
 	while (times--)

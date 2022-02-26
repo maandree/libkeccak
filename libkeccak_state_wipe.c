@@ -8,7 +8,7 @@
  * @param  state  The state that should be wipe
  */
 void
-libkeccak_state_wipe(volatile struct libkeccak_state *restrict state)
+libkeccak_state_wipe(volatile struct libkeccak_state *state)
 {
 	libkeccak_state_wipe_message(state);
 	libkeccak_state_wipe_sponge(state);
