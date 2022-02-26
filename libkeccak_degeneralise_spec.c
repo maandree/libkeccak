@@ -90,14 +90,13 @@ libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict spec, st
 		}
 	} else if (have_bitrate + have_capacity == 1) {
 		state_size = deft(state_size, 1600L);
-		bitrate = deft(bitrate, state_size - capacity);
 		capacity = deft(capacity, state_size - bitrate);
+		bitrate = deft(bitrate, state_size - capacity);
 		output = deft(output, capacity * 2L <= 8 ? 8 : capacity * 2L);
 	} else {
 		state_size = deft(state_size, 1600L);
-		output = deft(output, (state_size * 32L / 100L + 7L) & ~7L);
-		bitrate = 2L * output;
-		capacity = state_size - bitrate;
+		capacity = state_size * 9 / 25;
+		bitrate = state_size - capacity;
 		output = deft(output, bitrate / 2L <= 8 ? 8 : bitrate / 2L);
 	}
 
