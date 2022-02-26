@@ -462,10 +462,8 @@ libkeccak_zerocopy_digest(struct libkeccak_state *restrict state, void *restrict
                           size_t bits, const char *restrict suffix, void *restrict hashsum)
 {
 	unsigned char *restrict msg = msg_;
-	auto unsigned char *restrict new;
 	register long int rr = state->r >> 3;
 	auto size_t suffix_len = suffix ? __builtin_strlen(suffix) : 0;
-	register size_t ext;
 	register long int i;
 
 	if (!msg) {
