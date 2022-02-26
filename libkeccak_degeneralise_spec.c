@@ -27,11 +27,11 @@ int
 libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict spec, struct libkeccak_spec *restrict output_spec)
 {
 	long int state_size, word_size, capacity, bitrate, output;
-	const int have_state_size = spec->state_size != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
-	const int have_word_size  = spec->word_size  != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
-	const int have_capacity   = spec->capacity   != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
-	const int have_bitrate    = spec->bitrate    != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
-	const int have_output     = spec->output     != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
+	int have_state_size = spec->state_size != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
+	int have_word_size  = spec->word_size  != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
+	int have_capacity   = spec->capacity   != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
+	int have_bitrate    = spec->bitrate    != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
+	int have_output     = spec->output     != LIBKECCAK_GENERALISED_SPEC_AUTOMATIC;
 
 
 	if (have_state_size) {
@@ -53,7 +53,7 @@ libkeccak_degeneralise_spec(struct libkeccak_generalised_spec *restrict spec, st
 		if (have_state_size && state_size != word_size * 25)
 			return LIBKECCAK_GENERALISED_SPEC_ERROR_STATE_WORD_INCOHERENCY;
 		else if (!have_state_size) {
-			spec->state_size = 1;
+			have_state_size = 1;
 			state_size = word_size * 25;
 		}
 	}
