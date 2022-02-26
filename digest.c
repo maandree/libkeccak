@@ -73,7 +73,7 @@ static const uint_fast64_t RC[] = {
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __hot__)))
 static void
-libkeccak_f_round(register struct libkeccak_state *restrict state, register int_fast64_t rc)
+libkeccak_f_round(register struct libkeccak_state *state, register int_fast64_t rc)
 {
 	int_fast64_t *restrict A = state->S;
 	int_fast64_t B[25];
@@ -121,7 +121,7 @@ libkeccak_f_round(register struct libkeccak_state *restrict state, register int_
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __hot__)))
 static void
-libkeccak_f_round64(register struct libkeccak_state *restrict state, register int_fast64_t rc)
+libkeccak_f_round64(register struct libkeccak_state *state, register int_fast64_t rc)
 {
 	int_fast64_t *restrict A = state->S;
 	int_fast64_t B[25];
@@ -166,7 +166,7 @@ libkeccak_f_round64(register struct libkeccak_state *restrict state, register in
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __gnu_inline__)))
 static inline void
-libkeccak_f(register struct libkeccak_state *restrict state)
+libkeccak_f(register struct libkeccak_state *state)
 {
 	register long int i = 0;
 	register long int nr = state->nr;
@@ -218,7 +218,7 @@ libkeccak_to_lane(register const unsigned char *restrict message, register size_
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __pure__, __hot__, __warn_unused_result__, __gnu_inline__)))
 static inline int_fast64_t
-libkeccak_to_lane64(register const unsigned char *restrict message, register size_t msglen, register long int rr, size_t off)
+libkeccak_to_lane64(register const unsigned char *message, register size_t msglen, register long int rr, size_t off)
 {
 	register long int n = (long)((msglen < (size_t)rr ? msglen : (size_t)rr) - off);
 	int_fast64_t rc = 0;
