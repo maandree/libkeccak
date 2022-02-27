@@ -6,8 +6,10 @@ Just for fun:
   halfs are equal to the next's lower half; hopefully
   this does not matter)
 
-Test parallelisation and acceleration.
+Add tests for HMAC
 
-Measure cycles per byte.
+Add libkeccak_cshakesum_fd (TODO in libkeccak.h)
 
-Add tests for HMAC.
+Add KMAC and KMACXOF
+Add TupleHash and TupleHashXOF
+Add ParallelHash and ParallelHashXOF
