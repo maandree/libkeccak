@@ -321,7 +321,7 @@ libkeccak_spec_rawshake(struct libkeccak_spec *spec, long int x, long int d)
 }
 
 /**
-< * Fill in a `struct libkeccak_spec` for a SHAKEx hashing
+ * Fill in a `struct libkeccak_spec` for a SHAKEx hashing
  * 
  * @param  spec:struct libkeccak_spec *  The specifications datastructure to fill in
  * @param  x:long                        The value of x in `SHAKEx`, half the capacity
