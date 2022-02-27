@@ -1,0 +1,45 @@
+.TH LIBKECCAK_CSHAKE_SUFFIX 3 LIBKECCAK
+.SH NAME
+libkeccak_cshake_suffix - Get message suffix for cSHAKE hashing
+.SH SYNOPSIS
+.nf
+#include <libkeccak.h>
+
+const char *libkeccak_cshake_suffix(size_t \fInlen\fP, size_t \fIslen\fP);
+.fi
+.PP
+Link with
+.IR -lkeccak .
+.SH DESCRIPTION
+The
+.BR libkeccak_cshake_suffix ()
+function returns a string of '1':s and '0':s
+representing the bits the the message suffixed
+that shall be used.
+Canonically, the values of the
+.I nlen
+and
+.I slen
+parameters shall be the length of the cSHAKE
+function-name bit-string and the cSHAKE
+customisation bit-string, however, the function
+will only check whether these values are zero
+or non-zero.
+.SH RETURN VALUES
+The
+.BR libkeccak_cshake_suffix ()
+function returns a statically allocated,
+read-only, message suffix bit-string
+that shall be used.
+.SH ERRORS
+The
+.BR libkeccak_cshake_suffix ()
+function cannot fail.
+.SH SEE ALSO
+.BR libkeccak_spec_cshake (3),
+.BR libkeccak_generalised_spec_initialise (3),
+.BR libkeccak_state_initialise (3),
+.BR libkeccak_cshake_initialise (3),
+.BR libkeccak_fast_digest (3),
+.BR libkeccak_zerocopy_digest (3),
+.BR libkeccak_digest (3)

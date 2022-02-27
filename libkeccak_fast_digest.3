@@ -59,7 +59,9 @@ or \(dq\(dq is used. For the other algorithms the constants
 .B LIBKECCAK_RAWSHAKE_SUFFIX
 (for RawSHAKE), and
 .B LIBKECCAK_SHAKE_SUFFIX
-(for SHAKE) are used.
+(for SHAKE), or the return of the
+.BR libkeccak_cshake_suffix (3)
+function (for cSHAKE), are used.
 .PP
 The hash of the message will be stored to
 .IR hashsum ,
@@ -132,11 +134,25 @@ libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
 printf(\(dq%s\en\(dq, hexhash);
 libkeccak_state_fast_destroy(&state);
 .fi
+.SH NOTES
+For cSHAKE, the
+.BR libkeccak_cshake_initialise (3),
+must be called, once, immediately after
+state initialisation; before the first
+call to any of the
+.BR libkeccak_fast_update (),
+.BR libkeccak_zerocopy_update (),
+.BR libkeccak_update (),
+and
+.BR libkeccak_digest_digest ()
+functions.
 .SH SEE ALSO
 .BR libkeccak_state_initialise (3),
+.BR libkeccak_cshake_initialise (3),
 .BR libkeccak_fast_update (3),
 .BR libkeccak_zerocopy_update (3),
 .BR libkeccak_update (3),
+.BR libkeccak_cshake_suffix (3),
 .BR libkeccak_digest (3),
 .BR libkeccak_zerocopy_digest (3),
 .BR libkeccak_simple_squeeze (3),

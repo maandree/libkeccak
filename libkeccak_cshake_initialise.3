@@ -1,0 +1,126 @@
+.TH LIBKECCAK_CSHAKE_INITIALISE 3 LIBKECCAK
+.SH NAME
+libkeccak_cshake_initialise - Initialise a sponge for cSHAKE hashing
+.SH SYNOPSIS
+.nf
+#include <libkeccak.h>
+
+void libkeccak_cshake_initialise(struct libkeccak_state *restrict \fIstate\fP,
+                                 const void *\fIn_text\fP, size_t \fIn_len\fP, size_t \fIn_bits\fP, const char *\fIn_suffix\fP,
+                                 const void *\fIs_text\fP, size_t \fIs_len\fP, size_t \fIs_bits\fP, const char *\fIs_suffix\fP);
+.fi
+.PP
+Link with
+.IR -lkeccak .
+.SH DESCRIPTION
+The
+.BR libkeccak_cshake_suffix ()
+function shall be called immediately
+after the
+.BR libkeccak_state_initialise (3)
+function (before
+.BR libkeccak_update (3)
+or
+.BR libkeccak_digest (3),
+or any variant of those functions),
+to provide the initialisation blocks,
+containing customisation data, to the
+Keccak sponge.
+.PP
+The value of the
+.I state
+parameter shall be an initialised state
+to feed the initialisation blocks to.
+.PP
+The value of the
+.I n_text
+parameter shall be the function-name
+bit-string, represented in raw bytes;
+.I n_len
+shall be value no greater than the
+number of whole bytes in
+.I n_text
+and
+.I n_bits
+shall be the number of bits in
+.I n_text
+sans the bytes covered by
+.IR n_len ,
+that is, the number of bits in
+.I n_text
+minus
+.IR (nlen_*8) .
+.I n_suffix
+shall be either
+.I NULL
+or an appendix of bits to
+.I n_suffix
+(neither
+.I n_len
+nor
+.I n_bits
+shall count these), stored as a NUL-terminated
+string of the ASCII digits
+.B 1
+and
+.BR 0 .
+.PP
+The value of the
+.I s_text
+parameter shall be the customisation
+bit-string, represented in raw bytes;
+.I s_len
+shall be value no greater than the
+number of whole bytes in
+.I s_text
+and
+.I s_bits
+shall be the number of bits in
+.I s_text
+sans the bytes covered by
+.IR s_len ,
+that is, the number of bits in
+.I s_text
+minus
+.IR (nles_*8) .
+.I s_suffix
+shall be either
+.I NULL
+or an appendix of bits to
+.I s_suffix
+(neither
+.I s_len
+nor
+.I s_bits
+shall count these), stored as a NUL-terminated
+string of the ASCII digits
+.B 1
+and
+.BR 0 .
+.PP
+For the
+.I n_suffix
+and
+.I s_suffix
+parameters,
+.I NULL
+is treated as the empty string.
+.SH RETURN VALUES
+The
+.BR libkeccak_cshake_suffix ()
+function does not return a value.
+.SH ERRORS
+The
+.BR libkeccak_cshake_suffix ()
+function cannot fail.
+.SH SEE ALSO
+.BR libkeccak_spec_cshake (3),
+.BR libkeccak_generalised_spec_initialise (3),
+.BR libkeccak_state_initialise (3),
+.BR libkeccak_cshake_initialise (3),
+.BR libkeccak_fast_update (3),
+.BR libkeccak_zerocopy_update (3),
+.BR libkeccak_update (3),
+.BR libkeccak_fast_digest (3),
+.BR libkeccak_zerocopy_digest (3),
+.BR libkeccak_digest (3)

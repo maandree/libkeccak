@@ -82,8 +82,17 @@ libkeccak_behex_lower(hexhash, binhash, sizeof(binhash));
 printf(\(dq%s\en\(dq, hexhash);
 libkeccak_state_destroy(&state);
 .fi
+.SH NOTES
+For cSHAKE, the
+.BR libkeccak_cshake_initialise (3),
+must be called, once, immediately after
+state initialisation; before the first
+call to the
+.BR libkeccak_update ()
+function.
 .SH SEE ALSO
 .BR libkeccak_state_initialise (3),
+.BR libkeccak_cshake_initialise (3),
 .BR libkeccak_fast_update (3),
 .BR libkeccak_zerocopy_update (3),
 .BR libkeccak_fast_digest (3),

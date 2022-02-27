@@ -330,6 +330,15 @@ libkeccak_spec_rawshake(struct libkeccak_spec *spec, long int x, long int d)
 #define libkeccak_spec_shake libkeccak_spec_rawshake
 
 /**
+ * Fill in a `struct libkeccak_spec` for a cSHAKEx hashing
+ * 
+ * @param  spec:struct libkeccak_spec *  The specifications datastructure to fill in
+ * @param  x:long                        The value of x in `cSHAKEx`, half the capacity
+ * @param  d:long                        The output size
+ */
+#define libkeccak_spec_cshake libkeccak_spec_rawshake
+
+/**
  * Check for errors in a `struct libkeccak_spec`
  * 
  * @param   spec  The specifications datastructure to check
@@ -546,6 +555,30 @@ LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__(2))))
 size_t libkeccak_state_unmarshal(struct libkeccak_state *restrict, const void *restrict);
 
 /**
+ * Create and absorb the initialisation blocks for cSHAKE hashing
+ * 
+ * @param  state       The hashing state
+ * @param  n_text      Function name-string
+ * @param  n_len       Byte-length of `n_text` (only whole byte)
+ * @param  n_bits      Bit-length of `n_text`, minus `n_len * 8`
+ * @param  n_suffix    Bit-string, represented by a NUL-terminated
+ *                     string of '1':s and '0's:, making up the part
+ *                     after `n_text` of the function-name bit-string;
+ *                     `NULL` is treated as the empty string
+ * @param  s_text      Customisation-string
+ * @param  s_len       Byte-length of `s_text` (only whole byte)
+ * @param  s_bits      Bit-length of `s_text`, minus `s_len * 8`
+ * @param  s_suffix    Bit-string, represented by a NUL-terminated
+ *                     string of '1':s and '0's:, making up the part
+ *                     after `s_text` of the customisation bit-string;
+ *                     `NULL` is treated as the empty string
+ */
+LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__(1), __nothrow__)))
+void libkeccak_cshake_initialise(struct libkeccak_state *restrict,
+                                 const void *, size_t, size_t, const char *,
+                                 const void *, size_t, size_t, const char *);
+
+/**
  * Get the number of bytes that are absorbed during
  * one pass of the absorption phase
  * 
@@ -556,7 +589,7 @@ LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __warn_unused_result
 inline size_t
 libkeccak_zerocopy_chunksize(struct libkeccak_state *state)
 {
-	return state->r >> 3;
+	return (size_t)state->r >> 3;
 }
 
 /**
@@ -601,6 +634,19 @@ int libkeccak_fast_update(struct libkeccak_state *restrict, const void *restrict
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__)))
 int libkeccak_update(struct libkeccak_state *restrict, const void *restrict, size_t);
 
+/**
+ * Get message suffix for cSHAKE hashing
+ * 
+ * @param   nlen  Whether the function-name bit string is non-empty
+ * @param   slen  Whether the customisation bit string is non-empty
+ * @return        The message suffix to use
+ */
+LIBKECCAK_GCC_ONLY(__attribute__((__nothrow__, __warn_unused_result__, __const__, __returns_nonnull__)))
+inline const char *
+libkeccak_cshake_suffix(size_t nlen, size_t slen)
+{
+	return (nlen || slen) ? "00" : LIBKECCAK_SHAKE_SUFFIX;
+}
 
 /**
  * Absorb the last part of the message and squeeze the Keccak sponge
@@ -719,14 +765,17 @@ void libkeccak_unhex(void *restrict, const char *restrict);
  * the content of the file is assumed non-sensitive
  * 
  * @param   fd       The file descriptor of the file to hash
- * @param   state    The hashing state, should not be initialised (memory leak otherwise)
+ * @param   state    The hashing state, should not be initialised unless
+ *                   `spec` is `NULL` (memory leak otherwise)
+ * @param   spec     Specifications for the hashing algorithm; or `NULL`
+ *                   if `spec` is already initialised
  * @param   spec     Specifications for the hashing algorithm
  * @param   suffix   The data suffix, see `libkeccak_digest`
  * @param   hashsum  Output array for the hashsum, have an allocation size of
  *                   at least `((spec->output + 7) / 8) * sizeof(char)`, may be `NULL`
  * @return           Zero on success, -1 on error
  */
-LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__(2, 3))))
+LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__(2))))
 int libkeccak_generalised_sum_fd(int, struct libkeccak_state *restrict, const struct libkeccak_spec *restrict,
                                  const char *restrict, void *restrict);
 
@@ -811,11 +860,14 @@ libkeccak_shakesum_fd(int fd, struct libkeccak_state *restrict state, long semic
 	return libkeccak_generalised_sum_fd(fd, state, &spec, LIBKECCAK_SHAKE_SUFFIX, hashsum);
 }
 
+/* TODO add libkeccak_cshakesum_fd */
+
 
 /*
  * The Keccak hash-function, that was selected by NIST as the SHA-3 competition winner,
  * doesn't need this nested approach and can be used to generate a MAC by simply prepending
- * the key to the message. [http://keccak.noekeon.org]
+ * the key to the message. [http://keccak.noekeon.org] HMAC-SHA3-224, HMAC-SHA3-256,
+ * HMAC-SHA3-384, and HMAC-SHA3-512 are however approved by NIST.
  */
 
 
@@ -861,7 +913,7 @@ struct libkeccak_hmac_state {
 	 */
 	unsigned char leftover;
 
-	char __pad[sizeof(void *) - 1];
+	char _pad[sizeof(void *) - 1];
 };
 
 

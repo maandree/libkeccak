@@ -38,13 +38,23 @@ should have an allocation size of at least
 + 7) / 8) * sizeof(char)).
 .PP
 .I *state
-should not be initialised.
+should not be initialised unless
+.I spec
+is
+.IR NULL .
 .BR libkeccak_generalised_sum_fd ()
 initialises
 .I *state
-itself. Therefore there would be a memory leak if
+itself unless
+.I spec
+is
+.IR NULL .
+Therefore there would be a memory leak if
 .I *state
-is already initialised.
+is already initialised and
+.I spec
+is
+.RI non- NULL .
 .SH RETURN VALUES
 The
 .BR libkeccak_generalised_sum_fd ()
@@ -118,6 +128,7 @@ libkeccak_state_destroy(&state);
 .BR libkeccak_sha3sum_fd (3),
 .BR libkeccak_rawshakesum_fd (3),
 .BR libkeccak_shakesum_fd (3),
+.BR libkeccak_spec_cshake (3),
 .BR libkeccak_spec_sha3 (3),
 .BR libkeccak_spec_shake (3),
 .BR libkeccak_spec_rawshake (3),

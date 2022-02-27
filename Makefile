@@ -21,6 +21,8 @@ OBJ =\
 	digest.o\
 	libkeccak_behex_lower.o\
 	libkeccak_behex_upper.o\
+	libkeccak_cshake_initialise.o\
+	libkeccak_cshake_suffix.o\
 	libkeccak_degeneralise_spec.o\
 	libkeccak_generalised_spec_initialise.o\
 	libkeccak_generalised_sum_fd.o\
@@ -73,6 +75,8 @@ HDR =\
 MAN3 =\
 	libkeccak_behex_lower.3\
 	libkeccak_behex_upper.3\
+	libkeccak_cshake_initialise.3\
+	libkeccak_cshake_suffix.3\
 	libkeccak_degeneralise_spec.3\
 	libkeccak_digest.3\
 	libkeccak_fast_digest.3\
@@ -103,6 +107,7 @@ MAN3 =\
 	libkeccak_shakesum_fd.3\
 	libkeccak_simple_squeeze.3\
 	libkeccak_spec_check.3\
+	libkeccak_spec_cshake.3\
 	libkeccak_spec_rawshake.3\
 	libkeccak_spec_sha3.3\
 	libkeccak_spec_shake.3\

@@ -146,26 +146,24 @@ test_state(struct libkeccak_spec *restrict spec)
 /**
  * Run a test case for `libkeccak_digest`
  * 
+ * @param   state            Already initialised state
  * @param   spec             The specification for the hashing
  * @param   suffix           The message suffix (padding prefix)
  * @param   msg              The message to digest
- * @param   bits             Bits at the end of `message` that does not make up a whole byte
+ * @param   bytes            Number of while bytes in `msg`
+ * @param   bits             Bits at the end of `msg` that does not make up a whole byte
  * @param   expected_answer  The expected answer, must be lowercase
  * @return                   Zero on success, -1 on error
  */
 static int
-test_digest_case(const struct libkeccak_spec *restrict spec, const char *restrict suffix,
-                 const char *restrict msg, long int bits, const char *restrict expected_answer)
+test_digest_case_inited(struct libkeccak_state *restrict state, const struct libkeccak_spec *restrict spec,
+                        const char *restrict suffix, const char *restrict msg, size_t bytes, size_t bits,
+                        const char *restrict expected_answer)
 {
-	struct libkeccak_state state;
 	unsigned char *restrict hashsum;
 	char *restrict hexsum;
 	int ok;
 
-	if (libkeccak_state_initialise(&state, spec)) {
-		perror("libkeccak_state_initialise");
-		return -1;
-	}
 	hashsum = malloc((size_t)((spec->output + 7) / 8));
 	if (!hashsum) {
 		perror("malloc");
@@ -177,11 +175,10 @@ test_digest_case(const struct libkeccak_spec *restrict spec, const char *restric
 		return -1;
 	}
 
-	if (libkeccak_digest(&state, msg, strlen(msg) - !!bits, (size_t)bits, suffix, hashsum)) {
+	if (libkeccak_digest(state, msg, bytes, bits, suffix, hashsum)) {
 		perror("libkeccak_digest");
 		return -1;
 	}
-	libkeccak_state_fast_destroy(&state);
 
 	libkeccak_behex_lower(hexsum, hashsum, (size_t)((spec->output + 7) / 8));
 	ok = !strcmp(hexsum, expected_answer);
@@ -197,6 +194,77 @@ test_digest_case(const struct libkeccak_spec *restrict spec, const char *restric
 
 
 /**
+ * Run a test case for `libkeccak_digest`
+ * 
+ * @param   spec             The specification for the hashing
+ * @param   suffix           The message suffix (padding prefix)
+ * @param   msg              The message to digest
+ * @param   bytes            Number of while bytes in `msg`
+ * @param   bits             Bits at the end of `msg` that does not make up a whole byte
+ * @param   expected_answer  The expected answer, must be lowercase
+ * @return                   Zero on success, -1 on error
+ */
+static int
+test_digest_case(const struct libkeccak_spec *restrict spec, const char *restrict suffix,
+                 const char *restrict msg, size_t bytes, size_t bits, const char *restrict expected_answer)
+{
+	struct libkeccak_state state;
+	int ret;
+	if (libkeccak_state_initialise(&state, spec)) {
+		perror("libkeccak_state_initialise");
+		return -1;
+	}
+	ret = test_digest_case_inited(&state, spec, suffix, msg, bytes, bits, expected_answer);
+	libkeccak_state_fast_destroy(&state);
+	return ret;
+}
+
+
+/**
+ * Run a test case for `libkeccak_digest` with cSHAKE
+ * 
+ * @param   spec             The specification for the hashing
+ * @param   suffix           The message suffix (padding prefix)
+ * @param   n_text           Function name-string
+ * @param   n_len            Byte-length of `n_text` (only whole byte)
+ * @param   n_bits           Bit-length of `n_text`, minus `n_len * 8`
+ * @param   n_suffix         Bit-string, represented by a NUL-terminated
+ *                           string of '1':s and '0's:, making up the part
+ *                           after `n_text` of the function-name bit-string;
+ *                           `NULL` is treated as the empty string
+ * @param   s_text           Customisation-string
+ * @param   s_len            Byte-length of `s_text` (only whole byte)
+ * @param   s_bits           Bit-length of `s_text`, minus `s_len * 8`
+ * @param   s_suffix         Bit-string, represented by a NUL-terminated
+ *                           string of '1':s and '0's:, making up the part
+ *                           after `s_text` of the customisation bit-string;
+ *                           `NULL` is treated as the empty string
+ * @param   msg              The message to digest
+ * @param   bytes            Number of while bytes in `msg`
+ * @param   bits             Bits at the end of `msg` that does not make up a whole byte
+ * @param   expected_answer  The expected answer, must be lowercase
+ * @return                   Zero on success, -1 on error
+ */
+static int
+test_digest_case_cshake(const struct libkeccak_spec *restrict spec, const char *restrict suffix,
+                        const void *n_text, size_t n_len, size_t n_bits, const char *n_suffix,
+                        const void *s_text, size_t s_len, size_t s_bits, const char *s_suffix,
+                        const char *restrict msg, size_t bytes, size_t bits, const char *restrict expected_answer)
+{
+	struct libkeccak_state state;
+	int ret;
+	if (libkeccak_state_initialise(&state, spec)) {
+		perror("libkeccak_state_initialise");
+		return -1;
+	}
+	libkeccak_cshake_initialise(&state, n_text, n_len, n_bits, n_suffix, s_text, s_len, s_bits, s_suffix);
+	ret = test_digest_case_inited(&state, spec, suffix, msg, bytes, bits, expected_answer);
+	libkeccak_state_fast_destroy(&state);
+	return ret;
+}
+
+
+/**
  * Run test cases for `libkeccak_digest`
  * 
  * @return  Zero on success, -1 on error
@@ -207,37 +275,37 @@ test_digest(void)
 #define sha3(output, message)\
 	(printf("  Testing SHA3-"#output"(%s): ", #message),\
 	 libkeccak_spec_sha3(&spec, output),\
-	 test_digest_case(&spec, LIBKECCAK_SHA3_SUFFIX, message, 0, answer))
+	 test_digest_case(&spec, LIBKECCAK_SHA3_SUFFIX, message, strlen(message), 0, answer))
 
 #define keccak(output, message)\
 	(printf("  Testing Keccak-"#output"(%s): ", #message),\
 	 libkeccak_spec_sha3(&spec, output) /* sic! */,\
-	 test_digest_case(&spec, "", message, 0, answer))
+	 test_digest_case(&spec, "", message, strlen(message), 0, answer))
 
-#define keccak_bits(output, message, bits)\
-	(printf("  Testing Keccak-"#output"(%s-%i): ", #message, bits),\
+#define keccak_bits(output, message, msg_bits)\
+	(printf("  Testing Keccak-"#output"(%s:%i): ", #message, msg_bits),\
 	 libkeccak_spec_sha3(&spec, output) /* sic! */,\
-	 test_digest_case(&spec, "", message, bits, answer))
+	 test_digest_case(&spec, "", message, msg_bits / 8, msg_bits % 8, answer))
 
 #define rawshake(semicapacity, output, message)\
 	(printf("  Testing RawSHAKE-"#semicapacity"(%s, %i): ", #message, output),\
 	 libkeccak_spec_rawshake(&spec, semicapacity, output),\
-	 test_digest_case(&spec, LIBKECCAK_RAWSHAKE_SUFFIX, message, 0, answer))
+	 test_digest_case(&spec, LIBKECCAK_RAWSHAKE_SUFFIX, message, strlen(message), 0, answer))
 
 #define rawshake_bits(semicapacity, output, message, bits)\
 	(printf("  Testing RawSHAKE-"#semicapacity"(%s-%i, %i): ", #message, bits, output),\
 	 libkeccak_spec_rawshake(&spec, semicapacity, output),\
-	 test_digest_case(&spec, LIBKECCAK_RAWSHAKE_SUFFIX, message, bits, answer))
+	 test_digest_case(&spec, LIBKECCAK_RAWSHAKE_SUFFIX, message, strlen(message) - !!bits, bits, answer))
 
 #define shake(semicapacity, output, message)\
 	(printf("  Testing SHAKE-"#semicapacity"(%s, %i): ", #message, output),\
 	 libkeccak_spec_shake(&spec, semicapacity, output),\
-	 test_digest_case(&spec, LIBKECCAK_SHAKE_SUFFIX, message, 0, answer))
+	 test_digest_case(&spec, LIBKECCAK_SHAKE_SUFFIX, message, strlen(message), 0, answer))
 
 #define keccak_g(b, c, o, message)\
 	(printf("  Testing Keccak[%i,%i,%i](%s): ", b, c, o, #message),\
 	 spec.bitrate = b, spec.capacity = c, spec.output = o,\
-	 test_digest_case(&spec, "", message, 0, answer))
+	 test_digest_case(&spec, "", message, strlen(message), 0, answer))
 
 
 	struct libkeccak_spec spec;
@@ -456,25 +524,44 @@ test_digest(void)
 static int
 test_digest_bits(void)
 {
-#define MSG0 "", 0
-#define MSG5 "\x13" /* 1 1001 */, 5
-#define MSG30 "\x53\x58\x7B\x19" /* 1100 1010  0001 1010  1101 1110  10 0110 */, 30
+#define MSG0 ""
+#define MSG5 "\x13" /* 1 1001 */
+#define MSG30 "\x53\x58\x7B\x19" /* 1100 1010  0001 1010  1101 1110  10 0110 */
 #define MSG1600_32 "\xA3\xA3\xA3\xA3" /* (1100 0101)x4 */
 #define MSG1600_160 MSG1600_32 MSG1600_32 MSG1600_32 MSG1600_32 MSG1600_32
 #define MSG1600_800 MSG1600_160 MSG1600_160 MSG1600_160 MSG1600_160 MSG1600_160
-#define MSG1600 MSG1600_800 MSG1600_800, 1600
-#define MSG1605 MSG1600_800 MSG1600_800 "\x03", 1605
-#define MSG1630 MSG1600_800 MSG1600_800 "\xA3\xA3\xA3\x23", 1630
+#define MSG1600 MSG1600_800 MSG1600_800
+#define MSG1605 MSG1600_800 MSG1600_800 "\x03"
+#define MSG1630 MSG1600_800 MSG1600_800 "\xA3\xA3\xA3\x23"
+#define SEQ1600 "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F"\
+                "\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F"\
+                "\x20\x21\x22\x23\x24\x25\x26\x27\x28\x29\x2A\x2B\x2C\x2D\x2E\x2F"\
+                "\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x3A\x3B\x3C\x3D\x3E\x3F"\
+                "\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4A\x4B\x4C\x4D\x4E\x4F"\
+                "\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5A\x5B\x5C\x5D\x5E\x5F"\
+                "\x60\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6A\x6B\x6C\x6D\x6E\x6F"\
+                "\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7A\x7B\x7C\x7D\x7E\x7F"\
+                "\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8A\x8B\x8C\x8D\x8E\x8F"\
+                "\x90\x91\x92\x93\x94\x95\x96\x97\x98\x99\x9A\x9B\x9C\x9D\x9E\x9F"\
+                "\xA0\xA1\xA2\xA3\xA4\xA5\xA6\xA7\xA8\xA9\xAA\xAB\xAC\xAD\xAE\xAF"\
+                "\xB0\xB1\xB2\xB3\xB4\xB5\xB6\xB7\xB8\xB9\xBA\xBB\xBC\xBD\xBE\xBF"\
+                "\xC0\xC1\xC2\xC3\xC4\xC5\xC6\xC7"
 
-#define sha3(output, message)\
-	(printf("  Testing SHA3-"#output"(%s): ", #message),\
+#define sha3(output, message, msg_bits)\
+	(printf("  Testing SHA3-"#output"(%s:%i): ", #message, msg_bits),\
 	 libkeccak_spec_sha3(&spec, output),\
-	 test_digest_case(&spec, LIBKECCAK_SHA3_SUFFIX, message & 7, answer))
+	 test_digest_case(&spec, LIBKECCAK_SHA3_SUFFIX, message, msg_bits / 8, msg_bits % 8, answer))
 
-#define shake(semicapacity, message)\
-	(printf("  Testing SHAKE-"#semicapacity"(%s): ", #message),\
-	 libkeccak_spec_shake(&spec, semicapacity, strlen(answer) * 4),\
-	 test_digest_case(&spec, LIBKECCAK_SHAKE_SUFFIX, message & 7, answer))
+#define shake(semicapacity, message, msg_bits)\
+	(printf("  Testing SHAKE-"#semicapacity"(%s:%i): ", #message, msg_bits),\
+	 libkeccak_spec_shake(&spec, semicapacity, (long int)strlen(answer) * 4),\
+	 test_digest_case(&spec, LIBKECCAK_SHAKE_SUFFIX, message, msg_bits / 8, msg_bits % 8, answer))
+
+#define cshake(semicapacity, n, s, message, msg_bits)			\
+	(printf("  Testing cSHAKE-"#semicapacity"(%s, %s, %s:%i): ", #n, #s, #message, msg_bits),\
+	 libkeccak_spec_cshake(&spec, semicapacity, (long int)strlen(answer) * 4),\
+	 test_digest_case_cshake(&spec, libkeccak_cshake_suffix(strlen(n), strlen(s)), n, strlen(n), 0, NULL,\
+	                         s, strlen(s), 0, NULL, message, msg_bits / 8, msg_bits % 8, answer))
 
 
 	struct libkeccak_spec spec;
@@ -494,7 +581,7 @@ test_digest_bits(void)
 	         "d83c6d5e8ce803aa62b8d654db53d09b8dcff273cdfeb573fad8bcd45578bec2e770d01efde86e721a3f7c6cce275dab"
 	         "e6e2143f1af18da7efddc4c7b70b5e345db93cc936bea323491ccb38a388f546a9ff00dd4e1300b9b2153d2041d205b4"
 	         "43e41b45a653f2a5c4492c1add544512dda2529833462b71a41a45be97290b6f";
-	if (shake(128, MSG0))
+	if (shake(128, MSG0, 0))
 		return -1;
 
 	answer = "46b9dd2b0ba88d13233b3feb743eeb243fcd52ea62b81b82b50c27646ed5762fd75dc4ddd8c0f200cb05019d67b592f6"
@@ -508,25 +595,25 @@ test_digest_bits(void)
 	         "143045d791cc85eff5b21932f23861bcf23a52b5da67eaf7baae0f5fb1369db78f3ac45f8c4ac5671d85735cdddb09d2"
 	         "b1e34a1fc066ff4a162cb263d6541274ae2fcc865f618abe27c124cd8b074ccd516301b91875824d09958f341ef274bd"
 	         "ab0bae316339894304e35877b0c28a9b1fd166c796b9cc258a064a8f57e27f2a";
-	if (shake(256, MSG0))
+	if (shake(256, MSG0, 0))
 		return -1;
 
 
 	answer = "ffbad5da96bad71789330206dc6768ecaeb1b32dca6b3301489674ab";
-	if (sha3(224, MSG5))
+	if (sha3(224, MSG5, 5))
 		return -1;
 
 	answer = "7b0047cf5a456882363cbf0fb05322cf65f4b7059a46365e830132e3b5d957af";
-	if (sha3(256, MSG5))
+	if (sha3(256, MSG5, 5))
 		return -1;
 
 	answer = "737c9b491885e9bf7428e792741a7bf8dca9653471c3e148473f2c236b6a0a6455eb1dce9f779b4b6b237fef171b1c64";
-	if (sha3(384, MSG5))
+	if (sha3(384, MSG5, 5))
 		return -1;
 
 	answer = "a13e01494114c09800622a70288c432121ce70039d753cadd2e006e4d961cb27"
 	         "544c1481e5814bdceb53be6733d5e099795e5e81918addb058e22a9f24883f37";
-	if (sha3(512, MSG5))
+	if (sha3(512, MSG5, 5))
 		return -1;
 
 	answer = "2e0abfba83e6720bfbc225ff6b7ab9ffce58ba027ee3d898764fef287ddeccca3e6e5998411e7ddb32f67538f500b18c"
@@ -540,7 +627,7 @@ test_digest_bits(void)
 	         "191e6dbbb5aa5a2afda51fc05a3af5258b87665243550f28948ae2b8beb6bc9c770b35f067eaa641efe65b1a44909d1b"
 	         "149f97eea601391c609ec81d1930f57c18a4e0fab491d1cadfd50483449edc0f07ffb24d2c6f9a9a3bff39ae3d57f560"
 	         "654d7d75c908abe62564753eac39d7503da6d37c2e32e1af3b8aec8ae3069cd9";
-	if (shake(128, MSG5))
+	if (shake(128, MSG5, 5))
 		return -1;
 
 	answer = "48a5c11abaeeff092f3646ef0d6b3d3ff76c2f55f9c732ac6470c03764008212e21b1467778b181989f88858211b45df"
@@ -554,25 +641,25 @@ test_digest_bits(void)
 	         "4618a23e10f9c229397440542d0ab1b2e10dacc5c95e597f2c7ea38438105f97803dbb03fcc0fd416b0905a41d184deb"
 	         "238905775891f93501fb4176a3bd6c464461d36ee8b008aabd9e26a34055e80c8c813eeba07f728ab32b15605ad161a0"
 	         "669f6fce5c5509fbb6afd24aeacc5fa4a51523e6b173246ed4bfa521d74fc6bb";
-	if (shake(256, MSG5))
+	if (shake(256, MSG5, 5))
 		return -1;
 
 
 	answer = "d666a514cc9dba25ac1ba69ed3930460deaac9851b5f0baab007df3b";
-	if (sha3(224, MSG30))
+	if (sha3(224, MSG30, 30))
 		return -1;
 
 	answer = "c8242fef409e5ae9d1f1c857ae4dc624b92b19809f62aa8c07411c54a078b1d0";
-	if (sha3(256, MSG30))
+	if (sha3(256, MSG30, 30))
 		return -1;
 
 	answer = "955b4dd1be03261bd76f807a7efd432435c417362811b8a50c564e7ee9585e1ac7626dde2fdc030f876196ea267f08c3";
-	if (sha3(384, MSG30))
+	if (sha3(384, MSG30, 30))
 		return -1;
 
 	answer = "9834c05a11e1c5d3da9c740e1c106d9e590a0e530b6f6aaa7830525d075ca5db"
 	         "1bd8a6aa981a28613ac334934a01823cd45f45e49b6d7e6917f2f16778067bab";
-	if (sha3(512, MSG30))
+	if (sha3(512, MSG30, 30))
 		return -1;
 
 	answer = "6d5d39c55f3cca567feaf422dc64ba17401d07756d78b0fa3d546d66afc27671e0010685fc69a7ec3c5367b8fa5fda39"
@@ -586,7 +673,7 @@ test_digest_bits(void)
 	         "65cb7dba46a3340df8c3fa89c7c4db539d38dc406f1d2cf54e5905580b4404bfd7b3719561c5a59d5dfdb1bf93df1382"
 	         "5225edcce0fa7d87efcd239feb49fc9e2de9d828feeb1f2cf579b95dd050ab2ca47105a8d30f3fd2a1154c15f87fb37b"
 	         "2c7156bd7f3cf2b745c912a40bc1b559b656e3e903cc5733e86ba15dfef70678";
-	if (shake(128, MSG30))
+	if (shake(128, MSG30, 30))
 		return -1;
 
 	answer = "465d081dff875e396200e4481a3e9dcd88d079aa6d66226cb6ba454107cb81a7841ab02960de279ccbe34b42c36585ad"
@@ -600,25 +687,25 @@ test_digest_bits(void)
 	         "5546193a9b923f0590385dc4bff7c49d4915b5a365db4c84ddcb185de8f9eeb334965a42f1381c8badc22ba1f8ee4c0e"
 	         "4daaf7a88e7f42ddb8148f3bf8d3b8d74f098155a37cb4cb27876b85da602e5c789c10e03be73407bab8c49213f8c74e"
 	         "1266ce9b11286e674ca9c10c9c9955049a66e9051d9a2b1fc9afe26798e9cec6";
-	if (shake(256, MSG30))
+	if (shake(256, MSG30, 30))
 		return -1;
 
 
 	answer = "9376816aba503f72f96ce7eb65ac095deee3be4bf9bbc2a1cb7e11e0";
-	if (sha3(224, MSG1600))
+	if (sha3(224, MSG1600, 1600))
 		return -1;
 
 	answer = "79f38adec5c20307a98ef76e8324afbfd46cfd81b22e3973c65fa1bd9de31787";
-	if (sha3(256, MSG1600))
+	if (sha3(256, MSG1600, 1600))
 		return -1;
 
 	answer = "1881de2ca7e41ef95dc4732b8f5f002b189cc1e42b74168ed1732649ce1dbcdd76197a31fd55ee989f2d7050dd473e8f";
-	if (sha3(384, MSG1600))
+	if (sha3(384, MSG1600, 1600))
 		return -1;
 
 	answer = "e76dfad22084a8b1467fcf2ffa58361bec7628edf5f3fdc0e4805dc48caeeca8"
 	         "1b7c13c30adf52a3659584739a2df46be589c51ca1a4a8416df6545a1ce8ba00";
-	if (sha3(512, MSG1600))
+	if (sha3(512, MSG1600, 1600))
 		return -1;
 
 	answer = "131ab8d2b594946b9c81333f9bb6e0ce75c3b93104fa3469d3917457385da037cf232ef7164a6d1eb448c8908186ad85"
@@ -632,7 +719,7 @@ test_digest_bits(void)
 	         "188d855f1b70d71ff3e50c537ac1b0f8974f0fe1a6ad295ba42f6aec74d123a7abedde6e2c0711cab36be5acb1a5a11a"
 	         "4b1db08ba6982efccd716929a7741cfc63aa4435e0b69a9063e880795c3dc5ef3272e11c497a91acf699fefee206227a"
 	         "44c9fb359fd56ac0a9a75a743cff6862f17d7259ab075216c0699511643b6439";
-	if (shake(128, MSG1600))
+	if (shake(128, MSG1600, 1600))
 		return -1;
 
 	answer = "cd8a920ed141aa0407a22d59288652e9d9f1a7ee0c1e7c1ca699424da84a904d2d700caae7396ece96604440577da4f3"
@@ -646,25 +733,25 @@ test_digest_bits(void)
 	         "149f7b62675e7d1a4d6dec48c1c7164586eae06a51208c0b791244d307726505c3ad4b26b6822377257aa152037560a7"
 	         "39714a3ca79bd605547c9b78dd1f596f2d4f1791bc689a0e9b799a37339c04275733740143ef5d2b58b96a363d4e0807"
 	         "6a1a9d7846436e4dca5728b6f760eef0ca92bf0be5615e96959d767197a0beeb";
-	if (shake(256, MSG1600))
+	if (shake(256, MSG1600, 1600))
 		return -1;
 
 
 	answer = "22d2f7bb0b173fd8c19686f9173166e3ee62738047d7eadd69efb228";
-	if (sha3(224, MSG1605))
+	if (sha3(224, MSG1605, 1605))
 		return -1;
 
 	answer = "81ee769bed0950862b1ddded2e84aaa6ab7bfdd3ceaa471be31163d40336363c";
-	if (sha3(256, MSG1605))
+	if (sha3(256, MSG1605, 1605))
 		return -1;
 
 	answer = "a31fdbd8d576551c21fb1191b54bda65b6c5fe97f0f4a69103424b43f7fdb835979fdbeae8b3fe16cb82e587381eb624";
-	if (sha3(384, MSG1605))
+	if (sha3(384, MSG1605, 1605))
 		return -1;
 
 	answer = "fc4a167ccb31a937d698fde82b04348c9539b28f0c9d3b4505709c03812350e4"
 	         "990e9622974f6e575c47861c0d2e638ccfc2023c365bb60a93f528550698786b";
-	if (sha3(512, MSG1605))
+	if (sha3(512, MSG1605, 1605))
 		return -1;
 
 	answer = "4ac38ebd1678b4a452792c5673f9777d36b55451aaae2424924942d318a2f6f51bbc837dcc7022c5403b69d29ac99a74"
@@ -678,7 +765,7 @@ test_digest_bits(void)
 	         "161356a5941c799907ef9d3b1a441f09515f2831c4fafde3dc7c1e9b5aa57d3e83cd6734da3d8b9ef3fc448805ea29c9"
 	         "9cba6b352bcabe2fd970ae9580d2bf25152b960e6b806d87d7d0608b247f61089e298692c27f19c52d03ebe395a36806"
 	         "ad540bec2d046c18e355faf8313d2ef8995ee6aae42568f314933e3a21e5be40";
-	if (shake(128, MSG1605))
+	if (shake(128, MSG1605, 1605))
 		return -1;
 
 	answer = "98d093b067475760124ffb9204a5b327c6bb05c54ff234f0b43fac7240415166a8c705ea0d739f0808b06576d996662c"
@@ -692,25 +779,25 @@ test_digest_bits(void)
 	         "874e8722d03d3f5ff6ef3bebe7642fe4916c5f10ff3fd61387d5d91bcd32f9e8e4593dcaad23eccc05d2fc9be2c1cd63"
 	         "0ea123dca9cb6938d60cddedc11e1e9bc9d268a5456ba9ccff18597c5ff9735708413b9d84b9f4721937cc6595712797"
 	         "532b48d6f1a2d1723b07d5460bc13916d96e88180713ac33d2c232e35e764e04";
-	if (shake(256, MSG1605))
+	if (shake(256, MSG1605, 1605))
 		return -1;
 
 
 	answer = "4e907bb1057861f200a599e9d4f85b02d88453bf5b8ace9ac589134c";
-	if (sha3(224, MSG1630))
+	if (sha3(224, MSG1630, 1630))
 		return -1;
 
 	answer = "52860aa301214c610d922a6b6cab981ccd06012e54ef689d744021e738b9ed20";
-	if (sha3(256, MSG1630))
+	if (sha3(256, MSG1630, 1630))
 		return -1;
 
 	answer = "3485d3b280bd384cf4a777844e94678173055d1cbc40c7c2c3833d9ef12345172d6fcd31923bb8795ac81847d3d8855c";
-	if (sha3(384, MSG1630))
+	if (sha3(384, MSG1630, 1630))
 		return -1;
 
 	answer = "cf9a30ac1f1f6ac0916f9fef1919c595debe2ee80c85421210fdf05f1c6af73a"
 	         "a9cac881d0f91db6d034a2bbadc1cf7fbcb2ecfa9d191d3a5016fb3fad8709c9";
-	if (sha3(512, MSG1630))
+	if (sha3(512, MSG1630, 1630))
 		return -1;
 
 	answer = "89846dc776ac0f014572ea79f560773451002938248e6882569ac32aeab191fcacde68eb07557539c4845fb444108e6e"
@@ -724,7 +811,9 @@ test_digest_bits(void)
 	         "700cd2bc3e6aab437d93d8a30f1cf692efef43602028e0ce5742eb3f4f4d5b029158dd6896acb5e3a7f684d9aa8914e7"
 	         "0974b223a6fec38d76c7473e86e4b9b32c621e2015c55e947dd016c675c82368ce26fb456a5b65881af513bfdc88687c"
 	         "6381676abbd2d9104ed23a9e89310246b026cedd57595b1ab6fe88a784be0c06";
-	if (shake(128, MSG1630))
+	if (shake(128, MSG1630, 1630))
+		return -1;
+	if (cshake(128, "", "", MSG1630, 1630))
 		return -1;
 
 	answer = "8a8325079b0fc3265d52f59855cafe655df438aa639f6fec991f2494330ce32fa37f7db90f6966d8e4a46e50c5ede57b"
@@ -738,15 +827,37 @@ test_digest_bits(void)
 	         "de45e71830a40eb0d075afccfcd9dc548d0d529460ea7ac2adac722e7678ef597dd3b495bd7d1a8ff39448bbab1dc6a8"
 	         "8481801cf5a8010e873c31e479a5e3db3d4e67d1d948e67cc66fd75a4a19c120662ef55977bddbac0721c80d69902693"
 	         "c83d5ef7bc27efa393af4c439fc39958e0e75537358802ef0853b7470b0f19ac";
-	if (shake(256, MSG1630))
+	if (shake(256, MSG1630, 1630))
+		return -1;
+	if (cshake(256, "", "", MSG1630, 1630))
+		return -1;
+
+
+	answer = "c1c36925b6409a04f1b504fcbca9d82b4017277cb5ed2b2065fc1d3814d5aaf5";
+	if (cshake(128, "", "Email Signature", "\x00\x01\x02\x03", 32))
+		return -1;
+
+	answer = "c5221d50e4f822d96a2e8881a961420f294b7b24fe3d2094baed2c6524cc166b";
+	if(cshake(128, "", "Email Signature", SEQ1600, 1600))
+		return -1;
+
+	answer = "d008828e2b80ac9d2218ffee1d070c48b8e4c87bff32c9699d5b6896eee0edd1"
+	         "64020e2be0560858d9c00c037e34a96937c561a74c412bb4c746469527281c8c";
+	if (cshake(256, "", "Email Signature", "\x00\x01\x02\x03", 32))
+		return -1;
+
+	answer = "07dc27b11e51fbac75bc7b3c1d983e8b4b85fb1defaf218912ac864302730917"
+	         "27f42b17ed1df63e8ec118f04b23633c1dfb1574c8fb55cb45da8e25afb092bb";
+	if(cshake(256, "", "Email Signature", SEQ1600, 1600))
 		return -1;
 
 
 	printf("\n");
 	return 0;
 
-#undef shake
 #undef sha3
+#undef shake
+#undef cshake
 #undef MSG0
 #undef MSG5
 #undef MSG30
@@ -756,6 +867,7 @@ test_digest_bits(void)
 #undef MSG1600
 #undef MSG1605
 #undef MSG1630
+#undef SEQ1600
 }
 
 
@@ -771,7 +883,7 @@ test_digest_trunc(void)
 #define shake(semicapacity, output, output_lastbyte)\
 	(printf("  Testing SHAKE-"#semicapacity"('', %i): ", output),\
 	 libkeccak_spec_shake(&spec, semicapacity, output),\
-	 test_digest_case(&spec, LIBKECCAK_SHAKE_SUFFIX, "", 0, INCOMPLETE_ANSWER output_lastbyte))
+	 test_digest_case(&spec, LIBKECCAK_SHAKE_SUFFIX, "", 0, 0, INCOMPLETE_ANSWER output_lastbyte))
 #define INCOMPLETE_ANSWER\
 	"7f9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef263cb1eea988004b93103cfb0aeefd2a68"\
 	"6e01fa4a58e8a3639ca8a1e3f9ae57e235b8cc873c23dc62b8d260169afa2f75ab916a58d974918835d25e6a435085b2"\

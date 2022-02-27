@@ -8,8 +8,10 @@
  * the content of the file is assumed non-sensitive
  * 
  * @param   fd       The file descriptor of the file to hash
- * @param   state    The hashing state, should not be initialised (memory leak otherwise)
- * @param   spec     Specifications for the hashing algorithm
+ * @param   state    The hashing state, should not be initialised unless
+ *                   `spec` is `NULL` (memory leak otherwise)
+ * @param   spec     Specifications for the hashing algorithm; or `NULL`
+ *                   if `spec` is already initialised
  * @param   suffix   The data suffix, see `libkeccak_digest`
  * @param   hashsum  Output array for the hashsum, have an allocation size of
  *                   at least `((spec->output + 7) / 8) * sizeof(char)`, may be `NULL`
@@ -29,7 +31,7 @@ libkeccak_generalised_sum_fd(int fd, struct libkeccak_state *restrict state, con
 	size_t chunksize, extrasize, extrachunks;
 	size_t chunks, chunkmod;
 
-	if (libkeccak_state_initialise(state, spec) < 0)
+	if (spec && libkeccak_state_initialise(state, spec) < 0)
 		return -1;
 
 	chunksize = libkeccak_zerocopy_chunksize(state);
