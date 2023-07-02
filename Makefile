@@ -168,10 +168,7 @@ check: test
 	@test $$(sha256sum .testfile | cut -d ' ' -f 1) = \
 	      e21d814d21ca269246849cc105faec1a71ac7d1cdb1a86023254f49d51b47231 || \
 	      ( echo 'The file .testfile is incorrect, test will fail!' ; false )
-	valgrind --leak-check=full ./test
-	test $$(valgrind ./test 2>&1 >/dev/null | wc -l) = 14
-# Using valgrind 3.10.0, its output to standard error should consist of 14 lines,
-# the test itself never prints to standard error.
+	$(CHECK_PREFIX) ./test
 
 benchfile:
 	dd if=/dev/urandom bs=1000 count=50 > $@
