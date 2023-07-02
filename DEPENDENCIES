@@ -15,7 +15,6 @@ BUILD DEPENDENCIES:
 CHECK DEPENDENCIES:
 
 	libc
-	valgrind
 	make
 	coreutils
 
