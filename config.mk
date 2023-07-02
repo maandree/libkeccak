@@ -1,11 +1,11 @@
 PREFIX    = /usr
 MANPREFIX = $(PREFIX)/share/man
 
-CC = cc
+CC = c99
 
-CFLAGS   = -std=c99 -O3
 CPPFLAGS = -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_XOPEN_SOURCE=700
-LDFLAGS  = -s
+CFLAGS   = -O3
+LDFLAGS  =
 
 # You can add -DALLOCA_LIMIT=# to CPPFLAGS, where # is a size_t
 # value, to put a limit on how large allocation the library is
