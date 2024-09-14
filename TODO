@@ -13,3 +13,7 @@ Add libkeccak_cshakesum_fd (TODO in libkeccak.h)
 Add KMAC and KMACXOF
 Add TupleHash and TupleHashXOF
 Add ParallelHash and ParallelHashXOF
+
+Optimise for wordsize 32
+Optimise for wordsize 16
+Optimise for wordsize 8
