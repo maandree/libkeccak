@@ -166,8 +166,8 @@ LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __warn_unused_result
 inline int
 libkeccak_spec_check(const struct libkeccak_spec *spec)
 {
-	long int state_size = spec->capacity + spec->bitrate;
-	int32_t word_size = (int32_t)(state_size / 25);
+	unsigned long int state_size = (unsigned long int)(spec->capacity + spec->bitrate);
+	uint32_t word_size = (uint32_t)(state_size / 25U);
 
 	if (spec->bitrate <= 0)  return LIBKECCAK_SPEC_ERROR_BITRATE_NONPOSITIVE;
 	if (spec->bitrate % 8)   return LIBKECCAK_SPEC_ERROR_BITRATE_MOD_8;
@@ -178,10 +178,6 @@ libkeccak_spec_check(const struct libkeccak_spec *spec)
 	if (state_size % 25)     return LIBKECCAK_SPEC_ERROR_STATE_MOD_25;
 	if (word_size % 8)       return LIBKECCAK_SPEC_ERROR_WORD_MOD_8;
 
-	/* `(x & -x) != x` assumes two's complement, which of course is always
-	 * satisfied by GCC, however C99 guarantees that `int32_t` exists,
-	 * and it is basically the same thing as `long int`; with one important
-	 * difference: it is guaranteed to use two's complement. */
 	if ((word_size & -word_size) != word_size)
 		return LIBKECCAK_SPEC_ERROR_WORD_NON_2_POTENT;
 
