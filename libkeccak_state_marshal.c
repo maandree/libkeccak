@@ -17,9 +17,15 @@
 size_t
 libkeccak_state_marshal(const struct libkeccak_state *restrict state, void *restrict data_)
 {
-#define set(type, var) *(type *)data = state->var, data += sizeof(type)
+#define set(VAR)\
+	do {\
+		__builtin_memcpy(data, &state->VAR, sizeof(state->VAR));\
+		data += sizeof(state->VAR);\
+	} while (0)
+
 	unsigned char *restrict start = data_;
 	unsigned char *restrict data = start;
+
 	if (!data) {
 		return 7 * sizeof(long int) +
 		       1 * sizeof(int64_t) +
@@ -27,20 +33,23 @@ libkeccak_state_marshal(const struct libkeccak_state *restrict state, void *rest
 		       2 * sizeof(size_t) +
 		       state->mptr;
 	}
-	set(long int, r);
-	set(long int, c);
-	set(long int, n);
-	set(long int, b);
-	set(long int, w);
-	set(int64_t, wmod);
-	set(long int, l);
-	set(long int, nr);
-	memcpy(data, state->S, sizeof(state->S));
+
+	set(r);
+	set(c);
+	set(n);
+	set(b);
+	set(w);
+	set(wmod);
+	set(l);
+	set(nr);
+	__builtin_memcpy(data, state->S, sizeof(state->S));
 	data += sizeof(state->S);
-	set(size_t, mptr);
-	set(size_t, mlen);
+	set(mptr);
+	set(mlen);
 	memcpy(data, state->M, state->mptr * sizeof(char));
 	data += state->mptr;
+
 	return (size_t)(data - start);
+
 #undef set
 }

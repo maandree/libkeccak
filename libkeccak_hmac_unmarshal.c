@@ -28,7 +28,7 @@ libkeccak_hmac_unmarshal(struct libkeccak_hmac_state *restrict state, const void
 		return 0;
 	data += parsed;
 
-	size = *(const size_t *)data;
+	__builtin_memcpy(&size, data, sizeof(size));
 	data += sizeof(size_t);
 	if (state)
 		size = state->key_length;
@@ -44,7 +44,7 @@ libkeccak_hmac_unmarshal(struct libkeccak_hmac_state *restrict state, const void
 		data += size;
 
 		if (data[0]) {
-			state->key_ipad = state->key_opad + size;
+			state->key_ipad = &state->key_opad[size];
 			memcpy(state->key_ipad, state->key_opad, size);
 			for (i = 0; i < size; i++)
 				state->key_ipad[i] ^= (char)(HMAC_OUTER_PAD ^ HMAC_INNER_PAD);

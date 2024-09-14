@@ -8,7 +8,7 @@ Just for fun:
 
 Add tests for HMAC
 
-Add libkeccak_cshakesum_fd (TODO in libkeccak.h)
+Add libkeccak_cshakesum_fd (TODO in libkeccak/cshake.h)
 
 Add KMAC and KMACXOF
 Add TupleHash and TupleHashXOF

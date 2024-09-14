@@ -69,8 +69,18 @@ OBJ =\
 
 HDR =\
 	libkeccak.h\
-	libkeccak-legacy.h\
-	common.h
+	common.h\
+	$(SUBHDR)
+
+SUBHDR =\
+	libkeccak/keccak.h\
+	libkeccak/sha3.h\
+	libkeccak/rawshake.h\
+	libkeccak/shake.h\
+	libkeccak/cshake.h\
+	libkeccak/hmac.h\
+	libkeccak/legacy.h\
+	libkeccak/util.h
 
 MAN3 =\
 	libkeccak_behex_lower.3\
@@ -183,8 +193,9 @@ install: libkeccak.$(LIBEXT) libkeccak.a
 	ln -sf -- libkeccak.$(LIBMINOREXT) "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBMAJOREXT)"
 	ln -sf -- libkeccak.$(LIBMINOREXT) "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBEXT)"
 	cp -- libkeccak.a "$(DESTDIR)$(PREFIX)/lib/libkeccak.a"
-	mkdir -p -- "$(DESTDIR)$(PREFIX)/include"
-	cp -- libkeccak.h libkeccak-legacy.h "$(DESTDIR)$(PREFIX)/include/"
+	mkdir -p -- "$(DESTDIR)$(PREFIX)/include/libkeccak"
+	cp -- libkeccak.h "$(DESTDIR)$(PREFIX)/include/"
+	cp -- $(SUBHDR) "$(DESTDIR)$(PREFIX)/include/libkeccak/"
 	mkdir -p -- "$(DESTDIR)$(MANPREFIX)/man3"
 	mkdir -p -- "$(DESTDIR)$(MANPREFIX)/man7"
 	cp -- $(MAN3) "$(DESTDIR)$(MANPREFIX)/man3"
@@ -197,14 +208,13 @@ uninstall:
 	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBMAJOREXT)"
 	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.$(LIBEXT)"
 	-rm -f -- "$(DESTDIR)$(PREFIX)/lib/libkeccak.a"
-	-rm -f -- "$(DESTDIR)$(PREFIX)/include/libkeccak.h"
-	-rm -f -- "$(DESTDIR)$(PREFIX)/include/libkeccak-legacy.h"
+	-cd -- "$(DESTDIR)$(PREFIX)/include/" && rm -f $(SUBHDIR)
 	-cd -- "$(DESTDIR)$(MANPREFIX)/man3" && rm -f -- $(MAN3)
 	-cd -- "$(DESTDIR)$(MANPREFIX)/man7" && rm -f -- $(MAN7)
 	-rm -rf -- "$(DESTDIR)$(PREFIX)/share/licenses/libkeccak"
 
 clean:
-	-rm -f -- *.o *.su libkeccak/*.o libkeccak/*.su test benchmark benchfile
+	-rm -f -- *.o *.su  test benchmark benchfile
 	-rm -f -- *.a libkeccak.$(LIBEXT) libkeccak.$(LIBEXT).* libkeccak.*.$(LIBEXT)
 
 .SUFFIXES:

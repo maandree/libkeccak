@@ -28,6 +28,7 @@
 # define __builtin_memset(dest, c, n) memset(dest, c, n)
 # define __builtin_memcpy(dest, src, n) memcpy(dest, src, n)
 # define __builtin_memmove(dest, src, n) memmove(dest, src, n)
+# define __builtin_strlen(s) strlen(s)
 #endif
 
 

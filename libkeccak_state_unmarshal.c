@@ -18,31 +18,38 @@
 size_t
 libkeccak_state_unmarshal(struct libkeccak_state *restrict state, const void *restrict data_)
 {
-#define get(type, var) state->var = *(const type *)data, data += sizeof(type)
+#define get(VAR) \
+	do {\
+		__builtin_memcpy(&state->VAR, data, sizeof(state->VAR));\
+		data += sizeof(state->VAR);\
+	} while (0)
+
 	const unsigned char *restrict start = data_;
 	const unsigned char *restrict data = start;
 	size_t mptr;
+
 	if (!state) {
-		data += 7 * sizeof(long int);
-		data += 1 * sizeof(int64_t);
+		data += 7U * sizeof(long int);
+		data += 1U * sizeof(int64_t);
 		data += sizeof(state->S);
 		mptr = *(const size_t *)data;
-		data += 2 * sizeof(size_t);
+		data += 2U * sizeof(size_t);
 		data += mptr;
 		return (size_t)(data - start);
 	}
-	get(long int, r);
-	get(long int, c);
-	get(long int, n);
-	get(long int, b);
-	get(long int, w);
-	get(int64_t, wmod);
-	get(long int, l);
-	get(long int, nr);
+
+	get(r);
+	get(c);
+	get(n);
+	get(b);
+	get(w);
+	get(wmod);
+	get(l);
+	get(nr);
 	memcpy(state->S, data, sizeof(state->S));
 	data += sizeof(state->S);
-	get(size_t, mptr);
-	get(size_t, mlen);
+	get(mptr);
+	get(mlen);
 	if (state->mptr) {
 		state->M = malloc(state->mptr * sizeof(char));
 		if (!state->M)
@@ -52,6 +59,8 @@ libkeccak_state_unmarshal(struct libkeccak_state *restrict state, const void *re
 	} else {
 		state->M = NULL;
 	}
+
 	return (size_t)(data - start);
+
 #undef get
 }
