@@ -319,7 +319,7 @@ libkeccak_squeezing_phase(register struct libkeccak_state *restrict state, long 
                           long int nn, long int ww, register unsigned char *restrict hashsum)
 {
 	register int_fast64_t v;
-	register long int ni = rr / ww;
+	register long int ni = rr / ww + !!(rr % ww);
 	auto long int olen = state->n;
 	auto long int i, j = 0;
 	register long int k;
