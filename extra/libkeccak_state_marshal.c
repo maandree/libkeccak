@@ -28,7 +28,7 @@ libkeccak_state_marshal(const struct libkeccak_state *restrict state, void *rest
 
 	if (!data) {
 		return 7 * sizeof(long int) +
-		       1 * sizeof(int64_t) +
+		       1 * sizeof(uint64_t) +
 		       sizeof(state->S) +
 		       2 * sizeof(size_t) +
 		       state->mptr;
@@ -42,7 +42,7 @@ libkeccak_state_marshal(const struct libkeccak_state *restrict state, void *rest
 	set(wmod);
 	set(l);
 	set(nr);
-	__builtin_memcpy(data, state->S, sizeof(state->S));
+	__builtin_memcpy(data, &state->S, sizeof(state->S));
 	data += sizeof(state->S);
 	set(mptr);
 	set(mlen);

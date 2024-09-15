@@ -34,9 +34,9 @@ libkeccak_state_initialise(struct libkeccak_state *restrict state, const struct 
 	}
 
 	state->nr = 12 + (state->l << 1);
-	state->wmod = (state->w == 64) ? ~0LL : (int64_t)((1ULL << state->w) - 1);
+	state->wmod = (state->w == 64) ? ~0ULL : (uint64_t)((1ULL << state->w) - 1);
 	for (x = 0; x < 25; x++)
-		state->S[x] = 0;
+		state->S.w64[x] = 0;
 	state->mptr = 0;
 	state->mlen = (size_t)(state->r * state->b) >> 2;
 

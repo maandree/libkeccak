@@ -11,7 +11,7 @@ inline void
 libkeccak_state_reset(struct libkeccak_state *state)
 {
 	state->mptr = 0;
-	memset(state->S, 0, sizeof(state->S));
+	memset(&state->S, 0, sizeof(state->S));
 }
 
 

@@ -14,6 +14,10 @@
 # pragma clang diagnostic ignored "-Wdocumentation"
 # pragma clang diagnostic ignored "-Wunknown-attributes"
 #endif
+#if defined(__GNUC__)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Winline"
+#endif
 
 
 /**
@@ -59,7 +63,12 @@ struct libkeccak_state {
 	/**
 	 * The lanes (state/sponge)
 	 */
-	int64_t S[25];
+	union {
+		uint64_t w64[25];
+		uint32_t w32[25];
+		uint16_t w16[25];
+		uint8_t w8[25];
+	} S;
 
 	/**
 	 * The bitrate
@@ -89,7 +98,7 @@ struct libkeccak_state {
 	/**
 	 * The word mask
 	 */
-	int64_t wmod;
+	uint64_t wmod;
 
 	/**
 	 * ℓ, the binary logarithm of the word size
@@ -255,7 +264,12 @@ void libkeccak_simple_squeeze(register struct libkeccak_state *, register long i
  * @param  times  The number of digests
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
-void libkeccak_fast_squeeze(register struct libkeccak_state *, register long int);
+inline void
+libkeccak_fast_squeeze(register struct libkeccak_state *state, register long int times)
+{
+	times *= (state->n - 1) / state->r + 1;
+	libkeccak_simple_squeeze(state, times);
+}
 
 /**
  * Squeeze out another digest
@@ -311,6 +325,9 @@ libkeccak_state_destroy(volatile struct libkeccak_state *state)
 
 
 
+#if defined(__GNUC__)
+# pragma GCC diagnostic pop
+#endif
 #if defined(__clang__)
 # pragma clang diagnostic pop
 #endif

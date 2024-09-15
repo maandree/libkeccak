@@ -38,6 +38,33 @@
 #define COMMA ,
 
 /**
+ * X-macro-enabled listing of all intergers in [0, 0]
+ * 
+ * @param  X(int)  The macro to expand 4 times
+ * @param  D       Code to insert between each expansion of `X`
+ */
+#define LIST_1(X, D)\
+	X(0)
+
+/**
+ * X-macro-enabled listing of all intergers in [0, 1]
+ * 
+ * @param  X(int)  The macro to expand 2 times
+ * @param  D       Code to insert between each expansion of `X`
+ */
+#define LIST_2(X, D)\
+	X(0) D X(1)
+
+/**
+ * X-macro-enabled listing of all intergers in [0, 3]
+ * 
+ * @param  X(int)  The macro to expand 4 times
+ * @param  D       Code to insert between each expansion of `X`
+ */
+#define LIST_4(X, D)\
+	X(0) D X(1) D X(2) D X(3)
+
+/**
  * X-macro-enabled listing of all intergers in [0, 4]
  * 
  * @param  X(int)  The macro to expand 5 times

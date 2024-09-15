@@ -30,7 +30,7 @@ libkeccak_state_unmarshal(struct libkeccak_state *restrict state, const void *re
 
 	if (!state) {
 		data += 7U * sizeof(long int);
-		data += 1U * sizeof(int64_t);
+		data += 1U * sizeof(uint64_t);
 		data += sizeof(state->S);
 		mptr = *(const size_t *)data;
 		data += 2U * sizeof(size_t);
@@ -46,7 +46,7 @@ libkeccak_state_unmarshal(struct libkeccak_state *restrict state, const void *re
 	get(wmod);
 	get(l);
 	get(nr);
-	memcpy(state->S, data, sizeof(state->S));
+	memcpy(&state->S, data, sizeof(state->S));
 	data += sizeof(state->S);
 	get(mptr);
 	get(mlen);
