@@ -16,14 +16,21 @@
 #endif
 
 
+#ifndef L
+# define L                 6
+#endif
+#ifndef STATE
+# define STATE             (25 << (L))
+#endif
+
 #ifndef BITRATE
-# define BITRATE           1024
+# define BITRATE           (16 << (L))
 #endif
 #ifndef CAPACITY
-# define CAPACITY          576
+# define CAPACITY          ((STATE) - (BITRATE))
 #endif
 #ifndef OUTPUT
-# define OUTPUT            512
+# define OUTPUT            ((BITRATE) / 2)
 #endif
 
 #ifndef UPDATE_RUNS
