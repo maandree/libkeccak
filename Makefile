@@ -150,6 +150,8 @@ MAN7 =\
 all: libkeccak.a libkeccak.$(LIBEXT) test benchmark
 
 $(OBJ): $(HDR)
+digest.o: 1600.c 800.c 400.c 200.c
+
 .c.o:
 	$(CC) -fPIC -c -o $@ $< $(CFLAGS) $(CPPFLAGS)
 

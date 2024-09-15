@@ -67,7 +67,7 @@ struct libkeccak_state {
 		uint64_t w64[25];
 		uint32_t w32[25];
 		uint16_t w16[25];
-		uint8_t w8[25];
+		uint_fast8_t w8[25];
 	} S;
 
 	/**

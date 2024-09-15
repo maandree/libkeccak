@@ -17,7 +17,7 @@
 
 
 #ifndef L
-# define L                 6
+# define L                 3
 #endif
 #ifndef STATE
 # define STATE             (25 << (L))
