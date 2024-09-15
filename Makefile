@@ -19,53 +19,53 @@ LIB_VERSION = $(LIB_MAJOR).$(LIB_MINOR)
 
 OBJ =\
 	digest.o\
-	libkeccak_behex_lower.o\
-	libkeccak_behex_upper.o\
 	libkeccak_cshake_initialise.o\
-	libkeccak_cshake_suffix.o\
-	libkeccak_degeneralise_spec.o\
-	libkeccak_generalised_spec_initialise.o\
-	libkeccak_generalised_sum_fd.o\
-	libkeccak_hmac_copy.o\
-	libkeccak_hmac_create.o\
-	libkeccak_hmac_destroy.o\
-	libkeccak_hmac_digest.o\
-	libkeccak_hmac_duplicate.o\
-	libkeccak_hmac_fast_destroy.o\
-	libkeccak_hmac_fast_digest.o\
-	libkeccak_hmac_fast_free.o\
-	libkeccak_hmac_fast_update.o\
-	libkeccak_hmac_free.o\
-	libkeccak_hmac_initialise.o\
-	libkeccak_hmac_marshal.o\
-	libkeccak_hmac_reset.o\
-	libkeccak_hmac_set_key.o\
-	libkeccak_hmac_unmarshal.o\
-	libkeccak_hmac_update.o\
-	libkeccak_hmac_wipe.o\
-	libkeccak_keccaksum_fd.o\
-	libkeccak_rawshakesum_fd.o\
-	libkeccak_sha3sum_fd.o\
-	libkeccak_shakesum_fd.o\
-	libkeccak_spec_check.o\
-	libkeccak_spec_rawshake.o\
-	libkeccak_spec_sha3.o\
-	libkeccak_state_copy.o\
-	libkeccak_state_create.o\
 	libkeccak_state_destroy.o\
-	libkeccak_state_duplicate.o\
 	libkeccak_state_fast_destroy.o\
-	libkeccak_state_fast_free.o\
-	libkeccak_state_free.o\
 	libkeccak_state_initialise.o\
-	libkeccak_state_marshal.o\
-	libkeccak_state_reset.o\
-	libkeccak_state_unmarshal.o\
-	libkeccak_state_wipe.o\
-	libkeccak_state_wipe_message.o\
-	libkeccak_state_wipe_sponge.o\
-	libkeccak_unhex.o\
-	libkeccak_zerocopy_chunksize.o
+	libkeccak_zerocopy_chunksize.o\
+	extra/libkeccak_state_copy.o\
+	extra/libkeccak_state_create.o\
+	extra/libkeccak_state_duplicate.o\
+	extra/libkeccak_state_fast_free.o\
+	extra/libkeccak_state_free.o\
+	extra/libkeccak_state_marshal.o\
+	extra/libkeccak_state_reset.o\
+	extra/libkeccak_state_unmarshal.o\
+	extra/libkeccak_state_wipe.o\
+	extra/libkeccak_state_wipe_message.o\
+	extra/libkeccak_state_wipe_sponge.o\
+	hmac/libkeccak_hmac_copy.o\
+	hmac/libkeccak_hmac_create.o\
+	hmac/libkeccak_hmac_destroy.o\
+	hmac/libkeccak_hmac_digest.o\
+	hmac/libkeccak_hmac_duplicate.o\
+	hmac/libkeccak_hmac_fast_destroy.o\
+	hmac/libkeccak_hmac_fast_digest.o\
+	hmac/libkeccak_hmac_fast_free.o\
+	hmac/libkeccak_hmac_fast_update.o\
+	hmac/libkeccak_hmac_free.o\
+	hmac/libkeccak_hmac_initialise.o\
+	hmac/libkeccak_hmac_marshal.o\
+	hmac/libkeccak_hmac_reset.o\
+	hmac/libkeccak_hmac_set_key.o\
+	hmac/libkeccak_hmac_unmarshal.o\
+	hmac/libkeccak_hmac_update.o\
+	hmac/libkeccak_hmac_wipe.o\
+	spec/libkeccak_cshake_suffix.o\
+	spec/libkeccak_degeneralise_spec.o\
+	spec/libkeccak_generalised_spec_initialise.o\
+	spec/libkeccak_spec_check.o\
+	spec/libkeccak_spec_rawshake.o\
+	spec/libkeccak_spec_sha3.o\
+	util/libkeccak_behex_lower.o\
+	util/libkeccak_behex_upper.o\
+	util/libkeccak_generalised_sum_fd.o\
+	util/libkeccak_keccaksum_fd.o\
+	util/libkeccak_rawshakesum_fd.o\
+	util/libkeccak_sha3sum_fd.o\
+	util/libkeccak_shakesum_fd.o\
+	util/libkeccak_unhex.o
 
 HDR =\
 	libkeccak.h\
@@ -78,6 +78,7 @@ SUBHDR =\
 	libkeccak/rawshake.h\
 	libkeccak/shake.h\
 	libkeccak/cshake.h\
+	libkeccak/extra.h\
 	libkeccak/hmac.h\
 	libkeccak/legacy.h\
 	libkeccak/util.h
@@ -214,7 +215,7 @@ uninstall:
 	-rm -rf -- "$(DESTDIR)$(PREFIX)/share/licenses/libkeccak"
 
 clean:
-	-rm -f -- *.o *.su  test benchmark benchfile
+	-rm -f -- *.o *.su */*.o */*.su test benchmark benchfile
 	-rm -f -- *.a libkeccak.$(LIBEXT) libkeccak.$(LIBEXT).* libkeccak.*.$(LIBEXT)
 
 .SUFFIXES:

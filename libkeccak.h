@@ -16,7 +16,6 @@
 #endif
 
 
-
 /**
  * Only include some C code if compiling with GCC.
  * 
@@ -49,6 +48,7 @@ struct libkeccak_spec {
 	 */
 	long int output;
 };
+
 
 /**
  * Data structure that describes the state of a hashing process
@@ -117,6 +117,7 @@ struct libkeccak_state {
 	unsigned char *M;
 };
 
+
 /**
  * Initialise a state according to hashing specifications
  * 
@@ -126,154 +127,6 @@ struct libkeccak_state {
  */
 LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__)))
 int libkeccak_state_initialise(struct libkeccak_state *, const struct libkeccak_spec *);
-
-/**
- * Reset a state according to hashing specifications
- * 
- * @param  state  The state that should be reset
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
-inline void
-libkeccak_state_reset(struct libkeccak_state *state)
-{
-	state->mptr = 0;
-	memset(state->S, 0, sizeof(state->S));
-}
-
-/**
- * Release resources allocation for a state without wiping sensitive data
- * 
- * @param  state  The state that should be destroyed
- */
-inline void
-libkeccak_state_fast_destroy(struct libkeccak_state *state)
-{
-	if (state) {
-		free(state->M);
-		state->M = NULL;
-	}
-}
-
-/**
- * Wipe data in the state's message wihout freeing any data
- * 
- * @param  state  The state that should be wipe
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__, __nothrow__, __optimize__("-O0"))))
-void libkeccak_state_wipe_message(volatile struct libkeccak_state *);
-
-/**
- * Wipe data in the state's sponge wihout freeing any data
- * 
- * @param  state  The state that should be wipe
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__, __nothrow__, __optimize__("-O0"))))
-void libkeccak_state_wipe_sponge(volatile struct libkeccak_state *);
-
-/**
- * Wipe sensitive data wihout freeing any data
- * 
- * @param  state  The state that should be wipe
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__, __optimize__("-O0"))))
-void libkeccak_state_wipe(volatile struct libkeccak_state *);
-
-/**
- * Release resources allocation for a state and wipe sensitive data
- * 
- * @param  state  The state that should be destroyed
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__optimize__("-O0"))))
-inline void
-libkeccak_state_destroy(volatile struct libkeccak_state *state)
-{
-	if (state) {
-		libkeccak_state_wipe(state);
-		free(state->M);
-		state->M = NULL;
-	}
-}
-
-/**
- * Wrapper for `libkeccak_state_initialise` that also allocates the states
- * 
- * @param   spec  The specifications for the state
- * @return        The state, `NULL` on error
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __warn_unused_result__, __malloc__)))
-struct libkeccak_state *libkeccak_state_create(const struct libkeccak_spec *);
-
-/**
- * Wrapper for `libkeccak_state_fast_destroy` that also frees the allocation of the state
- * 
- * @param  state  The state that should be freed
- */
-inline void
-libkeccak_state_fast_free(struct libkeccak_state *state)
-{
-	libkeccak_state_fast_destroy(state);
-	free(state);
-}
-
-/**
- * Wrapper for `libkeccak_state_destroy` that also frees the allocation of the state
- * 
- * @param  state  The state that should be freed
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__optimize__("-O0"))))
-inline void
-libkeccak_state_free(volatile struct libkeccak_state *state)
-{
-#ifdef __GNUC__
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wcast-qual"
-#endif
-	libkeccak_state_destroy(state);
-	free((struct libkeccak_state *)state);
-#ifdef __GNUC__
-# pragma GCC diagnostic pop
-#endif
-}
-
-/**
- * Make a copy of a state
- * 
- * @param   dest  The slot for the duplicate, must not be initialised (memory leak otherwise)
- * @param   src   The state to duplicate
- * @return        Zero on success, -1 on error
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__)))
-int libkeccak_state_copy(struct libkeccak_state *restrict, const struct libkeccak_state *restrict);
-
-/**
- * A wrapper for `libkeccak_state_copy` that also allocates the duplicate
- * 
- * @param   src  The state to duplicate
- * @return       The duplicate, `NULL` on error
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __warn_unused_result__, __malloc__)))
-struct libkeccak_state *libkeccak_state_duplicate(const struct libkeccak_state *);
-
-/**
- * Marshal a `struct libkeccak_state` into a buffer
- * 
- * @param   state  The state to marshal
- * @param   data   The output buffer, can be `NULL`
- * @return         The number of bytes stored to `data`
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__(1), __nothrow__)))
-size_t libkeccak_state_marshal(const struct libkeccak_state *restrict, void *restrict);
-
-/**
- * Unmarshal a `struct libkeccak_state` from a buffer
- * 
- * @param   state  The slot for the unmarshalled state, must not be
- *                 initialised (memory leak otherwise), can be `NULL`
- * @param   data   The input buffer
- * @return         The number of bytes read from `data`, 0 on error
- */
-LIBKECCAK_GCC_ONLY(__attribute__((__leaf__, __nonnull__(2))))
-size_t libkeccak_state_unmarshal(struct libkeccak_state *restrict, const void *restrict);
 
 /**
  * Get the number of bytes that are absorbed during
@@ -413,16 +266,49 @@ void libkeccak_fast_squeeze(register struct libkeccak_state *, register long int
 LIBKECCAK_GCC_ONLY(__attribute__((__nonnull__, __nothrow__)))
 void libkeccak_squeeze(register struct libkeccak_state *restrict, register void *restrict);
 
+#include "libkeccak/extra.h"
 
-#include "libkeccak/hmac.h"
-#include "libkeccak/legacy.h"
+/**
+ * Release resources allocation for a state without wiping sensitive data
+ * 
+ * @param  state  The state that should be destroyed
+ */
+inline void
+libkeccak_state_fast_destroy(struct libkeccak_state *state)
+{
+	if (state) {
+		free(state->M);
+		state->M = NULL;
+	}
+}
+
+/**
+ * Release resources allocation for a state and wipe sensitive data
+ * 
+ * @param  state  The state that should be destroyed
+ */
+LIBKECCAK_GCC_ONLY(__attribute__((__optimize__("-O0"))))
+inline void
+libkeccak_state_destroy(volatile struct libkeccak_state *state)
+{
+	if (state) {
+		libkeccak_state_wipe(state);
+		free(state->M);
+		state->M = NULL;
+	}
+}
+
 #include "libkeccak/util.h"
+#include "libkeccak/hmac.h"
 
 #include "libkeccak/keccak.h"
 #include "libkeccak/sha3.h"
 #include "libkeccak/rawshake.h"
 #include "libkeccak/shake.h"
 #include "libkeccak/cshake.h"
+
+#include "libkeccak/legacy.h"
+
 
 
 #if defined(__clang__)

@@ -2,32 +2,13 @@
 #include "common.h"
 
 
-/**
- * X-macro-enabled listing of all intergers in [0, 4]
- */
-#define LIST_5 X(0) X(1) X(2) X(3) X(4)
-
-/**
- * X-macro-enabled listing of all intergers in [0, 7]
- */
-#define LIST_8 LIST_5 X(5) X(6) X(7)
-
-/**
- * X-macro-enabled listing of all intergers in [0, 24]
- */
-#define LIST_25 LIST_8 X(8) X(9) X(10) X(11) X(12) X(13) X(14) X(15)\
-                X(16) X(17) X(18) X(19) X(20) X(21) X(22) X(23) X(24)
-
-
-
-#define X(N) (N % 5) * 5 + N / 5,
+#define X(N) (N % 5) * 5 + N / 5
 /**
  * The order the lanes should be read when absorbing or squeezing,
  * it transposes the lanes in the sponge
  */
-static const long int LANE_TRANSPOSE_MAP[] = { LIST_25 };
+static const long int LANE_TRANSPOSE_MAP[] = { LIST_25(X, COMMA) };
 #undef X
-
 
 
 /**
@@ -83,8 +64,8 @@ libkeccak_f_round(register struct libkeccak_state *state, register int_fast64_t 
 	long int w = state->w;
 
 	/* θ step (step 1 of 3). */
-#define X(N) C[N] = A[N * 5] ^ A[N * 5 + 1] ^ A[N * 5 + 2] ^ A[N * 5 + 3] ^ A[N * 5 + 4];
-	LIST_5
+#define X(N) C[N] = A[N * 5] ^ A[N * 5 + 1] ^ A[N * 5 + 2] ^ A[N * 5 + 3] ^ A[N * 5 + 4]
+	LIST_5(X, ;);
 #undef X
 
 	/* θ step (step 2 of 3). */
@@ -104,8 +85,8 @@ libkeccak_f_round(register struct libkeccak_state *state, register int_fast64_t 
 #undef X
 
 	/* ξ step. */
-#define X(N) A[N] = B[N] ^ ((~(B[(N + 5) % 25])) & B[(N + 10) % 25]);
-	LIST_25
+#define X(N) A[N] = B[N] ^ ((~(B[(N + 5) % 25])) & B[(N + 10) % 25])
+	LIST_25(X, ;);
 #undef X
 
 	/* ι step. */
@@ -129,8 +110,8 @@ libkeccak_f_round64(register struct libkeccak_state *state, register int_fast64_
 	int_fast64_t da, db, dc, dd, de;
 
 	/* θ step (step 1 of 3). */
-#define X(N) C[N] = A[N * 5] ^ A[N * 5 + 1] ^ A[N * 5 + 2] ^ A[N * 5 + 3] ^ A[N * 5 + 4];
-	LIST_5
+#define X(N) C[N] = A[N * 5] ^ A[N * 5 + 1] ^ A[N * 5 + 2] ^ A[N * 5 + 3] ^ A[N * 5 + 4]
+	LIST_5(X, ;);
 #undef X
 
 	/* θ step (step 2 of 3). */
@@ -150,8 +131,8 @@ libkeccak_f_round64(register struct libkeccak_state *state, register int_fast64_
 #undef X
 
 	/* ξ step. */
-#define X(N) A[N] = B[N] ^ ((~(B[(N + 5) % 25])) & B[(N + 10) % 25]);
-	LIST_25
+#define X(N) A[N] = B[N] ^ ((~(B[(N + 5) % 25])) & B[(N + 10) % 25])
+	LIST_25(X, ;);
 #undef X
 
 	/* ι step. */
@@ -224,8 +205,8 @@ libkeccak_to_lane64(register const unsigned char *message, register size_t msgle
 	int_fast64_t rc = 0;
 	message += off;
 #define X(N) if (__builtin_expect(N < n, 1)) rc |= (int_fast64_t)(unsigned char)(message[N]) << (N * 8);\
-             else  return rc;
-	LIST_8
+             else return rc
+	LIST_8(X, ;);
 #undef X
 	return rc;
 }
@@ -284,8 +265,8 @@ libkeccak_absorption_phase(register struct libkeccak_state *restrict state,
 	register long int n = (long)len / rr;
 	if (__builtin_expect(ww >= 8, 1)) { /* ww > 8 is impossible, it is just for optimisation possibilities. */
 		while (n--) {
-#define X(N) state->S[N] ^= libkeccak_to_lane64(message, len, rr, (size_t)(LANE_TRANSPOSE_MAP[N] * 8));
-			LIST_25
+#define X(N) state->S[N] ^= libkeccak_to_lane64(message, len, rr, (size_t)(LANE_TRANSPOSE_MAP[N] * 8))
+			LIST_25(X, ;);
 #undef X
 			libkeccak_f(state);
 			message += (size_t)rr;
@@ -293,8 +274,8 @@ libkeccak_absorption_phase(register struct libkeccak_state *restrict state,
 		}
 	} else {
 		while (n--) {
-#define X(N) state->S[N] ^= libkeccak_to_lane(message, len, rr, ww, (size_t)(LANE_TRANSPOSE_MAP[N] * ww));
-			LIST_25
+#define X(N) state->S[N] ^= libkeccak_to_lane(message, len, rr, ww, (size_t)(LANE_TRANSPOSE_MAP[N] * ww))
+			LIST_25(X, ;);
 #undef X
 			libkeccak_f(state);
 			message += (size_t)rr;

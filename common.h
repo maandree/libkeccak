@@ -33,6 +33,44 @@
 
 
 /**
+ * Literal comma that can be passed as a macro argument
+ */
+#define COMMA ,
+
+/**
+ * X-macro-enabled listing of all intergers in [0, 4]
+ * 
+ * @param  X(int)  The macro to expand 5 times
+ * @param  D       Code to insert between each expansion of `X`
+ */
+#define LIST_5(X, D)\
+	X(0) D X(1) D X(2) D X(3) D X(4)
+
+/**
+ * X-macro-enabled listing of all intergers in [0, 7]
+ * 
+ * @param  X(int)  The macro to expand 8 times
+ * @param  D       Code to insert between each expansion of `X`
+ */
+#define LIST_8(X, D)\
+	X(0) D X(1) D X(2) D X(3) D X(4) D\
+	X(5) D X(6) D X(7)
+
+/**
+ * X-macro-enabled listing of all intergers in [0, 24]
+ * 
+ * @param  X(int)  The macro to expand 25 times
+ * @param  D       Code to insert between each expansion of `X`
+ */
+#define LIST_25(X, D)\
+	X( 0) D X( 1) D X( 2) D X( 3) D X( 4) D\
+	X( 5) D X( 6) D X( 7) D X( 8) D X( 9) D\
+	X(10) D X(11) D X(12) D X(13) D X(14) D\
+	X(15) D X(16) D X(17) D X(18) D X(19) D\
+	X(20) D X(21) D X(22) D X(23) D X(24)
+
+
+/**
  * The outer pad pattern for HMAC
  */
 #define HMAC_OUTER_PAD 0x5C
