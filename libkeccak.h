@@ -155,7 +155,7 @@ libkeccak_zerocopy_chunksize(struct libkeccak_state *state)
  * Absorb more of the message to the Keccak sponge
  * without copying the data to an internal buffer
  * 
- * It is safe run zero-copy functions before non-zero-copy
+ * It is safe to run zero-copy functions before non-zero-copy
  * functions for the same state, running zero-copy functions
  * after non-zero-copy functions on the other hand can
  * cause the message to be misread
@@ -197,7 +197,7 @@ int libkeccak_update(struct libkeccak_state *restrict, const void *restrict, siz
  * Absorb the last part of the message and squeeze the Keccak sponge
  * without copying the data to an internal buffer
  * 
- * It is safe run zero-copy functions before non-zero-copy
+ * It is safe to run zero-copy functions before non-zero-copy
  * functions for the same state, running zero-copy functions
  * after non-zero-copy functions on the other hand can
  * cause the message to be misread
@@ -205,7 +205,7 @@ int libkeccak_update(struct libkeccak_state *restrict, const void *restrict, siz
  * @param  state    The hashing state
  * @param  msg      The rest of the message; will be edited; extra memory
  *                  shall be allocated such that `suffix` and a 10*1 pad (which
- *                  is at least 2 bits long) can be added in a why the makes it's
+ *                  is at least 2 bits long) can be added in a way that makes its
  *                  length a multiple of `libkeccak_zerocopy_chunksize(state)`
  * @param  msglen   The length of the partial message
  * @param  bits     The number of bits at the end of the message not covered by `msglen`

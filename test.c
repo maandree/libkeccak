@@ -1070,8 +1070,8 @@ test_update(void)
  * @param   fast_squeezes    The number of fast squeezes to perform
  * @param   squeezes         The number of extra squeezes to perform in total
  * @param   fast_digest      Whether `libkeccak_digest` should do a fast squeeze rather than a slow squeeze
- * @param   hashsum          A buffer in which we can used to store the binary hashsum
- * @param   hexsum           A buffer in which we can used to store the hexadecimal hashsum
+ * @param   hashsum          A buffer in which we can use to store the binary hashsum
+ * @param   hexsum           A buffer in which we can use to store the hexadecimal hashsum
  * @param   expected_answer  The hashum we expect, must be in lowercase hexadecimal
  * @return                   Zero on success, -1 on error
  */

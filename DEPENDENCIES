@@ -2,7 +2,6 @@ RUNTIME DEPENDENCIES:
 
 	libc
 
-
 BUILD DEPENDENCIES:
 
 	libc
@@ -11,13 +10,11 @@ BUILD DEPENDENCIES:
 	coreutils
 	binutils
 
-
 CHECK DEPENDENCIES:
 
 	libc
 	make
 	coreutils
-
 
 BENCHMARK DEPENDENCIES:
 
@@ -27,7 +24,6 @@ BENCHMARK DEPENDENCIES:
 	median
 	grep (only needed for ./benchmark-flags)
 	sed (only needed for ./benchmark-flags)
-
 
 INSTALL DEPENDENCIES:
 
