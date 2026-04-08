@@ -79,7 +79,7 @@ main(void)
 		return 1;
 	}
 	for (ptr = 0; ptr < MESSAGE_LEN; ptr += (size_t)got) {
-		got = read(fd, message, MESSAGE_LEN - ptr);
+		got = read(fd, &message[ptr], MESSAGE_LEN - ptr);
 		if (got <= 0) {
 			perror("read");
 			close(fd);
